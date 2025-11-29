@@ -1,0 +1,101 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { categories } from "@/lib/products";
+
+// Take first 6 main categories for quick nav
+const quickCategories = categories.slice(0, 6);
+
+const categoryEmojis: Record<string, string> = {
+  podis: "🌶️",
+  pickles: "🥒",
+  sweets: "🍬",
+  savouries: "🥨",
+  vadams: "☀️",
+  "ready-to-mix": "⚡",
+  vathals: "🍂",
+  seasonal: "🎉",
+  "seer-bhakshanam": "🎁",
+};
+
+export function QuickCategories() {
+  return (
+    <section className="relative py-12 md:py-16 bg-[#0a1810]">
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
+        {/* Section header */}
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-8 gap-4">
+          <div>
+            <p className="text-[#b8860b] text-sm tracking-[0.2em] uppercase mb-2">
+              Categories
+            </p>
+            <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#f5f0e1]">
+              Shop by Category
+            </h2>
+          </div>
+          <Link
+            href="/shop"
+            className="inline-flex items-center gap-2 text-[#f5f0e1]/60 hover:text-[#b8860b] font-medium transition-colors text-sm"
+          >
+            All Categories
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        {/* Categories horizontal scroll on mobile, grid on desktop */}
+        <div className="flex gap-4 overflow-x-auto pb-4 md:pb-0 md:grid md:grid-cols-3 lg:grid-cols-6 scrollbar-hide">
+          {quickCategories.map((category) => (
+            <Link
+              key={category.slug}
+              href={`/shop/${category.slug}`}
+              className="flex-shrink-0 w-[160px] md:w-auto group"
+            >
+              <div className="relative bg-[#132a1c] rounded-2xl overflow-hidden border border-[#2a4a35] hover:border-[#b8860b]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#b8860b]/10">
+                {/* Background Image */}
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <Image
+                    src={category.image || "/placeholder.svg"}
+                    alt={category.name}
+                    fill
+                    className="object-cover opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d1f14] via-[#0d1f14]/60 to-transparent" />
+
+                  {/* Emoji */}
+                  <div className="absolute top-3 right-3 text-2xl">
+                    {categoryEmojis[category.slug] || "🍽️"}
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-4">
+                  <p className="text-[#b8860b] text-xs tracking-wider mb-1">
+                    {category.tamilName}
+                  </p>
+                  <h3 className="font-serif text-base font-bold text-[#f5f0e1] group-hover:text-[#b8860b] transition-colors">
+                    {category.name}
+                  </h3>
+                  <p className="text-[#f5f0e1]/40 text-xs mt-1">
+                    {category.productCount} items
+                  </p>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Hide scrollbar utility */}
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
+    </section>
+  );
+}

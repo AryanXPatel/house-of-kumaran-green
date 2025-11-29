@@ -1,13 +1,11 @@
-"use client"
+"use client";
 
-import { useRef } from "react"
-import { ArrowDown } from "lucide-react"
+import Link from "next/link";
+import { ArrowRight, Truck, Shield, Leaf } from "lucide-react";
 
 export function HeroSection() {
-  const videoRef = useRef<HTMLVideoElement>(null)
-
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[85vh] md:min-h-[80vh] flex items-center justify-center overflow-hidden pt-20">
       {/* Background with overlay */}
       <div className="absolute inset-0 bg-[#0d1f14]">
         {/* Kolam pattern overlay */}
@@ -21,17 +19,9 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#0d1f14] via-transparent to-[#0d1f14]" />
       </div>
 
-      {/* Decorative leaf elements */}
-      <div className="absolute top-20 left-10 w-32 h-32 opacity-10">
+      {/* Decorative leaf element */}
+      <div className="absolute top-24 right-10 w-32 h-32 opacity-10 hidden lg:block">
         <svg viewBox="0 0 100 100" className="w-full h-full text-[#b8860b]">
-          <path
-            fill="currentColor"
-            d="M50 5 C30 20, 15 40, 15 60 C15 80, 30 95, 50 95 C70 95, 85 80, 85 60 C85 40, 70 20, 50 5 M50 20 L50 80 M30 40 Q50 50 70 40 M30 60 Q50 70 70 60"
-          />
-        </svg>
-      </div>
-      <div className="absolute bottom-20 right-10 w-40 h-40 opacity-10 rotate-180">
-        <svg viewBox="0 0 100 100" className="w-full h-full text-[#2a4a35]">
           <path
             fill="currentColor"
             d="M50 5 C30 20, 15 40, 15 60 C15 80, 30 95, 50 95 C70 95, 85 80, 85 60 C85 40, 70 20, 50 5 M50 20 L50 80 M30 40 Q50 50 70 40 M30 60 Q50 70 70 60"
@@ -42,74 +32,104 @@ export function HeroSection() {
       {/* Main content */}
       <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 text-center">
         {/* Tagline */}
-        <div className="mb-8 inline-flex items-center gap-3 px-5 py-2 rounded-full border border-[#2a4a35] bg-[#0d1f14]/50 backdrop-blur-sm">
+        <div className="mb-6 inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-[#2a4a35] bg-[#0d1f14]/50 backdrop-blur-sm">
           <span className="w-2 h-2 rounded-full bg-[#b8860b] animate-pulse" />
-          <span className="text-[#f5f0e1]/70 text-sm tracking-[0.15em] uppercase">Est. 2021 in Chennai</span>
+          <span className="text-[#f5f0e1]/70 text-sm tracking-[0.15em] uppercase">
+            Est. 2021 in Chennai
+          </span>
         </div>
 
-        {/* Main headline */}
-        <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-[#f5f0e1] leading-[0.9] tracking-tight mb-8">
+        {/* Main headline - slightly smaller */}
+        <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-[#f5f0e1] leading-[0.95] tracking-tight mb-6">
           <span className="block">The Taste of</span>
           <span className="block text-[#b8860b] italic">Madras</span>
-          <span className="block text-3xl sm:text-4xl md:text-5xl font-normal text-[#f5f0e1]/60 mt-4">
-            delivered to your doorstep
-          </span>
         </h1>
 
-        {/* Description */}
-        <p className="max-w-2xl mx-auto text-lg md:text-xl text-[#f5f0e1]/60 leading-relaxed mb-12 font-serif">
-          Handcrafted podis, pickles, sweets & savouries made the way your grandmother made them. Zero preservatives.
+        {/* Description - condensed */}
+        <p className="max-w-xl mx-auto text-base md:text-lg text-[#f5f0e1]/60 leading-relaxed mb-8">
+          Handcrafted podis, pickles, sweets & savouries. Zero preservatives.
           Pure tradition.
         </p>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <button className="group relative px-10 py-4 bg-[#b8860b] hover:bg-[#d4a017] text-[#0d1f14] font-semibold rounded-full transition-all duration-300 overflow-hidden">
-            <span className="relative z-10 flex items-center gap-2">
-              Explore Collection
-              <svg
-                className="w-4 h-4 group-hover:translate-x-1 transition-transform"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </span>
-          </button>
-          <button className="px-10 py-4 border border-[#2a4a35] hover:border-[#f5f0e1]/30 text-[#f5f0e1] rounded-full transition-colors">
-            Our Story
-          </button>
+        {/* CTA Buttons - More prominent */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
+          <Link
+            href="/shop"
+            className="group px-8 py-4 bg-[#b8860b] hover:bg-[#d4a017] text-[#0d1f14] font-bold rounded-full transition-all duration-300 flex items-center gap-2 shadow-lg shadow-[#b8860b]/20"
+          >
+            Shop Now
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </Link>
+          <Link
+            href="#products"
+            className="px-8 py-4 border border-[#b8860b]/50 hover:border-[#b8860b] text-[#f5f0e1] hover:text-[#b8860b] rounded-full transition-all duration-300"
+          >
+            View Bestsellers
+          </Link>
         </div>
 
-        {/* Stats */}
-        <div className="mt-20 grid grid-cols-3 max-w-2xl mx-auto">
+        {/* Quick category links */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+          {[
+            { name: "Podis", slug: "podis" },
+            { name: "Pickles", slug: "pickles" },
+            { name: "Sweets", slug: "sweets" },
+            { name: "Savouries", slug: "savouries" },
+          ].map((cat) => (
+            <Link
+              key={cat.slug}
+              href={`/shop/${cat.slug}`}
+              className="px-4 py-2 text-sm text-[#f5f0e1]/60 hover:text-[#b8860b] border border-[#2a4a35] hover:border-[#b8860b]/50 rounded-full transition-all duration-200"
+            >
+              {cat.name}
+            </Link>
+          ))}
+        </div>
+
+        {/* Trust badges - Compact */}
+        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 text-[#f5f0e1]/50">
+          <div className="flex items-center gap-2">
+            <Truck className="w-4 h-4 text-[#b8860b]" />
+            <span className="text-xs md:text-sm">Free Shipping ₹500+</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Leaf className="w-4 h-4 text-[#b8860b]" />
+            <span className="text-xs md:text-sm">100% Natural</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Shield className="w-4 h-4 text-[#b8860b]" />
+            <span className="text-xs md:text-sm">Quality Guaranteed</span>
+          </div>
+        </div>
+
+        {/* Stats - Compact inline */}
+        <div className="mt-10 flex items-center justify-center gap-8 md:gap-12">
           {[
             { value: "50+", label: "Products" },
             { value: "10K+", label: "Happy Customers" },
-            { value: "28", label: "States Delivered" },
+            { value: "28", label: "States" },
           ].map((stat, i) => (
-            <div key={i} className="text-center px-4">
-              <p className="text-3xl md:text-4xl font-serif font-bold text-[#b8860b]">{stat.value}</p>
-              <p className="text-[#f5f0e1]/50 text-sm mt-1">{stat.label}</p>
+            <div key={i} className="text-center">
+              <p className="text-2xl md:text-3xl font-serif font-bold text-[#b8860b]">
+                {stat.value}
+              </p>
+              <p className="text-[#f5f0e1]/40 text-xs mt-0.5">{stat.label}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#f5f0e1]/40">
-        <span className="text-xs tracking-widest uppercase">Scroll</span>
-        <ArrowDown className="w-4 h-4 animate-bounce" />
+      {/* Side text - hidden on smaller screens */}
+      <div className="hidden xl:block absolute left-6 top-1/2 -translate-y-1/2 -rotate-90 origin-center">
+        <span className="text-[#f5f0e1]/20 text-xs tracking-[0.3em] uppercase">
+          House of Kumaran
+        </span>
       </div>
-
-      {/* Side text */}
-      <div className="hidden lg:block absolute left-6 top-1/2 -translate-y-1/2 -rotate-90 origin-center">
-        <span className="text-[#f5f0e1]/20 text-xs tracking-[0.3em] uppercase">House of Kumaran</span>
-      </div>
-      <div className="hidden lg:block absolute right-6 top-1/2 -translate-y-1/2 rotate-90 origin-center">
-        <span className="text-[#f5f0e1]/20 text-xs tracking-[0.3em] uppercase">Made in Madras</span>
+      <div className="hidden xl:block absolute right-6 top-1/2 -translate-y-1/2 rotate-90 origin-center">
+        <span className="text-[#f5f0e1]/20 text-xs tracking-[0.3em] uppercase">
+          Made in Madras
+        </span>
       </div>
     </section>
-  )
+  );
 }
