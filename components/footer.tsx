@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import Link from "next/link"
-import { Instagram, Facebook, Youtube, Twitter } from "lucide-react"
+import Image from "next/image";
+import Link from "next/link";
+import { Instagram, Facebook, Youtube, Twitter } from "lucide-react";
 
 const footerLinks = {
   shop: [
@@ -26,14 +26,14 @@ const footerLinks = {
     { name: "FAQs", href: "/faqs" },
     { name: "Track Order", href: "/track" },
   ],
-}
+};
 
 const socialLinks = [
   { icon: Instagram, href: "https://instagram.com", label: "Instagram" },
   { icon: Facebook, href: "https://facebook.com", label: "Facebook" },
   { icon: Youtube, href: "https://youtube.com", label: "YouTube" },
   { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
-]
+];
 
 export function Footer() {
   return (
@@ -57,9 +57,12 @@ export function Footer() {
 
           <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
             <div className="max-w-xl">
-              <h3 className="font-serif text-3xl md:text-4xl font-bold text-[#f5f0e1] mb-4">Join the Kumaran Family</h3>
+              <h3 className="font-serif text-3xl md:text-4xl font-bold text-[#f5f0e1] mb-4">
+                Join the Kumaran Family
+              </h3>
               <p className="text-[#f5f0e1]/60">
-                Subscribe for exclusive offers, recipes, and a 10% discount on your first order.
+                Subscribe for exclusive offers, recipes, and a 10% discount on
+                your first order.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
@@ -84,7 +87,7 @@ export function Footer() {
             <Link href="/" className="inline-flex items-center gap-3 mb-6">
               <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#b8860b]/30">
                 <Image
-                  src="/images/houseofkumaranlogo.jpeg"
+                  src="/images/houseofkumaranlogo.png"
                   alt="House Of Kumaran"
                   width={56}
                   height={56}
@@ -92,13 +95,17 @@ export function Footer() {
                 />
               </div>
               <div>
-                <p className="text-[10px] tracking-[0.2em] text-[#b8860b] uppercase">Made in Madras</p>
-                <h2 className="font-serif text-xl font-bold text-[#f5f0e1]">KUMARAN</h2>
+                <p className="text-[10px] tracking-[0.2em] text-[#b8860b] uppercase">
+                  Made in Madras
+                </p>
+                <h2 className="font-serif text-xl font-bold text-[#f5f0e1]">
+                  KUMARAN
+                </h2>
               </div>
             </Link>
             <p className="text-[#f5f0e1]/50 leading-relaxed mb-6 max-w-sm">
-              Authentic South Indian flavors crafted with tradition, love, and zero preservatives. From our kitchen to
-              yours.
+              Authentic South Indian flavors crafted with tradition, love, and
+              zero preservatives. From our kitchen to yours.
             </p>
 
             {/* Contact */}
@@ -111,11 +118,16 @@ export function Footer() {
 
           {/* Shop */}
           <div>
-            <h4 className="text-[#b8860b] text-xs tracking-[0.2em] uppercase mb-6">Shop</h4>
+            <h4 className="text-[#b8860b] text-xs tracking-[0.2em] uppercase mb-6">
+              Shop
+            </h4>
             <ul className="space-y-4">
               {footerLinks.shop.map((link) => (
                 <li key={link.name}>
-                  <Link href={link.href} className="text-[#f5f0e1]/60 hover:text-[#f5f0e1] transition-colors text-sm">
+                  <Link
+                    href={link.href}
+                    className="text-[#f5f0e1]/60 hover:text-[#f5f0e1] transition-colors text-sm"
+                  >
                     {link.name}
                   </Link>
                 </li>
@@ -125,11 +137,16 @@ export function Footer() {
 
           {/* Company */}
           <div>
-            <h4 className="text-[#b8860b] text-xs tracking-[0.2em] uppercase mb-6">Company</h4>
+            <h4 className="text-[#b8860b] text-xs tracking-[0.2em] uppercase mb-6">
+              Company
+            </h4>
             <ul className="space-y-4">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
-                  <Link href={link.href} className="text-[#f5f0e1]/60 hover:text-[#f5f0e1] transition-colors text-sm">
+                  <Link
+                    href={link.href}
+                    className="text-[#f5f0e1]/60 hover:text-[#f5f0e1] transition-colors text-sm"
+                  >
                     {link.name}
                   </Link>
                 </li>
@@ -139,11 +156,16 @@ export function Footer() {
 
           {/* Support */}
           <div>
-            <h4 className="text-[#b8860b] text-xs tracking-[0.2em] uppercase mb-6">Support</h4>
+            <h4 className="text-[#b8860b] text-xs tracking-[0.2em] uppercase mb-6">
+              Support
+            </h4>
             <ul className="space-y-4">
               {footerLinks.support.map((link) => (
                 <li key={link.name}>
-                  <Link href={link.href} className="text-[#f5f0e1]/60 hover:text-[#f5f0e1] transition-colors text-sm">
+                  <Link
+                    href={link.href}
+                    className="text-[#f5f0e1]/60 hover:text-[#f5f0e1] transition-colors text-sm"
+                  >
                     {link.name}
                   </Link>
                 </li>
@@ -153,7 +175,9 @@ export function Footer() {
 
           {/* Social */}
           <div>
-            <h4 className="text-[#b8860b] text-xs tracking-[0.2em] uppercase mb-6">Follow Us</h4>
+            <h4 className="text-[#b8860b] text-xs tracking-[0.2em] uppercase mb-6">
+              Follow Us
+            </h4>
             <div className="flex flex-wrap gap-3">
               {socialLinks.map((social) => (
                 <a
@@ -173,9 +197,15 @@ export function Footer() {
             <div className="mt-8">
               <p className="text-[#f5f0e1]/30 text-xs mb-3">We accept</p>
               <div className="flex gap-2 text-[#f5f0e1]/40 text-xs">
-                <span className="px-2 py-1 border border-[#2a4a35] rounded">UPI</span>
-                <span className="px-2 py-1 border border-[#2a4a35] rounded">Cards</span>
-                <span className="px-2 py-1 border border-[#2a4a35] rounded">COD</span>
+                <span className="px-2 py-1 border border-[#2a4a35] rounded">
+                  UPI
+                </span>
+                <span className="px-2 py-1 border border-[#2a4a35] rounded">
+                  Cards
+                </span>
+                <span className="px-2 py-1 border border-[#2a4a35] rounded">
+                  COD
+                </span>
               </div>
             </div>
           </div>
@@ -187,7 +217,8 @@ export function Footer() {
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-[#f5f0e1]/40 text-sm">
-              © {new Date().getFullYear()} House of Kumaran. All rights reserved.
+              © {new Date().getFullYear()} House of Kumaran. All rights
+              reserved.
             </p>
             <div className="flex items-center gap-6">
               {["Privacy", "Terms", "Cookies"].map((item) => (
@@ -213,5 +244,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

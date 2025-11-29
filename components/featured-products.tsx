@@ -1,21 +1,63 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Star, ShoppingBag, ArrowRight, Gift } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
-import { products } from "@/lib/products";
+import { Product } from "@/lib/types";
 
-// Get bestsellers and featured products
-const featuredProducts = products.filter((p) => p.isBestseller).slice(0, 6);
+// Loading skeleton
+function ProductSkeleton() {
+  return (
+    <div className="bg-[#1a472a]/30 rounded-xl overflow-hidden border border-[#b8860b]/10 animate-pulse">
+      <div className="aspect-square bg-[#1a472a]/50" />
+      <div className="p-3 space-y-2">
+        <div className="flex items-center gap-1">
+          <div className="w-6 h-3 bg-[#1a472a]/50 rounded" />
+        </div>
+        <div className="w-3/4 h-4 bg-[#1a472a]/50 rounded" />
+        <div className="w-1/3 h-3 bg-[#1a472a]/50 rounded" />
+        <div className="flex items-center justify-between pt-1">
+          <div className="w-12 h-4 bg-[#1a472a]/50 rounded" />
+          <div className="w-8 h-8 bg-[#1a472a]/50 rounded-full" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function FeaturedProducts() {
   const { addToCart, setIsCartOpen } = useCart();
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleAddToCart = (
-    product: (typeof featuredProducts)[0],
-    e: React.MouseEvent
-  ) => {
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const { getBestsellers, getProducts } = await import(
+          "@/lib/product-service"
+        );
+        let products = await getBestsellers();
+        // If no bestsellers, get first 6 products
+        if (products.length === 0) {
+          const allProducts = await getProducts();
+          products = allProducts.slice(0, 6);
+        }
+        setFeaturedProducts(products.slice(0, 6));
+      } catch (error) {
+        console.error("Error fetching featured products:", error);
+        // Fallback to static products
+        const { products } = await import("@/lib/products");
+        setFeaturedProducts(products.filter((p) => p.isBestseller).slice(0, 6));
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
+
+  const handleAddToCart = (product: Product, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     addToCart(product);
@@ -44,93 +86,95 @@ export function FeaturedProducts() {
           </Link>
         </div>
 
-        {/* Products grid - immediate add to cart */}
+        {/* Products grid - with loading state */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
-          {featuredProducts.map((product) => {
-            const discount = product.originalPrice
-              ? Math.round(
-                  ((product.originalPrice - product.price) /
-                    product.originalPrice) *
-                    100
-                )
-              : 0;
+          {isLoading
+            ? [...Array(6)].map((_, i) => <ProductSkeleton key={i} />)
+            : featuredProducts.map((product) => {
+                const discount = product.originalPrice
+                  ? Math.round(
+                      ((product.originalPrice - product.price) /
+                        product.originalPrice) *
+                        100
+                    )
+                  : 0;
 
-            return (
-              <Link
-                href={`/product/${product.slug}`}
-                key={product.id}
-                className="group"
-              >
-                <div className="relative bg-[#1a472a]/30 rounded-xl overflow-hidden border border-[#b8860b]/10 hover:border-[#b8860b]/40 transition-all duration-300">
-                  {/* Tag */}
-                  <div className="absolute top-2 left-2 z-10 flex gap-1">
-                    {product.isBestseller && (
-                      <span className="px-2 py-0.5 bg-[#b8860b] text-[#0d1f14] text-[10px] font-bold rounded-full">
-                        Bestseller
-                      </span>
-                    )}
-                    {discount > 0 && (
-                      <span className="px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full">
-                        -{discount}%
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Image */}
-                  <div className="relative aspect-square overflow-hidden">
-                    <Image
-                      src={product.image || "/placeholder.svg"}
-                      alt={product.name}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-3">
-                    {/* Rating */}
-                    <div className="flex items-center gap-1 mb-1">
-                      <Star className="w-3 h-3 fill-[#b8860b] text-[#b8860b]" />
-                      <span className="text-xs font-semibold text-[#f5f0e1]">
-                        {product.rating}
-                      </span>
-                      <span className="text-xs text-[#f5f0e1]/40">
-                        ({product.reviews})
-                      </span>
-                    </div>
-
-                    {/* Name */}
-                    <h3 className="font-serif text-sm font-bold text-[#f5f0e1] mb-1 group-hover:text-[#b8860b] transition-colors line-clamp-1">
-                      {product.name}
-                    </h3>
-                    <p className="text-[#f5f0e1]/50 text-xs mb-2">
-                      {product.weight}
-                    </p>
-
-                    {/* Price & Add to cart - Always visible */}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="text-base font-bold text-[#f5f0e1]">
-                          ₹{product.price}
-                        </span>
-                        {product.originalPrice && (
-                          <span className="text-xs text-[#f5f0e1]/40 line-through ml-1">
-                            ₹{product.originalPrice}
+                return (
+                  <Link
+                    href={`/product/${product.slug}`}
+                    key={product.id}
+                    className="group"
+                  >
+                    <div className="relative bg-[#1a472a]/30 rounded-xl overflow-hidden border border-[#b8860b]/10 hover:border-[#b8860b]/40 transition-all duration-300">
+                      {/* Tag */}
+                      <div className="absolute top-2 left-2 z-10 flex gap-1">
+                        {product.isBestseller && (
+                          <span className="px-2 py-0.5 bg-[#b8860b] text-[#0d1f14] text-[10px] font-bold rounded-full">
+                            Bestseller
+                          </span>
+                        )}
+                        {discount > 0 && (
+                          <span className="px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full">
+                            -{discount}%
                           </span>
                         )}
                       </div>
-                      <button
-                        onClick={(e) => handleAddToCart(product, e)}
-                        className="w-8 h-8 rounded-full bg-[#b8860b] hover:bg-[#d4a017] flex items-center justify-center transition-all duration-200 hover:scale-110"
-                      >
-                        <ShoppingBag className="w-4 h-4 text-[#0d1f14]" />
-                      </button>
+
+                      {/* Image */}
+                      <div className="relative aspect-square overflow-hidden">
+                        <Image
+                          src={product.image || "/placeholder.svg"}
+                          alt={product.name}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-3">
+                        {/* Rating */}
+                        <div className="flex items-center gap-1 mb-1">
+                          <Star className="w-3 h-3 fill-[#b8860b] text-[#b8860b]" />
+                          <span className="text-xs font-semibold text-[#f5f0e1]">
+                            {product.rating}
+                          </span>
+                          <span className="text-xs text-[#f5f0e1]/40">
+                            ({product.reviews})
+                          </span>
+                        </div>
+
+                        {/* Name */}
+                        <h3 className="font-serif text-sm font-bold text-[#f5f0e1] mb-1 group-hover:text-[#b8860b] transition-colors line-clamp-1">
+                          {product.name}
+                        </h3>
+                        <p className="text-[#f5f0e1]/50 text-xs mb-2">
+                          {product.weight}
+                        </p>
+
+                        {/* Price & Add to cart - Always visible */}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <span className="text-base font-bold text-[#f5f0e1]">
+                              ₹{product.price}
+                            </span>
+                            {product.originalPrice && (
+                              <span className="text-xs text-[#f5f0e1]/40 line-through ml-1">
+                                ₹{product.originalPrice}
+                              </span>
+                            )}
+                          </div>
+                          <button
+                            onClick={(e) => handleAddToCart(product, e)}
+                            className="w-8 h-8 rounded-full bg-[#b8860b] hover:bg-[#d4a017] flex items-center justify-center transition-all duration-200 hover:scale-110"
+                          >
+                            <ShoppingBag className="w-4 h-4 text-[#0d1f14]" />
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
+                  </Link>
+                );
+              })}
         </div>
 
         {/* Quick action banner */}

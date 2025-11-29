@@ -6,7 +6,8 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { ProductCard } from "@/components/product-card";
 import { RecentlyViewed } from "@/components/recently-viewed";
-import { categories, products } from "@/lib/products";
+import { categories } from "@/lib/products";
+import { Product } from "@/lib/types";
 import Link from "next/link";
 import {
   Search,
@@ -88,13 +89,27 @@ export default function ShopPage() {
   const [showMobileSort, setShowMobileSort] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>([]);
 
-  // Simulate loading state
+  // Fetch products from Shopify/static
   useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 500);
-    return () => clearTimeout(timer);
-  }, [selectedCategory, searchQuery, selectedTag, priceRange, sortBy]);
+    async function fetchProducts() {
+      setIsLoading(true);
+      try {
+        const { getProducts } = await import("@/lib/product-service");
+        const fetchedProducts = await getProducts();
+        setProducts(fetchedProducts);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        // Fallback to static products
+        const { products: staticProducts } = await import("@/lib/products");
+        setProducts(staticProducts);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
 
   // Sync state with URL params on mount and URL changes
   useEffect(() => {
@@ -179,7 +194,14 @@ export default function ShopPage() {
     });
 
     return result;
-  }, [selectedCategory, searchQuery, selectedTag, priceRange, sortBy]);
+  }, [
+    products,
+    selectedCategory,
+    searchQuery,
+    selectedTag,
+    priceRange,
+    sortBy,
+  ]);
 
   // Get category name for display
   const currentCategoryName = selectedCategory
