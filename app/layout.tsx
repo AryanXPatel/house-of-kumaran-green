@@ -83,9 +83,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body
         className={`${playfair.variable} ${inter.variable} ${ibmPlexMono.variable} font-sans antialiased`}
+        suppressHydrationWarning
       >
         <CartProvider>
           <WishlistProvider>

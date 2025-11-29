@@ -42,7 +42,7 @@ export function Navbar() {
           <Link href="/" className="flex items-center gap-2 md:gap-3 group">
             <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-[#b8860b]/50 group-hover:border-[#b8860b] transition-colors">
               <Image
-                src="/images/houseofkumaranlogo.jpeg"
+                src="/images/houseofkumaranlogo.png"
                 alt="House Of Kumaran"
                 fill
                 className="object-cover"

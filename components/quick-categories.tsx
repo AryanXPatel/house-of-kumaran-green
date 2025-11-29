@@ -11,8 +11,6 @@ import {
   Sun,
   Zap,
   Leaf,
-  PartyPopper,
-  Gift,
 } from "lucide-react";
 import { categories } from "@/lib/products";
 
@@ -31,8 +29,6 @@ const categoryIcons: Record<
   vadams: Sun,
   "ready-to-mix": Zap,
   vathals: Leaf,
-  seasonal: PartyPopper,
-  "seer-bhakshanam": Gift,
 };
 
 export function QuickCategories() {

@@ -1,19 +1,17 @@
 import { redirect } from "next/navigation";
-import { categories, getCategoryBySlug } from "@/lib/products";
+import { getCategories, getCategoryInfo } from "@/lib/product-service";
+import { Category } from "@/lib/types";
 
 interface CategoryPageProps {
   params: Promise<{ category: string }>;
 }
 
-export async function generateStaticParams() {
-  return categories.map((category) => ({
-    category: category.slug,
-  }));
-}
+// Dynamic rendering for Shopify data
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: CategoryPageProps) {
   const { category } = await params;
-  const categoryInfo = getCategoryBySlug(category);
+  const categoryInfo = getCategoryInfo(category as Category);
 
   if (!categoryInfo) {
     return { title: "Category Not Found" };

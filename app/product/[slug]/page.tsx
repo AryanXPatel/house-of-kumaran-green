@@ -3,10 +3,10 @@ import { Footer } from "@/components/footer";
 import { ProductDetails } from "@/components/product-details";
 import { RelatedProducts } from "@/components/related-products";
 import {
-  products,
   getProductBySlug,
-  getProductsByCategory,
-} from "@/lib/products";
+  getProducts,
+  getRelatedProducts,
+} from "@/lib/product-service";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
@@ -15,15 +15,13 @@ interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  return products.map((product) => ({
-    slug: product.slug,
-  }));
-}
+// Dynamic rendering for Shopify data
+export const dynamic = "force-dynamic";
+export const revalidate = 60; // Revalidate every 60 seconds
 
 export async function generateMetadata({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     return { title: "Product Not Found" };
@@ -37,15 +35,13 @@ export async function generateMetadata({ params }: ProductPageProps) {
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     notFound();
   }
 
-  const relatedProducts = getProductsByCategory(product.category)
-    .filter((p) => p.id !== product.id)
-    .slice(0, 4);
+  const relatedProducts = await getRelatedProducts(slug, product.category);
 
   return (
     <main className="min-h-screen bg-[#0d1f14] text-[#f5f0e1]">

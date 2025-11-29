@@ -1,4 +1,4 @@
-import type { Product, CategoryInfo } from "./types"
+import type { Product, CategoryInfo } from "./types";
 
 export const categories: CategoryInfo[] = [
   {
@@ -57,23 +57,7 @@ export const categories: CategoryInfo[] = [
     image: "/placeholder.svg?height=600&width=600",
     productCount: 4,
   },
-  {
-    slug: "seasonal",
-    name: "Seasonal Specials",
-    tamilName: "பருவ சிறப்பு",
-    description: "Limited edition items available only in specific seasons",
-    image: "/placeholder.svg?height=600&width=600",
-    productCount: 5,
-  },
-  {
-    slug: "seer-bhakshanam",
-    name: "Seer Bhakshanam",
-    tamilName: "சீர் பக்ஷணம்",
-    description: "Customized gift boxes for weddings and ceremonies",
-    image: "/placeholder.svg?height=600&width=600",
-    productCount: 15,
-  },
-]
+];
 
 export const products: Product[] = [
   // PODIS
@@ -81,7 +65,8 @@ export const products: Product[] = [
     id: "podi-001",
     name: "Idly Milagai Podi",
     slug: "idly-milagai-podi",
-    description: "Our signature spice powder, perfect with idly, dosa, and rice. Stone-ground for authentic taste.",
+    description:
+      "Our signature spice powder, perfect with idly, dosa, and rice. Stone-ground for authentic taste.",
     longDescription:
       "This is our most beloved recipe, passed down through three generations. Made with handpicked red chillies from Guntur, roasted urad dal, and cold-pressed gingelly oil. Each batch is stone-ground in small quantities to preserve the aromatic oils and ensure maximum freshness.",
     price: 150,
@@ -99,7 +84,13 @@ export const products: Product[] = [
     ],
     inStock: true,
     isBestseller: true,
-    ingredients: ["Red Chillies", "Urad Dal", "Gingelly Oil", "Salt", "Asafoetida"],
+    ingredients: [
+      "Red Chillies",
+      "Urad Dal",
+      "Gingelly Oil",
+      "Salt",
+      "Asafoetida",
+    ],
     shelfLife: "6 months",
     storageInfo: "Store in a cool, dry place. Keep refrigerated after opening.",
   },
@@ -107,7 +98,8 @@ export const products: Product[] = [
     id: "podi-002",
     name: "Paruppu Podi",
     slug: "paruppu-podi",
-    description: "Protein-rich lentil powder with mild spices. A nutritious companion for rice.",
+    description:
+      "Protein-rich lentil powder with mild spices. A nutritious companion for rice.",
     longDescription:
       "Made with a blend of five different dals, slow-roasted to perfection. This protein-packed powder is a staple in every South Indian household, loved by children and adults alike.",
     price: 140,
@@ -119,7 +111,15 @@ export const products: Product[] = [
     reviews: 189,
     image: "/placeholder.svg?height=600&width=600",
     inStock: true,
-    ingredients: ["Toor Dal", "Chana Dal", "Urad Dal", "Red Chillies", "Cumin", "Pepper", "Gingelly Oil"],
+    ingredients: [
+      "Toor Dal",
+      "Chana Dal",
+      "Urad Dal",
+      "Red Chillies",
+      "Cumin",
+      "Pepper",
+      "Gingelly Oil",
+    ],
     shelfLife: "6 months",
     storageInfo: "Store in a cool, dry place.",
   },
@@ -127,7 +127,8 @@ export const products: Product[] = [
     id: "podi-003",
     name: "Karuvepillai Podi",
     slug: "karuvepillai-podi",
-    description: "Aromatic curry leaf powder rich in iron and essential nutrients.",
+    description:
+      "Aromatic curry leaf powder rich in iron and essential nutrients.",
     longDescription:
       "Fresh curry leaves sourced from our own garden, sun-dried and ground with selected spices. Known for its health benefits including hair growth and digestion improvement.",
     price: 160,
@@ -140,7 +141,13 @@ export const products: Product[] = [
     image: "/placeholder.svg?height=600&width=600",
     inStock: true,
     isNew: true,
-    ingredients: ["Curry Leaves", "Urad Dal", "Chana Dal", "Red Chillies", "Gingelly Oil"],
+    ingredients: [
+      "Curry Leaves",
+      "Urad Dal",
+      "Chana Dal",
+      "Red Chillies",
+      "Gingelly Oil",
+    ],
     shelfLife: "4 months",
     storageInfo: "Store in refrigerator for best freshness.",
   },
@@ -148,7 +155,8 @@ export const products: Product[] = [
     id: "podi-004",
     name: "Sambar Podi",
     slug: "sambar-podi",
-    description: "Aromatic sambar powder with the perfect blend of coriander and spices.",
+    description:
+      "Aromatic sambar powder with the perfect blend of coriander and spices.",
     longDescription:
       "The secret to a great sambar lies in the powder. Our recipe uses 15 different spices, slow-roasted and ground to perfection. Makes your sambar taste like it was made in a traditional wood-fired kitchen.",
     price: 130,
@@ -161,7 +169,15 @@ export const products: Product[] = [
     image: "/placeholder.svg?height=600&width=600",
     inStock: true,
     isBestseller: true,
-    ingredients: ["Coriander", "Red Chillies", "Toor Dal", "Fenugreek", "Cumin", "Pepper", "Turmeric"],
+    ingredients: [
+      "Coriander",
+      "Red Chillies",
+      "Toor Dal",
+      "Fenugreek",
+      "Cumin",
+      "Pepper",
+      "Turmeric",
+    ],
     shelfLife: "8 months",
     storageInfo: "Store in an airtight container.",
   },
@@ -187,7 +203,8 @@ export const products: Product[] = [
     id: "podi-006",
     name: "Puliyodarai Podi",
     slug: "puliyodarai-podi",
-    description: "Temple-style tamarind rice powder with the authentic prasadam taste.",
+    description:
+      "Temple-style tamarind rice powder with the authentic prasadam taste.",
     price: 170,
     originalPrice: 200,
     weight: "200g",
@@ -198,7 +215,15 @@ export const products: Product[] = [
     image: "/placeholder.svg?height=600&width=600",
     inStock: true,
     isBestseller: true,
-    ingredients: ["Tamarind", "Red Chillies", "Groundnut", "Sesame", "Fenugreek", "Mustard", "Asafoetida"],
+    ingredients: [
+      "Tamarind",
+      "Red Chillies",
+      "Groundnut",
+      "Sesame",
+      "Fenugreek",
+      "Mustard",
+      "Asafoetida",
+    ],
     shelfLife: "4 months",
     storageInfo: "Store in refrigerator.",
   },
@@ -207,7 +232,8 @@ export const products: Product[] = [
     id: "pickle-001",
     name: "Mango Thokku",
     slug: "mango-thokku",
-    description: "Tangy grated mango preserve cooked in gingelly oil. A versatile condiment.",
+    description:
+      "Tangy grated mango preserve cooked in gingelly oil. A versatile condiment.",
     longDescription:
       "Made with raw mangoes sourced from Andhra Pradesh, grated and slow-cooked with our signature spice blend in cold-pressed gingelly oil. Perfect with curd rice, chapati, or as a sandwich spread.",
     price: 199,
@@ -220,7 +246,14 @@ export const products: Product[] = [
     image: "/placeholder.svg?height=600&width=600",
     inStock: true,
     isBestseller: true,
-    ingredients: ["Raw Mango", "Red Chillies", "Gingelly Oil", "Mustard", "Fenugreek", "Salt"],
+    ingredients: [
+      "Raw Mango",
+      "Red Chillies",
+      "Gingelly Oil",
+      "Mustard",
+      "Fenugreek",
+      "Salt",
+    ],
     shelfLife: "12 months",
     storageInfo: "Store in a cool, dry place. Use dry spoon.",
   },
@@ -228,7 +261,8 @@ export const products: Product[] = [
     id: "pickle-002",
     name: "Lemon Pickle",
     slug: "lemon-pickle",
-    description: "Zesty lemon pickle with mustard and fenugreek. A tangy delight.",
+    description:
+      "Zesty lemon pickle with mustard and fenugreek. A tangy delight.",
     price: 180,
     originalPrice: 200,
     weight: "300g",
@@ -238,7 +272,15 @@ export const products: Product[] = [
     reviews: 123,
     image: "/placeholder.svg?height=600&width=600",
     inStock: true,
-    ingredients: ["Lemon", "Red Chillies", "Gingelly Oil", "Mustard", "Fenugreek", "Salt", "Turmeric"],
+    ingredients: [
+      "Lemon",
+      "Red Chillies",
+      "Gingelly Oil",
+      "Mustard",
+      "Fenugreek",
+      "Salt",
+      "Turmeric",
+    ],
     shelfLife: "12 months",
     storageInfo: "Store in a cool, dry place.",
   },
@@ -257,7 +299,14 @@ export const products: Product[] = [
     image: "/placeholder.svg?height=600&width=600",
     inStock: true,
     isNew: true,
-    ingredients: ["Raw Mango", "Red Chilli Powder", "Mustard Powder", "Fenugreek", "Gingelly Oil", "Salt"],
+    ingredients: [
+      "Raw Mango",
+      "Red Chilli Powder",
+      "Mustard Powder",
+      "Fenugreek",
+      "Gingelly Oil",
+      "Salt",
+    ],
     shelfLife: "12 months",
     storageInfo: "Store in a cool, dry place. Keep in sunlight for first week.",
   },
@@ -265,7 +314,8 @@ export const products: Product[] = [
     id: "pickle-004",
     name: "Gongura Thokku",
     slug: "gongura-thokku",
-    description: "Tangy sorrel leaves preserve, a specialty from Andhra Pradesh.",
+    description:
+      "Tangy sorrel leaves preserve, a specialty from Andhra Pradesh.",
     price: 190,
     originalPrice: 220,
     weight: "250g",
@@ -275,7 +325,14 @@ export const products: Product[] = [
     reviews: 134,
     image: "/placeholder.svg?height=600&width=600",
     inStock: true,
-    ingredients: ["Gongura Leaves", "Red Chillies", "Garlic", "Gingelly Oil", "Mustard", "Salt"],
+    ingredients: [
+      "Gongura Leaves",
+      "Red Chillies",
+      "Garlic",
+      "Gingelly Oil",
+      "Mustard",
+      "Salt",
+    ],
     shelfLife: "6 months",
     storageInfo: "Store in refrigerator after opening.",
   },
@@ -284,7 +341,8 @@ export const products: Product[] = [
     id: "sweet-001",
     name: "Mysore Pak",
     slug: "mysore-pak",
-    description: "Melt-in-mouth ghee delight from the royal kitchens of Mysore.",
+    description:
+      "Melt-in-mouth ghee delight from the royal kitchens of Mysore.",
     longDescription:
       "Our Mysore Pak is made with pure cow ghee, premium besan, and sugar in the traditional method. Each piece melts in your mouth, leaving behind the rich aroma of ghee. A royal treat for special occasions.",
     price: 299,
@@ -305,7 +363,8 @@ export const products: Product[] = [
     id: "sweet-002",
     name: "Boondi Ladoo",
     slug: "boondi-ladoo",
-    description: "Soft, melt-in-mouth ladoos made with fine boondi and cardamom.",
+    description:
+      "Soft, melt-in-mouth ladoos made with fine boondi and cardamom.",
     price: 249,
     originalPrice: 280,
     weight: "250g",
@@ -323,7 +382,8 @@ export const products: Product[] = [
     id: "sweet-003",
     name: "Athirasam",
     slug: "athirasam",
-    description: "Traditional rice and jaggery sweet, crispy outside and soft inside.",
+    description:
+      "Traditional rice and jaggery sweet, crispy outside and soft inside.",
     price: 279,
     originalPrice: 320,
     weight: "300g",
@@ -342,7 +402,8 @@ export const products: Product[] = [
     id: "sweet-004",
     name: "Badusha",
     slug: "badusha",
-    description: "Flaky, syrup-soaked sweet with a crispy exterior and soft center.",
+    description:
+      "Flaky, syrup-soaked sweet with a crispy exterior and soft center.",
     price: 269,
     originalPrice: 300,
     weight: "250g",
@@ -374,7 +435,14 @@ export const products: Product[] = [
     image: "/placeholder.svg?height=600&width=600",
     inStock: true,
     isBestseller: true,
-    ingredients: ["Rice Flour", "Urad Dal Flour", "Cumin", "Sesame", "Butter", "Salt"],
+    ingredients: [
+      "Rice Flour",
+      "Urad Dal Flour",
+      "Cumin",
+      "Sesame",
+      "Butter",
+      "Salt",
+    ],
     shelfLife: "30 days",
     storageInfo: "Store in an airtight container.",
   },
@@ -429,7 +497,14 @@ export const products: Product[] = [
     image: "/placeholder.svg?height=600&width=600",
     inStock: true,
     isBestseller: true,
-    ingredients: ["Sev", "Boondi", "Peanuts", "Curry Leaves", "Red Chillies", "Cashews"],
+    ingredients: [
+      "Sev",
+      "Boondi",
+      "Peanuts",
+      "Curry Leaves",
+      "Red Chillies",
+      "Cashews",
+    ],
     shelfLife: "30 days",
     storageInfo: "Store in an airtight container.",
   },
@@ -485,7 +560,14 @@ export const products: Product[] = [
     reviews: 189,
     image: "/placeholder.svg?height=600&width=600",
     inStock: true,
-    ingredients: ["Rava", "Rice Flour", "Cumin", "Pepper", "Curry Leaves", "Salt"],
+    ingredients: [
+      "Rava",
+      "Rice Flour",
+      "Cumin",
+      "Pepper",
+      "Curry Leaves",
+      "Salt",
+    ],
     shelfLife: "6 months",
     storageInfo: "Store in a cool, dry place.",
   },
@@ -504,7 +586,14 @@ export const products: Product[] = [
     image: "/placeholder.svg?height=600&width=600",
     inStock: true,
     isNew: true,
-    ingredients: ["Rice", "Toor Dal", "Chana Dal", "Urad Dal", "Red Chillies", "Curry Leaves"],
+    ingredients: [
+      "Rice",
+      "Toor Dal",
+      "Chana Dal",
+      "Urad Dal",
+      "Red Chillies",
+      "Curry Leaves",
+    ],
     shelfLife: "6 months",
     storageInfo: "Store in a cool, dry place.",
   },
@@ -527,34 +616,34 @@ export const products: Product[] = [
     shelfLife: "4 months",
     storageInfo: "Store in an airtight container.",
   },
-]
+];
 
 export function getProductBySlug(slug: string): Product | undefined {
-  return products.find((p) => p.slug === slug)
+  return products.find((p) => p.slug === slug);
 }
 
 export function getProductsByCategory(category: string): Product[] {
-  return products.filter((p) => p.category === category)
+  return products.filter((p) => p.category === category);
 }
 
 export function getCategoryBySlug(slug: string): CategoryInfo | undefined {
-  return categories.find((c) => c.slug === slug)
+  return categories.find((c) => c.slug === slug);
 }
 
 export function getBestsellers(): Product[] {
-  return products.filter((p) => p.isBestseller)
+  return products.filter((p) => p.isBestseller);
 }
 
 export function getNewArrivals(): Product[] {
-  return products.filter((p) => p.isNew)
+  return products.filter((p) => p.isNew);
 }
 
 export function searchProducts(query: string): Product[] {
-  const lowercaseQuery = query.toLowerCase()
+  const lowercaseQuery = query.toLowerCase();
   return products.filter(
     (p) =>
       p.name.toLowerCase().includes(lowercaseQuery) ||
       p.description.toLowerCase().includes(lowercaseQuery) ||
-      p.tags.some((tag) => tag.toLowerCase().includes(lowercaseQuery)),
-  )
+      p.tags.some((tag) => tag.toLowerCase().includes(lowercaseQuery))
+  );
 }
