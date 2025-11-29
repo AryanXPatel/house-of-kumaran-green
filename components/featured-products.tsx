@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Star, ShoppingBag, ArrowRight } from "lucide-react";
+import { Star, ShoppingBag, ArrowRight, Gift } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { products } from "@/lib/products";
 
@@ -137,7 +137,7 @@ export function FeaturedProducts() {
         <div className="mt-10 p-6 bg-gradient-to-r from-[#1a472a] to-[#0d1f14] rounded-2xl border border-[#b8860b]/20 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-[#b8860b]/20 flex items-center justify-center">
-              <span className="text-2xl">🎁</span>
+              <Gift className="w-6 h-6 text-[#b8860b]" />
             </div>
             <div>
               <p className="font-serif text-lg font-bold text-[#f5f0e1]">

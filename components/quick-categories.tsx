@@ -2,22 +2,37 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import {
+  ArrowRight,
+  Flame,
+  Apple,
+  Cookie,
+  Croissant,
+  Sun,
+  Zap,
+  Leaf,
+  PartyPopper,
+  Gift,
+} from "lucide-react";
 import { categories } from "@/lib/products";
 
 // Take first 6 main categories for quick nav
 const quickCategories = categories.slice(0, 6);
 
-const categoryEmojis: Record<string, string> = {
-  podis: "🌶️",
-  pickles: "🥒",
-  sweets: "🍬",
-  savouries: "🥨",
-  vadams: "☀️",
-  "ready-to-mix": "⚡",
-  vathals: "🍂",
-  seasonal: "🎉",
-  "seer-bhakshanam": "🎁",
+// Category icons using Lucide
+const categoryIcons: Record<
+  string,
+  React.ComponentType<{ className?: string }>
+> = {
+  podis: Flame,
+  pickles: Apple,
+  sweets: Cookie,
+  savouries: Croissant,
+  vadams: Sun,
+  "ready-to-mix": Zap,
+  vathals: Leaf,
+  seasonal: PartyPopper,
+  "seer-bhakshanam": Gift,
 };
 
 export function QuickCategories() {
@@ -35,7 +50,7 @@ export function QuickCategories() {
             </h2>
           </div>
           <Link
-            href="/shop"
+            href="/collections"
             className="inline-flex items-center gap-2 text-[#f5f0e1]/60 hover:text-[#b8860b] font-medium transition-colors text-sm"
           >
             All Categories
@@ -48,23 +63,26 @@ export function QuickCategories() {
           {quickCategories.map((category) => (
             <Link
               key={category.slug}
-              href={`/shop/${category.slug}`}
+              href={`/shop?category=${category.slug}`}
               className="flex-shrink-0 w-[160px] md:w-auto group"
             >
               <div className="relative bg-[#132a1c] rounded-2xl overflow-hidden border border-[#2a4a35] hover:border-[#b8860b]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#b8860b]/10">
                 {/* Background Image */}
-                <div className="relative aspect-[4/3] overflow-hidden">
+                <div className="relative aspect-4/3 overflow-hidden">
                   <Image
                     src={category.image || "/placeholder.svg"}
                     alt={category.name}
                     fill
                     className="object-cover opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d1f14] via-[#0d1f14]/60 to-transparent" />
+                  <div className="absolute inset-0 bg-linear-to-t from-[#0d1f14] via-[#0d1f14]/60 to-transparent" />
 
-                  {/* Emoji */}
-                  <div className="absolute top-3 right-3 text-2xl">
-                    {categoryEmojis[category.slug] || "🍽️"}
+                  {/* Category Icon */}
+                  <div className="absolute top-3 right-3">
+                    {(() => {
+                      const Icon = categoryIcons[category.slug] || Flame;
+                      return <Icon className="w-5 h-5 text-[#b8860b]" />;
+                    })()}
                   </div>
                 </div>
 

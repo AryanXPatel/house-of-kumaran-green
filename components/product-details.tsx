@@ -1,37 +1,59 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Image from "next/image"
-import type { Product } from "@/lib/types"
-import { Star, Minus, Plus, ShoppingBag, Heart, Truck, Shield, Clock, Check, Leaf } from "lucide-react"
-import { useCart } from "@/lib/cart-context"
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import type { Product } from "@/lib/types";
+import {
+  Star,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Heart,
+  Truck,
+  Shield,
+  Clock,
+  Check,
+  Leaf,
+} from "lucide-react";
+import { useCart } from "@/lib/cart-context";
+import { useWishlist } from "@/lib/wishlist-context";
+import { useRecentlyViewed } from "@/lib/recently-viewed-context";
 
 interface ProductDetailsProps {
-  product: Product
+  product: Product;
 }
 
 export function ProductDetails({ product }: ProductDetailsProps) {
-  const [selectedImage, setSelectedImage] = useState(0)
-  const [quantity, setQuantity] = useState(1)
-  const [isWishlisted, setIsWishlisted] = useState(false)
-  const [isAdding, setIsAdding] = useState(false)
-  const { addToCart } = useCart()
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [isAdding, setIsAdding] = useState(false);
+  const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const { addToRecentlyViewed } = useRecentlyViewed();
 
-  const images = product.images || [product.image]
+  const isWishlisted = isInWishlist(product.id);
+  const images = product.images || [product.image];
   const discount = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-    : 0
+    ? Math.round(
+        ((product.originalPrice - product.price) / product.originalPrice) * 100
+      )
+    : 0;
+
+  // Track product view
+  useEffect(() => {
+    addToRecentlyViewed(product);
+  }, [product, addToRecentlyViewed]);
 
   const handleAddToCart = () => {
-    setIsAdding(true)
+    setIsAdding(true);
     for (let i = 0; i < quantity; i++) {
-      addToCart(product)
+      addToCart(product);
     }
     setTimeout(() => {
-      setIsAdding(false)
-      setQuantity(1)
-    }, 800)
-  }
+      setIsAdding(false);
+      setQuantity(1);
+    }, 800);
+  };
 
   return (
     <section className="py-8 px-6">
@@ -77,7 +99,9 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                     key={index}
                     onClick={() => setSelectedImage(index)}
                     className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
-                      selectedImage === index ? "border-[#b8860b]" : "border-transparent opacity-60 hover:opacity-100"
+                      selectedImage === index
+                        ? "border-[#b8860b]"
+                        : "border-transparent opacity-60 hover:opacity-100"
                     }`}
                   >
                     <Image
@@ -101,7 +125,9 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                   <Star
                     key={i}
                     className={`w-5 h-5 ${
-                      i < Math.floor(product.rating) ? "fill-[#b8860b] text-[#b8860b]" : "text-[#f5f0e1]/20"
+                      i < Math.floor(product.rating)
+                        ? "fill-[#b8860b] text-[#b8860b]"
+                        : "text-[#f5f0e1]/20"
                     }`}
                   />
                 ))}
@@ -112,14 +138,20 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             </div>
 
             {/* Name */}
-            <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">{product.name}</h1>
+            <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">
+              {product.name}
+            </h1>
 
             {/* Price */}
             <div className="flex items-baseline gap-4 mb-6">
-              <span className="text-4xl font-bold text-[#b8860b]">₹{product.price}</span>
+              <span className="text-4xl font-bold text-[#b8860b]">
+                ₹{product.price}
+              </span>
               {product.originalPrice && (
                 <>
-                  <span className="text-xl text-[#f5f0e1]/40 line-through">₹{product.originalPrice}</span>
+                  <span className="text-xl text-[#f5f0e1]/40 line-through">
+                    ₹{product.originalPrice}
+                  </span>
                   <span className="px-3 py-1 bg-green-500/20 text-green-400 text-sm font-semibold rounded-full">
                     Save ₹{product.originalPrice - product.price}
                   </span>
@@ -130,7 +162,9 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             {/* Weight */}
             <div className="flex items-center gap-2 mb-6 text-[#f5f0e1]/70">
               <span>Net Weight:</span>
-              <span className="font-semibold text-[#f5f0e1]">{product.weight}</span>
+              <span className="font-semibold text-[#f5f0e1]">
+                {product.weight}
+              </span>
             </div>
 
             {/* Description */}
@@ -148,7 +182,9 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                 >
                   <Minus className="w-5 h-5" />
                 </button>
-                <span className="w-12 text-center font-semibold">{quantity}</span>
+                <span className="w-12 text-center font-semibold">
+                  {quantity}
+                </span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
                   className="w-12 h-12 flex items-center justify-center hover:text-[#b8860b] transition-colors"
@@ -184,12 +220,20 @@ export function ProductDetails({ product }: ProductDetailsProps) {
 
               {/* Wishlist */}
               <button
-                onClick={() => setIsWishlisted(!isWishlisted)}
+                onClick={() => toggleWishlist(product)}
                 className={`w-12 h-12 rounded-full border flex items-center justify-center transition-all ${
-                  isWishlisted ? "border-red-500 bg-red-500/10" : "border-[#b8860b]/20 hover:border-[#b8860b]"
+                  isWishlisted
+                    ? "border-red-500 bg-red-500/10"
+                    : "border-[#b8860b]/20 hover:border-[#b8860b]"
                 }`}
               >
-                <Heart className={`w-5 h-5 ${isWishlisted ? "fill-red-500 text-red-500" : "text-[#f5f0e1]"}`} />
+                <Heart
+                  className={`w-5 h-5 ${
+                    isWishlisted
+                      ? "fill-red-500 text-red-500"
+                      : "text-[#f5f0e1]"
+                  }`}
+                />
               </button>
             </div>
 
@@ -230,7 +274,9 @@ export function ProductDetails({ product }: ProductDetailsProps) {
               {/* Ingredients */}
               {product.ingredients && (
                 <div>
-                  <h3 className="font-semibold text-[#b8860b] mb-3">Ingredients</h3>
+                  <h3 className="font-semibold text-[#b8860b] mb-3">
+                    Ingredients
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     {product.ingredients.map((ingredient) => (
                       <span
@@ -248,13 +294,17 @@ export function ProductDetails({ product }: ProductDetailsProps) {
               <div className="grid grid-cols-2 gap-6">
                 {product.shelfLife && (
                   <div>
-                    <h3 className="font-semibold text-[#b8860b] mb-2">Shelf Life</h3>
+                    <h3 className="font-semibold text-[#b8860b] mb-2">
+                      Shelf Life
+                    </h3>
                     <p className="text-[#f5f0e1]/70">{product.shelfLife}</p>
                   </div>
                 )}
                 {product.storageInfo && (
                   <div>
-                    <h3 className="font-semibold text-[#b8860b] mb-2">Storage</h3>
+                    <h3 className="font-semibold text-[#b8860b] mb-2">
+                      Storage
+                    </h3>
                     <p className="text-[#f5f0e1]/70">{product.storageInfo}</p>
                   </div>
                 )}
@@ -264,5 +314,5 @@ export function ProductDetails({ product }: ProductDetailsProps) {
         </div>
       </div>
     </section>
-  )
+  );
 }

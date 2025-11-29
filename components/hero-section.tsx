@@ -78,7 +78,7 @@ export function HeroSection() {
           ].map((cat) => (
             <Link
               key={cat.slug}
-              href={`/shop/${cat.slug}`}
+              href={`/shop?category=${cat.slug}`}
               className="px-4 py-2 text-sm text-[#f5f0e1]/60 hover:text-[#b8860b] border border-[#2a4a35] hover:border-[#b8860b]/50 rounded-full transition-all duration-200"
             >
               {cat.name}

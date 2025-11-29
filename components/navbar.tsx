@@ -72,6 +72,8 @@ export function Navbar() {
                 href={
                   item === "Our Story"
                     ? "/about"
+                    : item === "Collections"
+                    ? "/collections"
                     : `/#${item.toLowerCase().replace(" ", "-")}`
                 }
                 className="text-sm text-[#f5f0e1]/70 hover:text-[#f5f0e1] transition-colors tracking-wide uppercase"
@@ -127,7 +129,7 @@ export function Navbar() {
               {quickCategoryLinks.map((category) => (
                 <Link
                   key={category.slug}
-                  href={`/shop/${category.slug}`}
+                  href={`/shop?category=${category.slug}`}
                   className="text-xs text-[#f5f0e1]/60 hover:text-[#b8860b] transition-colors tracking-wide uppercase whitespace-nowrap"
                 >
                   {category.name}
@@ -178,7 +180,7 @@ export function Navbar() {
                 {quickCategoryLinks.map((category) => (
                   <Link
                     key={category.slug}
-                    href={`/shop/${category.slug}`}
+                    href={`/shop?category=${category.slug}`}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="text-lg text-[#f5f0e1]/70 hover:text-[#b8860b] transition-colors"
                   >
@@ -186,6 +188,13 @@ export function Navbar() {
                   </Link>
                 ))}
               </div>
+              <Link
+                href="/collections"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block text-lg text-[#b8860b] hover:text-[#d4a017] transition-colors mt-4"
+              >
+                Browse All Collections →
+              </Link>
             </div>
 
             <div className="w-full pt-4 border-t border-[#2a4a35]">
@@ -271,7 +280,7 @@ export function Navbar() {
                 {quickCategoryLinks.map((category) => (
                   <Link
                     key={category.slug}
-                    href={`/shop/${category.slug}`}
+                    href={`/shop?category=${category.slug}`}
                     onClick={() => setIsSearchOpen(false)}
                     className="px-4 py-2 bg-[#1a472a]/50 rounded-full text-[#f5f0e1]/70 hover:bg-[#b8860b]/20 hover:text-[#b8860b] transition-colors text-sm"
                   >
