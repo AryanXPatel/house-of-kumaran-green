@@ -39,7 +39,7 @@ export function ProductShowcase() {
         const { getNewArrivals, getProducts } = await import(
           "@/lib/product-service"
         );
-        let newArrivals = await getNewArrivals();
+        const newArrivals = await getNewArrivals();
         const allProducts = await getProducts();
 
         // Combine new arrivals with other products

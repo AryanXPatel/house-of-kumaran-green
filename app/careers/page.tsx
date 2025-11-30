@@ -133,13 +133,8 @@ export default function CareersPage() {
             Build Your <span className="text-[#b8860b]">Career</span>
           </h1>
           <p className="text-xl text-[#f5f0e1]/70 max-w-2xl mb-8">
-<<<<<<< HEAD
             Be part of a team that&apos;s passionate about preserving and
             sharing South Indian culinary traditions with the world.
-=======
-            Be part of a team that&apos;s passionate about preserving and sharing
-            South Indian culinary traditions with the world.
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
           </p>
           <Link
             href="#openings"
@@ -209,7 +204,6 @@ export default function CareersPage() {
                 Life at House of Kumaran
               </h2>
               <p className="text-[#f5f0e1]/70 mb-4">
-<<<<<<< HEAD
                 At House of Kumaran, we&apos;re more than colleagues—we&apos;re
                 a family united by our love for authentic South Indian cuisine.
                 Our workplace buzzes with the aroma of spices and the warmth of
@@ -225,22 +219,6 @@ export default function CareersPage() {
                 Whether you&apos;re crafting recipes in our kitchen, engaging
                 with customers, or strategizing our next big move, you&apos;ll
                 be part of something meaningful.
-=======
-                At House of Kumaran, we&apos;re more than colleagues—we&apos;re a family
-                united by our love for authentic South Indian cuisine. Our
-                workplace buzzes with the aroma of spices and the warmth of
-                shared meals.
-              </p>
-              <p className="text-[#f5f0e1]/70 mb-4">
-                We believe that great food comes from happy people. That&apos;s why
-                we&apos;ve created an environment where creativity flourishes, ideas
-                are valued, and every team member has the opportunity to grow.
-              </p>
-              <p className="text-[#f5f0e1]/70">
-                Whether you&apos;re crafting recipes in our kitchen, engaging with
-                customers, or strategizing our next big move, you&apos;ll be part of
-                something meaningful.
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
               </p>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -429,13 +407,8 @@ export default function CareersPage() {
             Don&apos;t see your perfect role?
           </h2>
           <p className="text-[#f5f0e1]/60 mb-6 max-w-lg mx-auto">
-<<<<<<< HEAD
             We&apos;re always looking for talented people. Send us your resume
             and we&apos;ll keep you in mind for future opportunities.
-=======
-            We&apos;re always looking for talented people. Send us your resume and
-            we&apos;ll keep you in mind for future opportunities.
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
           </p>
           <a
             href="mailto:careers@houseofkumaran.com"

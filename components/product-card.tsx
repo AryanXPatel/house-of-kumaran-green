@@ -17,7 +17,6 @@ interface ProductCardProps {
 
 export function ProductCard({
   product,
-  variant = "default",
 }: ProductCardProps) {
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();

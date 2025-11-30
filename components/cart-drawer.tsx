@@ -21,7 +21,8 @@ export function CartDrawer() {
 
   // Get checkout URL from context if using Shopify
   // For now we'll use the local checkout page, but the integration is ready
-  const checkoutUrl = USE_SHOPIFY ? "/checkout" : "/checkout";
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _checkoutUrl = USE_SHOPIFY ? "/checkout" : "/checkout";
 
   if (!isCartOpen) return null;
 

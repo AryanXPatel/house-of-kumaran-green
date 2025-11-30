@@ -22,13 +22,7 @@ export default function PrivacyPage() {
           <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">
             Privacy Policy
           </h1>
-<<<<<<< HEAD
           <p className="text-[#f5f0e1]/60">Last updated: January 2025</p>
-=======
-          <p className="text-[#f5f0e1]/60">
-            Last updated: January 2025
-          </p>
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
         </div>
       </section>
 
@@ -38,18 +32,11 @@ export default function PrivacyPage() {
           <div className="space-y-8">
             <div className="p-6 bg-[#1a472a]/20 rounded-2xl border border-[#b8860b]/10">
               <p className="text-[#f5f0e1]/70 mb-0">
-<<<<<<< HEAD
                 At House of Kumaran, we are committed to protecting your privacy
                 and ensuring the security of your personal information. This
                 Privacy Policy explains how we collect, use, disclose, and
                 safeguard your information when you visit our website or make a
                 purchase.
-=======
-                At House of Kumaran, we are committed to protecting your privacy and
-                ensuring the security of your personal information. This Privacy
-                Policy explains how we collect, use, disclose, and safeguard your
-                information when you visit our website or make a purchase.
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
               </p>
             </div>
 
@@ -63,26 +50,14 @@ export default function PrivacyPage() {
               <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-2 ml-4">
                 <li>Name, email address, phone number</li>
                 <li>Shipping and billing addresses</li>
-<<<<<<< HEAD
-                <li>
-                  Payment information (processed securely through our payment
-                  providers)
-                </li>
-=======
                 <li>Payment information (processed securely through our payment providers)</li>
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
                 <li>Order history and preferences</li>
                 <li>Communications with our customer support team</li>
                 <li>Account login credentials (if you create an account)</li>
               </ul>
 
               <p className="text-[#f5f0e1]/70 mt-4 mb-4">
-<<<<<<< HEAD
-                We also automatically collect certain information when you visit
-                our website:
-=======
                 We also automatically collect certain information when you visit our website:
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
               </p>
               <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-2 ml-4">
                 <li>Device information (browser type, operating system)</li>
@@ -116,45 +91,13 @@ export default function PrivacyPage() {
                 3. Information Sharing
               </h2>
               <p className="text-[#f5f0e1]/70 mb-4">
-<<<<<<< HEAD
-                We do not sell, trade, or rent your personal information to
-                third parties. We may share your information with:
-              </p>
-              <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-2 ml-4">
-                <li>
-                  <strong className="text-[#f5f0e1]">Service Providers:</strong>{" "}
-                  Payment processors, shipping carriers, and other vendors who
-                  assist in our operations
-                </li>
-                <li>
-                  <strong className="text-[#f5f0e1]">
-                    Legal Requirements:
-                  </strong>{" "}
-                  When required by law or to protect our rights
-                </li>
-                <li>
-                  <strong className="text-[#f5f0e1]">
-                    Business Transfers:
-                  </strong>{" "}
-                  In connection with a merger, acquisition, or sale of assets
-=======
                 We do not sell, trade, or rent your personal information to third parties.
                 We may share your information with:
               </p>
               <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-2 ml-4">
-                <li>
-                  <strong className="text-[#f5f0e1]">Service Providers:</strong> Payment processors, shipping
-                  carriers, and other vendors who assist in our operations
-                </li>
-                <li>
-                  <strong className="text-[#f5f0e1]">Legal Requirements:</strong> When required by law or to
-                  protect our rights
-                </li>
-                <li>
-                  <strong className="text-[#f5f0e1]">Business Transfers:</strong> In connection with a merger,
-                  acquisition, or sale of assets
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
-                </li>
+                <li><strong className="text-[#f5f0e1]">Service Providers:</strong> Payment processors, shipping carriers, and other vendors who assist in our operations</li>
+                <li><strong className="text-[#f5f0e1]">Legal Requirements:</strong> When required by law or to protect our rights</li>
+                <li><strong className="text-[#f5f0e1]">Business Transfers:</strong> In connection with a merger, acquisition, or sale of assets</li>
               </ul>
             </div>
 
@@ -163,20 +106,11 @@ export default function PrivacyPage() {
                 4. Data Security
               </h2>
               <p className="text-[#f5f0e1]/70">
-<<<<<<< HEAD
-                We implement appropriate technical and organizational measures
-                to protect your personal information against unauthorized
-                access, alteration, disclosure, or destruction. All payment
-                transactions are encrypted using SSL technology. However, no
-                method of transmission over the Internet is 100% secure, and we
-                cannot guarantee absolute security.
-=======
                 We implement appropriate technical and organizational measures to protect
                 your personal information against unauthorized access, alteration,
                 disclosure, or destruction. All payment transactions are encrypted using
                 SSL technology. However, no method of transmission over the Internet is
                 100% secure, and we cannot guarantee absolute security.
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
               </p>
             </div>
 
@@ -194,21 +128,9 @@ export default function PrivacyPage() {
                 <li>Deliver targeted advertisements</li>
               </ul>
               <p className="text-[#f5f0e1]/70 mt-4">
-<<<<<<< HEAD
-                You can control cookies through your browser settings. For more
-                details, please see our{" "}
-                <Link
-                  href="/cookies"
-                  className="text-[#b8860b] hover:underline"
-                >
-=======
                 You can control cookies through your browser settings. For more details,
                 please see our{" "}
-                <Link href="/cookies" className="text-[#b8860b] hover:underline">
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
-                  Cookie Policy
-                </Link>
-                .
+                <Link href="/cookies" className="text-[#b8860b] hover:underline">Cookie Policy</Link>.
               </p>
             </div>
 
@@ -217,13 +139,8 @@ export default function PrivacyPage() {
                 6. Your Rights
               </h2>
               <p className="text-[#f5f0e1]/70 mb-4">
-<<<<<<< HEAD
-                Depending on your location, you may have the following rights
-                regarding your personal information:
-=======
                 Depending on your location, you may have the following rights regarding
                 your personal information:
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
               </p>
               <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-2 ml-4">
                 <li>Access and receive a copy of your data</li>
@@ -235,12 +152,7 @@ export default function PrivacyPage() {
                 <li>Opt-out of marketing communications</li>
               </ul>
               <p className="text-[#f5f0e1]/70 mt-4">
-<<<<<<< HEAD
-                To exercise these rights, please contact us using the
-                information below.
-=======
                 To exercise these rights, please contact us using the information below.
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
               </p>
             </div>
 
@@ -249,18 +161,10 @@ export default function PrivacyPage() {
                 7. Data Retention
               </h2>
               <p className="text-[#f5f0e1]/70">
-<<<<<<< HEAD
-                We retain your personal information for as long as necessary to
-                fulfill the purposes outlined in this policy, unless a longer
-                retention period is required by law. Order information is
-                typically retained for 7 years for accounting and legal
-                purposes.
-=======
                 We retain your personal information for as long as necessary to fulfill
                 the purposes outlined in this policy, unless a longer retention period is
                 required by law. Order information is typically retained for 7 years for
                 accounting and legal purposes.
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
               </p>
             </div>
 
@@ -269,17 +173,10 @@ export default function PrivacyPage() {
                 8. Third-Party Links
               </h2>
               <p className="text-[#f5f0e1]/70">
-<<<<<<< HEAD
-                Our website may contain links to third-party websites. We are
-                not responsible for the privacy practices of these external
-                sites. We encourage you to review their privacy policies before
-                providing any personal information.
-=======
                 Our website may contain links to third-party websites. We are not
                 responsible for the privacy practices of these external sites. We
                 encourage you to review their privacy policies before providing any
                 personal information.
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
               </p>
             </div>
 
@@ -288,17 +185,9 @@ export default function PrivacyPage() {
                 9. Children&apos;s Privacy
               </h2>
               <p className="text-[#f5f0e1]/70">
-<<<<<<< HEAD
-                Our website is not intended for children under 13 years of age.
-                We do not knowingly collect personal information from children.
-                If you believe a child has provided us with their information,
-                please contact us immediately.
-=======
                 Our website is not intended for children under 13 years of age. We do not
                 knowingly collect personal information from children. If you believe a
-                child has provided us with their information, please contact us
-                immediately.
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
+                child has provided us with their information, please contact us immediately.
               </p>
             </div>
 
@@ -307,15 +196,9 @@ export default function PrivacyPage() {
                 10. Changes to This Policy
               </h2>
               <p className="text-[#f5f0e1]/70">
-<<<<<<< HEAD
-                We may update this Privacy Policy from time to time. Any changes
-                will be posted on this page with an updated revision date. We
-                encourage you to review this policy periodically.
-=======
                 We may update this Privacy Policy from time to time. Any changes will be
                 posted on this page with an updated revision date. We encourage you to
                 review this policy periodically.
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
               </p>
             </div>
 
@@ -328,31 +211,9 @@ export default function PrivacyPage() {
                 practices, please contact us:
               </p>
               <ul className="text-[#f5f0e1]/70 space-y-2">
-                <li>
-                  <strong className="text-[#f5f0e1]">Email:</strong>{" "}
-                  <a
-                    href="mailto:privacy@houseofkumaran.com"
-                    className="text-[#b8860b] hover:underline"
-                  >
-                    privacy@houseofkumaran.com
-                  </a>
-                </li>
-                <li>
-<<<<<<< HEAD
-                  <strong className="text-[#f5f0e1]">Phone:</strong> +91 98765
-                  43210
-                </li>
-                <li>
-                  <strong className="text-[#f5f0e1]">Address:</strong> 123 Spice
-                  Street, Chennai, Tamil Nadu 600001, India
-=======
-                  <strong className="text-[#f5f0e1]">Phone:</strong> +91 98765 43210
-                </li>
-                <li>
-                  <strong className="text-[#f5f0e1]">Address:</strong> 123 Spice Street,
-                  Chennai, Tamil Nadu 600001, India
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
-                </li>
+                <li><strong className="text-[#f5f0e1]">Email:</strong>{" "}<a href="mailto:privacy@houseofkumaran.com" className="text-[#b8860b] hover:underline">privacy@houseofkumaran.com</a></li>
+                <li><strong className="text-[#f5f0e1]">Phone:</strong> +91 98765 43210</li>
+                <li><strong className="text-[#f5f0e1]">Address:</strong> 123 Spice Street, Chennai, Tamil Nadu 600001, India</li>
               </ul>
             </div>
           </div>

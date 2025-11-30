@@ -17,7 +17,7 @@ export function Navbar() {
   const [showCategoryBar, setShowCategoryBar] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const { totalItems, setIsCartOpen, isCartOpen } = useCart();
+  const { totalItems, setIsCartOpen } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {

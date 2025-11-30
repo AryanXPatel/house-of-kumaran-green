@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
@@ -64,7 +64,42 @@ function ProductSkeleton() {
   );
 }
 
+// Loading fallback component for Suspense
+function ShopPageSkeleton() {
+  return (
+    <main className="min-h-screen bg-[#0d1f14] text-[#f5f0e1]">
+      <Navbar />
+      <section className="pt-28 pb-6 px-6 border-b border-[#b8860b]/10">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="h-4 w-32 bg-[#1a472a]/50 rounded mb-6 animate-pulse" />
+          <div className="h-10 w-64 bg-[#1a472a]/50 rounded mb-2 animate-pulse" />
+          <div className="h-4 w-24 bg-[#1a472a]/50 rounded animate-pulse" />
+        </div>
+      </section>
+      <section className="py-8 px-6">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            {[...Array(6)].map((_, i) => (
+              <ProductSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+      <Footer />
+    </main>
+  );
+}
+
+// Wrap the shop content in Suspense
 export default function ShopPage() {
+  return (
+    <Suspense fallback={<ShopPageSkeleton />}>
+      <ShopContent />
+    </Suspense>
+  );
+}
+
+function ShopContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 

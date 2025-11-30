@@ -49,7 +49,7 @@ export function CraftSection() {
               <span className="block text-[#f5f0e1]/40">to Yours</span>
             </h2>
             <p className="text-[#f5f0e1]/60 text-lg leading-relaxed mb-12">
-              Every product from House of Kumaran follows a journey of care and tradition. We don't just make food — we
+              Every product from House of Kumaran follows a journey of care and tradition. We don&apos;t just make food — we
               preserve a legacy.
             </p>
 

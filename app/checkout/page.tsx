@@ -76,7 +76,7 @@ export default function CheckoutPage() {
           <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">Order Confirmed!</h1>
           <p className="text-[#f5f0e1]/70 text-lg mb-2">Thank you for your order, {shippingData.firstName}!</p>
           <p className="text-[#f5f0e1]/50 mb-8 max-w-md">
-            We've received your order and will begin preparing it shortly. You'll receive a confirmation email at{" "}
+            We&apos;ve received your order and will begin preparing it shortly. You&apos;ll receive a confirmation email at{" "}
             {shippingData.email}
           </p>
           <div className="p-6 bg-[#1a472a]/30 rounded-xl mb-8">

@@ -4,7 +4,6 @@ import { ProductDetails } from "@/components/product-details";
 import { RelatedProducts } from "@/components/related-products";
 import {
   getProductBySlug,
-  getProducts,
   getRelatedProducts,
 } from "@/lib/product-service";
 import { notFound } from "next/navigation";

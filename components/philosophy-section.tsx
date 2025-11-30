@@ -73,8 +73,8 @@ export function PhilosophySection() {
         <div className="mt-20 py-16 border-t border-b border-[#2a4a35]">
           <blockquote className="max-w-4xl mx-auto text-center">
             <p className="font-serif text-2xl md:text-3xl lg:text-4xl text-[#f5f0e1]/80 italic leading-relaxed">
-              "Food is memories. Every spoonful of our podi takes you back to your grandmother's kitchen, to lazy Sunday
-              afternoons, to the taste of home."
+              &quot;Food is memories. Every spoonful of our podi takes you back to your grandmother&apos;s kitchen, to lazy Sunday
+              afternoons, to the taste of home.&quot;
             </p>
             <footer className="mt-8">
               <p className="text-[#b8860b] font-semibold">Kumaran Family</p>

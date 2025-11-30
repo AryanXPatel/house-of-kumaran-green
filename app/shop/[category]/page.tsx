@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getCategories, getCategoryInfo } from "@/lib/product-service";
+import { getCategoryInfo } from "@/lib/product-service";
 import { Category } from "@/lib/types";
 
 interface CategoryPageProps {

@@ -163,7 +163,7 @@ export function TestimonialsSection() {
           {/* Mobile: Horizontal scroll cards */}
           <div className="md:hidden">
             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-              {testimonials.map((testimonial, i) => (
+              {testimonials.map((testimonial) => (
                 <div
                   key={testimonial.id}
                   className="flex-shrink-0 w-[300px] p-5 bg-[#132a1c] rounded-xl border border-[#2a4a35]"

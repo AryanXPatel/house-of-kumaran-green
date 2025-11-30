@@ -116,6 +116,10 @@ const blogPosts: Record<
   },
 };
 
+interface BlogPageProps {
+  params: Promise<{ slug: string }>;
+}
+
 // Generate static params for all blog posts
 export function generateStaticParams() {
   return Object.keys(blogPosts).map((slug) => ({
@@ -124,8 +128,9 @@ export function generateStaticParams() {
 }
 
 // Generate metadata for each blog post
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const post = blogPosts[params.slug];
+export async function generateMetadata({ params }: BlogPageProps) {
+  const { slug } = await params;
+  const post = blogPosts[slug];
   if (!post) {
     return {
       title: "Post Not Found | House of Kumaran Blog",
@@ -137,8 +142,9 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   };
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = blogPosts[params.slug];
+export default async function BlogPostPage({ params }: BlogPageProps) {
+  const { slug } = await params;
+  const post = blogPosts[slug];
 
   if (!post) {
     return (
@@ -231,7 +237,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             <div className="flex items-center gap-3">
               <a
                 href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                  `https://houseofkumaran.com/blog/${params.slug}`
+                  `https://houseofkumaran.com/blog/${slug}`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -243,7 +249,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                 href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
                   post.title
                 )}&url=${encodeURIComponent(
-                  `https://houseofkumaran.com/blog/${params.slug}`
+                  `https://houseofkumaran.com/blog/${slug}`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -253,7 +259,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
               </a>
               <a
                 href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
-                  `https://houseofkumaran.com/blog/${params.slug}`
+                  `https://houseofkumaran.com/blog/${slug}`
                 )}&title=${encodeURIComponent(post.title)}`}
                 target="_blank"
                 rel="noopener noreferrer"

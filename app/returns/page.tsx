@@ -259,13 +259,7 @@ export default function ReturnsPage() {
               <div>
                 <h3 className="font-semibold mb-2">Refund Information</h3>
                 <ul className="space-y-2 text-[#f5f0e1]/60 text-sm">
-<<<<<<< HEAD
                   <li>• Refunds are credited to the original payment method</li>
-=======
-                  <li>
-                    • Refunds are credited to the original payment method
-                  </li>
->>>>>>> 17c510e9eeae2ab11385825134c6e5679e9b3c1d
                   <li>
                     • Credit/Debit card refunds may take 5-10 business days to
                     reflect

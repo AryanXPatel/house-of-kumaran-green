@@ -28,7 +28,7 @@ export default function CartPage() {
               </div>
               <p className="font-serif text-2xl text-[#f5f0e1] mb-4">Your cart is empty</p>
               <p className="text-[#f5f0e1]/50 mb-8 max-w-md">
-                Looks like you haven't added anything yet. Explore our authentic South Indian delicacies.
+                Looks like you haven&apos;t added anything yet. Explore our authentic South Indian delicacies.
               </p>
               <Link
                 href="/shop"

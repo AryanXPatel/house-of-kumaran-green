@@ -1,7 +1,7 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import Link from "next/link";
-import { Home, Search, ArrowLeft, ShoppingBag } from "lucide-react";
+import { Home, Search, ShoppingBag } from "lucide-react";
 
 export default function NotFound() {
   return (

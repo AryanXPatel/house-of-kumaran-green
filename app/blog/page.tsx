@@ -2,7 +2,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, Clock, ArrowRight, Tag } from "lucide-react";
+import { Calendar, Clock, ArrowRight } from "lucide-react";
 
 export const metadata = {
   title: "Blog | House of Kumaran - Recipes, Tips & Stories",

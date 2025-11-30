@@ -21,15 +21,18 @@ import {
   Lora as V0_Font_Lora,
 } from "next/font/google";
 
-// Initialize fonts
+// Initialize fonts (unused but kept for potential future use)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _libreBaskerville = V0_Font_Libre_Baskerville({
   subsets: ["latin"],
   weight: ["400", "700"],
 });
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _ibmPlexMono = V0_Font_IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700"],
 });
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _lora = V0_Font_Lora({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
