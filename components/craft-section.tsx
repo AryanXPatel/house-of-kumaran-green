@@ -1,29 +1,33 @@
-"use client"
+"use client";
 
-import Image from "next/image"
+import Image from "next/image";
 
 const steps = [
   {
     number: "01",
     title: "Source",
-    description: "We handpick ingredients from trusted farmers across Tamil Nadu who share our values.",
+    description:
+      "We handpick ingredients from trusted farmers across Tamil Nadu who share our values.",
   },
   {
     number: "02",
     title: "Prepare",
-    description: "Traditional stone grinding, sun drying, and age-old techniques preserved through generations.",
+    description:
+      "Traditional stone grinding, sun drying, and age-old techniques preserved through generations.",
   },
   {
     number: "03",
     title: "Perfect",
-    description: "Every batch is tasted and tested to match the authentic flavours we grew up with.",
+    description:
+      "Every batch is tasted and tested to match the authentic flavours we grew up with.",
   },
   {
     number: "04",
     title: "Pack",
-    description: "Freshly packed and shipped to preserve the aroma and taste until it reaches you.",
+    description:
+      "Freshly packed and shipped to preserve the aroma and taste until it reaches you.",
   },
-]
+];
 
 export function CraftSection() {
   return (
@@ -43,14 +47,16 @@ export function CraftSection() {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left - Content */}
           <div>
-            <p className="text-[#b8860b] text-sm tracking-[0.2em] uppercase mb-4">Our Craft</p>
+            <p className="text-[#b8860b] text-sm tracking-[0.2em] uppercase mb-4">
+              Our Craft
+            </p>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-[#f5f0e1] leading-tight mb-8">
               From Our Kitchen
               <span className="block text-[#f5f0e1]/40">to Yours</span>
             </h2>
             <p className="text-[#f5f0e1]/60 text-lg leading-relaxed mb-12">
-              Every product from House of Kumaran follows a journey of care and tradition. We don&apos;t just make food — we
-              preserve a legacy.
+              Every product from House of Kumaran follows a journey of care and
+              tradition. We don&apos;t just make food — we preserve a legacy.
             </p>
 
             {/* Steps */}
@@ -63,8 +69,12 @@ export function CraftSection() {
                     </span>
                   </div>
                   <div>
-                    <h3 className="font-serif text-xl font-bold text-[#f5f0e1] mb-2">{step.title}</h3>
-                    <p className="text-[#f5f0e1]/50 leading-relaxed">{step.description}</p>
+                    <h3 className="font-serif text-xl font-bold text-[#f5f0e1] mb-2">
+                      {step.title}
+                    </h3>
+                    <p className="text-[#f5f0e1]/50 leading-relaxed">
+                      {step.description}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -125,5 +135,5 @@ export function CraftSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -76,26 +76,50 @@ export default function CookiesPage() {
                 <table className="w-full text-sm text-[#f5f0e1]/70 border border-[#b8860b]/20">
                   <thead className="bg-[#b8860b]/10">
                     <tr>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Cookie</th>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Purpose</th>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Duration</th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Cookie
+                      </th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Purpose
+                      </th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Duration
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">cart_id</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Shopping cart identifier</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Session</td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        cart_id
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Shopping cart identifier
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Session
+                      </td>
                     </tr>
                     <tr>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">session_id</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">User session management</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Session</td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        session_id
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        User session management
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Session
+                      </td>
                     </tr>
                     <tr>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">cookie_consent</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Stores cookie preferences</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">1 year</td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        cookie_consent
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Stores cookie preferences
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        1 year
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -118,26 +142,50 @@ export default function CookiesPage() {
                 <table className="w-full text-sm text-[#f5f0e1]/70 border border-[#b8860b]/20">
                   <thead className="bg-[#b8860b]/10">
                     <tr>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Cookie</th>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Provider</th>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Duration</th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Cookie
+                      </th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Provider
+                      </th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Duration
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">_ga</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Google Analytics</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">2 years</td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        _ga
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Google Analytics
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        2 years
+                      </td>
                     </tr>
                     <tr>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">_gid</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Google Analytics</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">24 hours</td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        _gid
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Google Analytics
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        24 hours
+                      </td>
                     </tr>
                     <tr>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">_gat</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Google Analytics</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">1 minute</td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        _gat
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Google Analytics
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        1 minute
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -173,21 +221,39 @@ export default function CookiesPage() {
                 <table className="w-full text-sm text-[#f5f0e1]/70 border border-[#b8860b]/20">
                   <thead className="bg-[#b8860b]/10">
                     <tr>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Cookie</th>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Provider</th>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Duration</th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Cookie
+                      </th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Provider
+                      </th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Duration
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">_fbp</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Facebook Pixel</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">3 months</td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        _fbp
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Facebook Pixel
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        3 months
+                      </td>
                     </tr>
                     <tr>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">_gcl_au</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Google Ads</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">3 months</td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        _gcl_au
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Google Ads
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        3 months
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -200,13 +266,26 @@ export default function CookiesPage() {
               </h2>
               <p className="text-[#f5f0e1]/70 mb-4">
                 Some cookies are placed by third-party services that appear on
-                our pages. We do not control these cookies. Third parties include:
+                our pages. We do not control these cookies. Third parties
+                include:
               </p>
               <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-2 ml-4">
-                <li><strong className="text-[#f5f0e1]">Google Analytics:</strong> Website analytics</li>
-                <li><strong className="text-[#f5f0e1]">Facebook:</strong> Social sharing and advertising</li>
-                <li><strong className="text-[#f5f0e1]">Instagram:</strong> Social media widgets</li>
-                <li><strong className="text-[#f5f0e1]">Payment Providers:</strong> Secure payment processing</li>
+                <li>
+                  <strong className="text-[#f5f0e1]">Google Analytics:</strong>{" "}
+                  Website analytics
+                </li>
+                <li>
+                  <strong className="text-[#f5f0e1]">Facebook:</strong> Social
+                  sharing and advertising
+                </li>
+                <li>
+                  <strong className="text-[#f5f0e1]">Instagram:</strong> Social
+                  media widgets
+                </li>
+                <li>
+                  <strong className="text-[#f5f0e1]">Payment Providers:</strong>{" "}
+                  Secure payment processing
+                </li>
               </ul>
             </div>
 
@@ -218,10 +297,12 @@ export default function CookiesPage() {
                 You have several options for managing cookies:
               </p>
 
-              <h3 className="font-semibold text-lg mb-2 mt-4">Browser Settings</h3>
+              <h3 className="font-semibold text-lg mb-2 mt-4">
+                Browser Settings
+              </h3>
               <p className="text-[#f5f0e1]/70 mb-4">
-                Most browsers allow you to control cookies through their settings.
-                You can typically:
+                Most browsers allow you to control cookies through their
+                settings. You can typically:
               </p>
               <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-2 ml-4 mb-4">
                 <li>View cookies stored on your device</li>
@@ -231,13 +312,50 @@ export default function CookiesPage() {
                 <li>Clear all cookies when you close the browser</li>
               </ul>
               <p className="text-[#f5f0e1]/70 mb-4">
-                For more information, check your browser&apos;s help documentation:
+                For more information, check your browser&apos;s help
+                documentation:
               </p>
               <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-2 ml-4">
-                <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer" className="text-[#b8860b] hover:underline">Google Chrome</a></li>
-                <li><a href="https://support.mozilla.org/en-US/kb/clear-cookies-and-site-data-firefox" target="_blank" rel="noopener noreferrer" className="text-[#b8860b] hover:underline">Mozilla Firefox</a></li>
-                <li><a href="https://support.apple.com/en-in/guide/safari/sfri11471/mac" target="_blank" rel="noopener noreferrer" className="text-[#b8860b] hover:underline">Safari</a></li>
-                <li><a href="https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener noreferrer" className="text-[#b8860b] hover:underline">Microsoft Edge</a></li>
+                <li>
+                  <a
+                    href="https://support.google.com/chrome/answer/95647"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#b8860b] hover:underline"
+                  >
+                    Google Chrome
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://support.mozilla.org/en-US/kb/clear-cookies-and-site-data-firefox"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#b8860b] hover:underline"
+                  >
+                    Mozilla Firefox
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://support.apple.com/en-in/guide/safari/sfri11471/mac"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#b8860b] hover:underline"
+                  >
+                    Safari
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#b8860b] hover:underline"
+                  >
+                    Microsoft Edge
+                  </a>
+                </li>
               </ul>
 
               <h3 className="font-semibold text-lg mb-2 mt-6">Opt-Out Tools</h3>
@@ -245,9 +363,36 @@ export default function CookiesPage() {
                 You can opt out of targeted advertising through:
               </p>
               <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-2 ml-4">
-                <li><a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" className="text-[#b8860b] hover:underline">Google Analytics Opt-out</a></li>
-                <li><a href="https://www.facebook.com/settings/?tab=ads" target="_blank" rel="noopener noreferrer" className="text-[#b8860b] hover:underline">Facebook Ad Preferences</a></li>
-                <li><a href="https://optout.networkadvertising.org/" target="_blank" rel="noopener noreferrer" className="text-[#b8860b] hover:underline">Network Advertising Initiative</a></li>
+                <li>
+                  <a
+                    href="https://tools.google.com/dlpage/gaoptout"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#b8860b] hover:underline"
+                  >
+                    Google Analytics Opt-out
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://www.facebook.com/settings/?tab=ads"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#b8860b] hover:underline"
+                  >
+                    Facebook Ad Preferences
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://optout.networkadvertising.org/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#b8860b] hover:underline"
+                  >
+                    Network Advertising Initiative
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -257,7 +402,8 @@ export default function CookiesPage() {
               </h2>
               <p className="text-[#f5f0e1]/70">
                 Please note that blocking or deleting cookies may affect your
-                experience on our website. Some features may not work properly, including:
+                experience on our website. Some features may not work properly,
+                including:
               </p>
               <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-2 ml-4 mt-4">
                 <li>Shopping cart may not retain items</li>
@@ -274,7 +420,8 @@ export default function CookiesPage() {
               <p className="text-[#f5f0e1]/70">
                 We may update this Cookie Policy from time to time to reflect
                 changes in technology, legislation, or our data practices. We
-                encourage you to review this page periodically for the latest information.
+                encourage you to review this page periodically for the latest
+                information.
               </p>
             </div>
 
@@ -283,15 +430,34 @@ export default function CookiesPage() {
                 Contact Us
               </h2>
               <p className="text-[#f5f0e1]/70 mb-4">
-                If you have questions about our use of cookies, please contact us:
+                If you have questions about our use of cookies, please contact
+                us:
               </p>
               <ul className="text-[#f5f0e1]/70 space-y-2">
-                <li><strong className="text-[#f5f0e1]">Email:</strong>{" "}<a href="mailto:privacy@houseofkumaran.com" className="text-[#b8860b] hover:underline">privacy@houseofkumaran.com</a></li>
-                <li><strong className="text-[#f5f0e1]">Phone:</strong> +91 98765 43210</li>
+                <li>
+                  <strong className="text-[#f5f0e1]">Email:</strong>{" "}
+                  <a
+                    href="mailto:privacy@houseofkumaran.com"
+                    className="text-[#b8860b] hover:underline"
+                  >
+                    privacy@houseofkumaran.com
+                  </a>
+                </li>
+                <li>
+                  <strong className="text-[#f5f0e1]">Phone:</strong> +91 98765
+                  43210
+                </li>
               </ul>
               <p className="text-[#f5f0e1]/70 mt-4">
-                For more information about how we handle your personal data, please see our{" "}
-                <Link href="/privacy" className="text-[#b8860b] hover:underline">Privacy Policy</Link>.
+                For more information about how we handle your personal data,
+                please see our{" "}
+                <Link
+                  href="/privacy"
+                  className="text-[#b8860b] hover:underline"
+                >
+                  Privacy Policy
+                </Link>
+                .
               </p>
             </div>
           </div>

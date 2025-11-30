@@ -2,10 +2,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { ProductDetails } from "@/components/product-details";
 import { RelatedProducts } from "@/components/related-products";
-import {
-  getProductBySlug,
-  getRelatedProducts,
-} from "@/lib/product-service";
+import { getProductBySlug, getRelatedProducts } from "@/lib/product-service";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";

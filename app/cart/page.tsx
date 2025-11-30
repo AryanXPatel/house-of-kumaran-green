@@ -1,17 +1,26 @@
-"use client"
+"use client";
 
-import { Navbar } from "@/components/navbar"
-import { Footer } from "@/components/footer"
-import { useCart } from "@/lib/cart-context"
-import Image from "next/image"
-import Link from "next/link"
-import { Minus, Plus, Trash2, ArrowRight, ShoppingBag, Truck, Shield } from "lucide-react"
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
+import { useCart } from "@/lib/cart-context";
+import Image from "next/image";
+import Link from "next/link";
+import {
+  Minus,
+  Plus,
+  Trash2,
+  ArrowRight,
+  ShoppingBag,
+  Truck,
+  Shield,
+} from "lucide-react";
 
 export default function CartPage() {
-  const { items, removeFromCart, updateQuantity, totalPrice, totalItems } = useCart()
+  const { items, removeFromCart, updateQuantity, totalPrice, totalItems } =
+    useCart();
 
-  const deliveryFee = totalPrice >= 500 ? 0 : 50
-  const finalTotal = totalPrice + deliveryFee
+  const deliveryFee = totalPrice >= 500 ? 0 : 50;
+  const finalTotal = totalPrice + deliveryFee;
 
   return (
     <main className="min-h-screen bg-[#0d1f14] text-[#f5f0e1]">
@@ -19,16 +28,21 @@ export default function CartPage() {
 
       <section className="pt-28 pb-20 px-6">
         <div className="max-w-[1200px] mx-auto">
-          <h1 className="font-serif text-4xl md:text-5xl font-bold mb-12">Shopping Cart</h1>
+          <h1 className="font-serif text-4xl md:text-5xl font-bold mb-12">
+            Shopping Cart
+          </h1>
 
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
               <div className="w-24 h-24 rounded-full bg-[#1a472a]/30 flex items-center justify-center mb-8">
                 <ShoppingBag className="w-12 h-12 text-[#b8860b]/50" />
               </div>
-              <p className="font-serif text-2xl text-[#f5f0e1] mb-4">Your cart is empty</p>
+              <p className="font-serif text-2xl text-[#f5f0e1] mb-4">
+                Your cart is empty
+              </p>
               <p className="text-[#f5f0e1]/50 mb-8 max-w-md">
-                Looks like you haven&apos;t added anything yet. Explore our authentic South Indian delicacies.
+                Looks like you haven&apos;t added anything yet. Explore our
+                authentic South Indian delicacies.
               </p>
               <Link
                 href="/shop"
@@ -44,7 +58,10 @@ export default function CartPage() {
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center justify-between pb-4 border-b border-[#b8860b]/10">
                   <p className="text-[#f5f0e1]/50">{totalItems} items</p>
-                  <Link href="/shop" className="text-sm text-[#b8860b] hover:underline">
+                  <Link
+                    href="/shop"
+                    className="text-sm text-[#b8860b] hover:underline"
+                  >
                     Continue Shopping
                   </Link>
                 </div>
@@ -70,25 +87,40 @@ export default function CartPage() {
                     {/* Details */}
                     <div className="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div>
-                        <Link href={`/product/${item.product.slug}`} className="hover:text-[#b8860b] transition-colors">
-                          <h3 className="font-serif text-lg font-bold">{item.product.name}</h3>
+                        <Link
+                          href={`/product/${item.product.slug}`}
+                          className="hover:text-[#b8860b] transition-colors"
+                        >
+                          <h3 className="font-serif text-lg font-bold">
+                            {item.product.name}
+                          </h3>
                         </Link>
-                        <p className="text-sm text-[#f5f0e1]/50">{item.product.weight}</p>
-                        <p className="text-[#b8860b] font-semibold mt-1">₹{item.product.price}</p>
+                        <p className="text-sm text-[#f5f0e1]/50">
+                          {item.product.weight}
+                        </p>
+                        <p className="text-[#b8860b] font-semibold mt-1">
+                          ₹{item.product.price}
+                        </p>
                       </div>
 
                       <div className="flex items-center gap-6">
                         {/* Quantity */}
                         <div className="flex items-center border border-[#b8860b]/20 rounded-full">
                           <button
-                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                            onClick={() =>
+                              updateQuantity(item.product.id, item.quantity - 1)
+                            }
                             className="w-10 h-10 flex items-center justify-center text-[#f5f0e1]/70 hover:text-[#b8860b] transition-colors"
                           >
                             <Minus className="w-4 h-4" />
                           </button>
-                          <span className="w-10 text-center font-semibold">{item.quantity}</span>
+                          <span className="w-10 text-center font-semibold">
+                            {item.quantity}
+                          </span>
                           <button
-                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            onClick={() =>
+                              updateQuantity(item.product.id, item.quantity + 1)
+                            }
                             className="w-10 h-10 flex items-center justify-center text-[#f5f0e1]/70 hover:text-[#b8860b] transition-colors"
                           >
                             <Plus className="w-4 h-4" />
@@ -116,7 +148,9 @@ export default function CartPage() {
               {/* Order Summary */}
               <div className="lg:col-span-1">
                 <div className="sticky top-28 bg-[#1a472a]/20 rounded-2xl border border-[#b8860b]/10 p-6">
-                  <h2 className="font-serif text-xl font-bold mb-6">Order Summary</h2>
+                  <h2 className="font-serif text-xl font-bold mb-6">
+                    Order Summary
+                  </h2>
 
                   {/* Delivery Progress */}
                   {totalPrice < 500 && (
@@ -142,7 +176,11 @@ export default function CartPage() {
                     <div className="flex justify-between text-[#f5f0e1]/70">
                       <span>Delivery</span>
                       <span>
-                        {deliveryFee === 0 ? <span className="text-green-400">FREE</span> : `₹${deliveryFee}`}
+                        {deliveryFee === 0 ? (
+                          <span className="text-green-400">FREE</span>
+                        ) : (
+                          `₹${deliveryFee}`
+                        )}
                       </span>
                     </div>
                     <div className="flex justify-between text-xl font-bold text-[#f5f0e1] pt-4 border-t border-[#b8860b]/10">
@@ -180,5 +218,5 @@ export default function CartPage() {
 
       <Footer />
     </main>
-  )
+  );
 }
