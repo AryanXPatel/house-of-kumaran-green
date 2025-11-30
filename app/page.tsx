@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/navbar";
 import { HeroSection } from "@/components/hero-section";
 import { FeaturedProducts } from "@/components/featured-products";
+import { NewAndPopularProducts } from "@/components/new-and-popular";
 import { QuickCategories } from "@/components/quick-categories";
 import { ProductShowcase } from "@/components/product-showcase";
 import { TestimonialsSection } from "@/components/testimonials-section";
@@ -16,6 +17,7 @@ export default function Home() {
       <div id="products">
         <FeaturedProducts />
       </div>
+      <NewAndPopularProducts />
       <QuickCategories />
       <ProductShowcase />
       <TestimonialsSection />

@@ -112,9 +112,14 @@ export async function getBestsellers(): Promise<Product[]> {
   }
 
   try {
-    // Search for products tagged as bestseller
-    const shopifyProducts = await shopifySearchProducts("tag:bestseller");
-    return shopifyProducts.map(shopifyToProduct);
+    // Fetch from Shopify "Bestsellers" collection
+    const shopifyProducts = await getProductsByCollection("bestsellers");
+    if (shopifyProducts.length > 0) {
+      return shopifyProducts.map(shopifyToProduct);
+    }
+    // Fallback to tag search if collection is empty
+    const taggedProducts = await shopifySearchProducts("tag:bestseller");
+    return taggedProducts.map(shopifyToProduct);
   } catch (error) {
     console.error("Error fetching bestsellers from Shopify:", error);
     return getStaticBestsellers();
@@ -127,12 +132,72 @@ export async function getNewArrivals(): Promise<Product[]> {
   }
 
   try {
-    // Search for products tagged as new-arrival
-    const shopifyProducts = await shopifySearchProducts("tag:new-arrival");
-    return shopifyProducts.map(shopifyToProduct);
+    // Fetch from Shopify "New & Popular" collection (handle: new-popular or new-and-popular)
+    let shopifyProducts = await getProductsByCollection("new-popular");
+    if (shopifyProducts.length === 0) {
+      shopifyProducts = await getProductsByCollection("new-and-popular");
+    }
+    if (shopifyProducts.length > 0) {
+      return shopifyProducts.map(shopifyToProduct);
+    }
+    // Fallback to tag search if collection is empty
+    const taggedProducts = await shopifySearchProducts(
+      "tag:new-arrival OR tag:new OR tag:popular"
+    );
+    return taggedProducts.map(shopifyToProduct);
   } catch (error) {
     console.error("Error fetching new arrivals from Shopify:", error);
     return getStaticNewArrivals();
+  }
+}
+
+export async function getNewAndPopular(): Promise<Product[]> {
+  if (!USE_SHOPIFY) {
+    // Fallback to static new arrivals or any products
+    const newArrivals = getStaticNewArrivals();
+    if (newArrivals.length > 0) return newArrivals;
+    return staticProducts.slice(0, 8); // Return some products as fallback
+  }
+
+  try {
+    // Try multiple collection handle variations
+    const collectionHandles = [
+      "new-popular",
+      "new-and-popular",
+      "new-arrivals",
+      "popular",
+    ];
+
+    for (const handle of collectionHandles) {
+      try {
+        const shopifyProducts = await getProductsByCollection(handle);
+        if (shopifyProducts.length > 0) {
+          console.log(`Found products in collection: ${handle}`);
+          return shopifyProducts.map(shopifyToProduct);
+        }
+      } catch {
+        // Collection doesn't exist, try next
+        console.log(`Collection ${handle} not found, trying next...`);
+      }
+    }
+
+    // Fallback to tag search
+    const taggedProducts = await shopifySearchProducts(
+      "tag:new OR tag:popular OR tag:new-arrival"
+    );
+    if (taggedProducts.length > 0) {
+      return taggedProducts.map(shopifyToProduct);
+    }
+
+    // Final fallback - return some static products
+    const staticNewArrivals = getStaticNewArrivals();
+    if (staticNewArrivals.length > 0) return staticNewArrivals;
+    return staticProducts.slice(0, 8);
+  } catch (error) {
+    console.error("Error fetching new & popular from Shopify:", error);
+    const staticNewArrivals = getStaticNewArrivals();
+    if (staticNewArrivals.length > 0) return staticNewArrivals;
+    return staticProducts.slice(0, 8);
   }
 }
 

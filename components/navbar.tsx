@@ -3,10 +3,22 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, ShoppingBag, Menu, X, ArrowRight } from "lucide-react";
+import {
+  Search,
+  ShoppingBag,
+  Menu,
+  X,
+  ArrowRight,
+  Heart,
+  User,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart-context";
+import { useWishlist } from "@/lib/wishlist-context";
+import { useAuth } from "@/lib/auth-context";
 import { CartDrawer } from "@/components/cart-drawer";
+import { WishlistDrawer } from "@/components/wishlist-drawer";
+import { AuthDrawer } from "@/components/auth-drawer";
 import { categories } from "@/lib/products";
 
 // Quick category links for sticky nav
@@ -17,7 +29,11 @@ export function Navbar() {
   const [showCategoryBar, setShowCategoryBar] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const { totalItems, setIsCartOpen } = useCart();
+  const { wishlistItems } = useWishlist();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -90,6 +106,26 @@ export function Navbar() {
               className="p-2 text-[#f5f0e1]/70 hover:text-[#f5f0e1] transition-colors"
             >
               <Search className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => setIsWishlistOpen(true)}
+              className="relative p-2 text-[#f5f0e1]/70 hover:text-[#f5f0e1] transition-colors"
+            >
+              <Heart className="w-5 h-5" />
+              {wishlistItems.length > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-[#b8860b] rounded-full text-[10px] flex items-center justify-center text-[#0d1f14] font-bold">
+                  {wishlistItems.length > 99 ? "99+" : wishlistItems.length}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setIsAuthOpen(true)}
+              className="relative p-2 text-[#f5f0e1]/70 hover:text-[#f5f0e1] transition-colors"
+            >
+              <User className="w-5 h-5" />
+              {isAuthenticated && (
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full" />
+              )}
             </button>
             <button
               onClick={() => setIsCartOpen(true)}
@@ -292,6 +328,22 @@ export function Navbar() {
           </div>
         </div>
       )}
+
+      {/* Wishlist Drawer */}
+      <WishlistDrawer
+        isOpen={isWishlistOpen}
+        onClose={() => setIsWishlistOpen(false)}
+      />
+
+      {/* Auth Drawer */}
+      <AuthDrawer
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        onOpenWishlist={() => {
+          setIsAuthOpen(false);
+          setIsWishlistOpen(true);
+        }}
+      />
     </>
   );
 }

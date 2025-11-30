@@ -5,6 +5,7 @@ import "./globals.css";
 import { CartProvider } from "@/lib/cart-context";
 import { WishlistProvider } from "@/lib/wishlist-context";
 import { RecentlyViewedProvider } from "@/lib/recently-viewed-context";
+import { AuthProvider } from "@/lib/auth-context";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -93,7 +94,9 @@ export default function RootLayout({
       >
         <CartProvider>
           <WishlistProvider>
-            <RecentlyViewedProvider>{children}</RecentlyViewedProvider>
+            <RecentlyViewedProvider>
+              <AuthProvider>{children}</AuthProvider>
+            </RecentlyViewedProvider>
           </WishlistProvider>
         </CartProvider>
         {/* Subtle grain texture overlay */}
