@@ -39,7 +39,11 @@ export default function TrackOrderPage() {
           steps: [
             { title: "Order Placed", date: "Nov 28, 2025", completed: true },
             { title: "Order Confirmed", date: "Nov 28, 2025", completed: true },
-            { title: "Packed & Shipped", date: "Nov 29, 2025", completed: true },
+            {
+              title: "Packed & Shipped",
+              date: "Nov 29, 2025",
+              completed: true,
+            },
             { title: "In Transit", date: "Nov 30, 2025", completed: true },
             {
               title: "Out for Delivery",
@@ -205,7 +209,9 @@ export default function TrackOrderPage() {
               ) : (
                 <div className="bg-[#1a472a]/20 rounded-3xl border border-red-500/20 p-8 text-center">
                   <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-                  <h3 className="font-semibold text-lg mb-2">Order Not Found</h3>
+                  <h3 className="font-semibold text-lg mb-2">
+                    Order Not Found
+                  </h3>
                   <p className="text-[#f5f0e1]/60 text-sm mb-4">
                     We couldn&apos;t find an order matching those details.
                     Please check your order number and email.

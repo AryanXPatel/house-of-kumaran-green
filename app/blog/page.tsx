@@ -79,7 +79,14 @@ const blogPosts = [
   },
 ];
 
-const categories = ["All", "Recipes", "Health", "Story", "Culture", "Behind the Scenes"];
+const categories = [
+  "All",
+  "Recipes",
+  "Health",
+  "Story",
+  "Culture",
+  "Behind the Scenes",
+];
 
 export default function BlogPage() {
   return (

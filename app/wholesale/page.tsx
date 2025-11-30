@@ -149,7 +149,9 @@ export default function WholesalePage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg mb-2">{type.title}</h3>
-                  <p className="text-[#f5f0e1]/60 text-sm">{type.description}</p>
+                  <p className="text-[#f5f0e1]/60 text-sm">
+                    {type.description}
+                  </p>
                 </div>
               </div>
             ))}

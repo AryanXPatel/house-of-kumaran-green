@@ -22,9 +22,7 @@ export default function CookiesPage() {
           <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">
             Cookie Policy
           </h1>
-          <p className="text-[#f5f0e1]/60">
-            Last updated: January 2025
-          </p>
+          <p className="text-[#f5f0e1]/60">Last updated: January 2025</p>
         </div>
       </section>
 
@@ -34,10 +32,10 @@ export default function CookiesPage() {
           <div className="space-y-8">
             <div className="p-6 bg-[#1a472a]/20 rounded-2xl border border-[#b8860b]/10">
               <p className="text-[#f5f0e1]/70 mb-0">
-                This Cookie Policy explains how House of Kumaran uses cookies and
-                similar tracking technologies when you visit our website. By
-                continuing to use our website, you consent to the use of cookies as
-                described in this policy.
+                This Cookie Policy explains how House of Kumaran uses cookies
+                and similar tracking technologies when you visit our website. By
+                continuing to use our website, you consent to the use of cookies
+                as described in this policy.
               </p>
             </div>
 
@@ -46,12 +44,13 @@ export default function CookiesPage() {
                 What Are Cookies?
               </h2>
               <p className="text-[#f5f0e1]/70">
-                Cookies are small text files that are stored on your device (computer,
-                tablet, or mobile) when you visit a website. They help websites
-                remember your preferences, understand how you use the site, and
-                improve your overall experience. Cookies can be &quot;session&quot; cookies
-                (deleted when you close your browser) or &quot;persistent&quot; cookies
-                (remain until they expire or you delete them).
+                Cookies are small text files that are stored on your device
+                (computer, tablet, or mobile) when you visit a website. They
+                help websites remember your preferences, understand how you use
+                the site, and improve your overall experience. Cookies can be
+                &quot;session&quot; cookies (deleted when you close your
+                browser) or &quot;persistent&quot; cookies (remain until they
+                expire or you delete them).
               </p>
             </div>
 
@@ -64,8 +63,8 @@ export default function CookiesPage() {
                 1. Essential Cookies
               </h3>
               <p className="text-[#f5f0e1]/70 mb-2">
-                These cookies are necessary for the website to function properly. They
-                enable core functionality such as:
+                These cookies are necessary for the website to function
+                properly. They enable core functionality such as:
               </p>
               <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-2 ml-4 mb-4">
                 <li>Shopping cart functionality</li>
@@ -77,26 +76,50 @@ export default function CookiesPage() {
                 <table className="w-full text-sm text-[#f5f0e1]/70 border border-[#b8860b]/20">
                   <thead className="bg-[#b8860b]/10">
                     <tr>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Cookie</th>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Purpose</th>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Duration</th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Cookie
+                      </th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Purpose
+                      </th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Duration
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">cart_id</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Shopping cart identifier</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Session</td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        cart_id
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Shopping cart identifier
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Session
+                      </td>
                     </tr>
                     <tr>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">session_id</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">User session management</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Session</td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        session_id
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        User session management
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Session
+                      </td>
                     </tr>
                     <tr>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">cookie_consent</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Stores cookie preferences</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">1 year</td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        cookie_consent
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Stores cookie preferences
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        1 year
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -119,26 +142,50 @@ export default function CookiesPage() {
                 <table className="w-full text-sm text-[#f5f0e1]/70 border border-[#b8860b]/20">
                   <thead className="bg-[#b8860b]/10">
                     <tr>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Cookie</th>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Provider</th>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Duration</th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Cookie
+                      </th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Provider
+                      </th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Duration
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">_ga</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Google Analytics</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">2 years</td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        _ga
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Google Analytics
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        2 years
+                      </td>
                     </tr>
                     <tr>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">_gid</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Google Analytics</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">24 hours</td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        _gid
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Google Analytics
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        24 hours
+                      </td>
                     </tr>
                     <tr>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">_gat</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Google Analytics</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">1 minute</td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        _gat
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Google Analytics
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        1 minute
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -161,8 +208,8 @@ export default function CookiesPage() {
                 4. Marketing Cookies
               </h3>
               <p className="text-[#f5f0e1]/70 mb-2">
-                These cookies are used to deliver relevant advertisements and track
-                the effectiveness of our marketing campaigns:
+                These cookies are used to deliver relevant advertisements and
+                track the effectiveness of our marketing campaigns:
               </p>
               <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-2 ml-4 mb-4">
                 <li>Displaying relevant ads on other websites</li>
@@ -174,21 +221,39 @@ export default function CookiesPage() {
                 <table className="w-full text-sm text-[#f5f0e1]/70 border border-[#b8860b]/20">
                   <thead className="bg-[#b8860b]/10">
                     <tr>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Cookie</th>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Provider</th>
-                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">Duration</th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Cookie
+                      </th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Provider
+                      </th>
+                      <th className="px-4 py-2 text-left border-b border-[#b8860b]/20">
+                        Duration
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">_fbp</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Facebook Pixel</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">3 months</td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        _fbp
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Facebook Pixel
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        3 months
+                      </td>
                     </tr>
                     <tr>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">_gcl_au</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">Google Ads</td>
-                      <td className="px-4 py-2 border-b border-[#b8860b]/10">3 months</td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        _gcl_au
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        Google Ads
+                      </td>
+                      <td className="px-4 py-2 border-b border-[#b8860b]/10">
+                        3 months
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -200,21 +265,26 @@ export default function CookiesPage() {
                 Third-Party Cookies
               </h2>
               <p className="text-[#f5f0e1]/70 mb-4">
-                Some cookies are placed by third-party services that appear on our
-                pages. We do not control these cookies. Third parties include:
+                Some cookies are placed by third-party services that appear on
+                our pages. We do not control these cookies. Third parties
+                include:
               </p>
               <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-2 ml-4">
                 <li>
-                  <strong className="text-[#f5f0e1]">Google Analytics:</strong> Website analytics
+                  <strong className="text-[#f5f0e1]">Google Analytics:</strong>{" "}
+                  Website analytics
                 </li>
                 <li>
-                  <strong className="text-[#f5f0e1]">Facebook:</strong> Social sharing and advertising
+                  <strong className="text-[#f5f0e1]">Facebook:</strong> Social
+                  sharing and advertising
                 </li>
                 <li>
-                  <strong className="text-[#f5f0e1]">Instagram:</strong> Social media widgets
+                  <strong className="text-[#f5f0e1]">Instagram:</strong> Social
+                  media widgets
                 </li>
                 <li>
-                  <strong className="text-[#f5f0e1]">Payment Providers:</strong> Secure payment processing
+                  <strong className="text-[#f5f0e1]">Payment Providers:</strong>{" "}
+                  Secure payment processing
                 </li>
               </ul>
             </div>
@@ -231,8 +301,8 @@ export default function CookiesPage() {
                 Browser Settings
               </h3>
               <p className="text-[#f5f0e1]/70 mb-4">
-                Most browsers allow you to control cookies through their settings. You
-                can typically:
+                Most browsers allow you to control cookies through their
+                settings. You can typically:
               </p>
               <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-2 ml-4 mb-4">
                 <li>View cookies stored on your device</li>
@@ -242,7 +312,8 @@ export default function CookiesPage() {
                 <li>Clear all cookies when you close the browser</li>
               </ul>
               <p className="text-[#f5f0e1]/70 mb-4">
-                For more information, check your browser&apos;s help documentation:
+                For more information, check your browser&apos;s help
+                documentation:
               </p>
               <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-2 ml-4">
                 <li>
@@ -287,9 +358,7 @@ export default function CookiesPage() {
                 </li>
               </ul>
 
-              <h3 className="font-semibold text-lg mb-2 mt-6">
-                Opt-Out Tools
-              </h3>
+              <h3 className="font-semibold text-lg mb-2 mt-6">Opt-Out Tools</h3>
               <p className="text-[#f5f0e1]/70 mb-4">
                 You can opt out of targeted advertising through:
               </p>
@@ -361,7 +430,8 @@ export default function CookiesPage() {
                 Contact Us
               </h2>
               <p className="text-[#f5f0e1]/70 mb-4">
-                If you have questions about our use of cookies, please contact us:
+                If you have questions about our use of cookies, please contact
+                us:
               </p>
               <ul className="text-[#f5f0e1]/70 space-y-2">
                 <li>
@@ -374,13 +444,17 @@ export default function CookiesPage() {
                   </a>
                 </li>
                 <li>
-                  <strong className="text-[#f5f0e1]">Phone:</strong> +91 98765 43210
+                  <strong className="text-[#f5f0e1]">Phone:</strong> +91 98765
+                  43210
                 </li>
               </ul>
               <p className="text-[#f5f0e1]/70 mt-4">
-                For more information about how we handle your personal data, please
-                see our{" "}
-                <Link href="/privacy" className="text-[#b8860b] hover:underline">
+                For more information about how we handle your personal data,
+                please see our{" "}
+                <Link
+                  href="/privacy"
+                  className="text-[#b8860b] hover:underline"
+                >
                   Privacy Policy
                 </Link>
                 .
