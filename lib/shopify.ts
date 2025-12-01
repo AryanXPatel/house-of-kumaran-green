@@ -21,6 +21,29 @@ const endpoint = domain
   ? `https://${domain}/api/${apiVersion}/graphql.json`
   : "";
 
+// The custom checkout domain - this is where Shopify checkout will be hosted
+// Using shop.houseofkumaran.com as the Shopify-connected subdomain
+const CHECKOUT_DOMAIN =
+  process.env.NEXT_PUBLIC_SHOPIFY_CHECKOUT_DOMAIN || "shop.houseofkumaran.com";
+
+// Transform checkout URL to use the shop subdomain
+// This fixes the issue where Shopify returns URLs with www domain
+// that our Next.js app can't handle (e.g., /cart/c/ routes)
+function transformCheckoutUrl(checkoutUrl: string): string {
+  if (!checkoutUrl) return checkoutUrl;
+
+  try {
+    const url = new URL(checkoutUrl);
+    // Replace the hostname with our Shopify checkout subdomain
+    // This ensures checkout goes to shop.houseofkumaran.com (connected to Shopify)
+    // instead of www.houseofkumaran.com (connected to Vercel)
+    url.hostname = CHECKOUT_DOMAIN;
+    return url.toString();
+  } catch {
+    return checkoutUrl;
+  }
+}
+
 // Type definitions
 export interface ShopifyImage {
   url: string;
@@ -494,6 +517,14 @@ export async function getCollectionByHandle(
 
 // ===== CART MUTATIONS =====
 
+// Helper to transform cart checkout URL to use Shopify domain
+function transformCart(cart: ShopifyCart): ShopifyCart {
+  return {
+    ...cart,
+    checkoutUrl: transformCheckoutUrl(cart.checkoutUrl),
+  };
+}
+
 export async function createCart(): Promise<ShopifyCart> {
   const query = `
     ${CART_FRAGMENT}
@@ -521,7 +552,7 @@ export async function createCart(): Promise<ShopifyCart> {
     throw new Error(data.cartCreate.userErrors[0].message);
   }
 
-  return data.cartCreate.cart;
+  return transformCart(data.cartCreate.cart);
 }
 
 export async function getCart(cartId: string): Promise<ShopifyCart | null> {
@@ -539,7 +570,7 @@ export async function getCart(cartId: string): Promise<ShopifyCart | null> {
     variables: { cartId },
   });
 
-  return data.cart;
+  return data.cart ? transformCart(data.cart) : null;
 }
 
 export async function addToCart(
@@ -575,7 +606,7 @@ export async function addToCart(
     throw new Error(data.cartLinesAdd.userErrors[0].message);
   }
 
-  return data.cartLinesAdd.cart;
+  return transformCart(data.cartLinesAdd.cart);
 }
 
 export async function updateCartLines(
@@ -611,7 +642,7 @@ export async function updateCartLines(
     throw new Error(data.cartLinesUpdate.userErrors[0].message);
   }
 
-  return data.cartLinesUpdate.cart;
+  return transformCart(data.cartLinesUpdate.cart);
 }
 
 export async function removeFromCart(
@@ -647,7 +678,7 @@ export async function removeFromCart(
     throw new Error(data.cartLinesRemove.userErrors[0].message);
   }
 
-  return data.cartLinesRemove.cart;
+  return transformCart(data.cartLinesRemove.cart);
 }
 
 // ===== UTILITY FUNCTIONS =====
