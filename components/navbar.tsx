@@ -90,6 +90,8 @@ export function Navbar() {
                     ? "/about"
                     : item === "Collections"
                     ? "/collections"
+                    : item === "Contact"
+                    ? "/contact"
                     : `/#${item.toLowerCase().replace(" ", "-")}`
                 }
                 className="text-sm text-[#f5f0e1]/70 hover:text-[#f5f0e1] transition-colors tracking-wide uppercase"
@@ -240,6 +242,8 @@ export function Navbar() {
                   href={
                     item === "Our Story"
                       ? "/about"
+                      : item === "Contact"
+                      ? "/contact"
                       : `/#${item.toLowerCase().replace(" ", "-")}`
                   }
                   onClick={() => setIsMobileMenuOpen(false)}
