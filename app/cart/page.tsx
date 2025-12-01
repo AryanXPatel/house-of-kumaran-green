@@ -2,7 +2,7 @@
 
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { useCart } from "@/lib/cart-context";
+import { useShopifyCart } from "@/lib/shopify-cart-context";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -13,11 +13,20 @@ import {
   ShoppingBag,
   Truck,
   Shield,
+  Loader2,
 } from "lucide-react";
 
 export default function CartPage() {
-  const { items, removeFromCart, updateQuantity, totalPrice, totalItems } =
-    useCart();
+  const {
+    items,
+    removeFromCart,
+    updateQuantity,
+    totalPrice,
+    totalItems,
+    isLoading,
+    checkoutUrl,
+    goToCheckout,
+  } = useShopifyCart();
 
   const deliveryFee = totalPrice >= 500 ? 0 : 50;
   const finalTotal = totalPrice + deliveryFee;
@@ -190,13 +199,20 @@ export default function CartPage() {
                   </div>
 
                   {/* Checkout Button */}
-                  <Link
-                    href="/checkout"
-                    className="flex items-center justify-center gap-2 w-full py-4 bg-[#b8860b] hover:bg-[#d4a017] text-[#0d1f14] font-bold rounded-full transition-colors"
+                  <button
+                    onClick={() => goToCheckout()}
+                    disabled={isLoading || !checkoutUrl}
+                    className="flex items-center justify-center gap-2 w-full py-4 bg-[#b8860b] hover:bg-[#d4a017] disabled:opacity-50 text-[#0d1f14] font-bold rounded-full transition-colors"
                   >
-                    Proceed to Checkout
-                    <ArrowRight className="w-5 h-5" />
-                  </Link>
+                    {isLoading ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <>
+                        Proceed to Checkout
+                        <ArrowRight className="w-5 h-5" />
+                      </>
+                    )}
+                  </button>
 
                   {/* Trust Badges */}
                   <div className="mt-6 pt-6 border-t border-[#b8860b]/10 space-y-3">

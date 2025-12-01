@@ -2,7 +2,7 @@ import type React from "react";
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
-import { CartProvider } from "@/lib/cart-context";
+import { ShopifyCartProvider } from "@/lib/shopify-cart-context";
 import { WishlistProvider } from "@/lib/wishlist-context";
 import { RecentlyViewedProvider } from "@/lib/recently-viewed-context";
 import { AuthProvider } from "@/lib/auth-context";
@@ -53,7 +53,10 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "House of Kumaran | Authentic South Indian Foods | Made in Madras",
+  title: {
+    default: "House of Kumaran | Authentic South Indian Foods | Made in Madras",
+    template: "%s | House of Kumaran",
+  },
   description:
     "Experience the authentic taste of South India with House of Kumaran. Handcrafted podis, pickles, sweets, savouries & more. 100% natural, zero preservatives. Pan-India delivery.",
   keywords: [
@@ -67,11 +70,37 @@ export const metadata: Metadata = {
     "zero preservatives",
     "House of Kumaran",
   ],
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://houseofkumaran.com"
+  ),
   openGraph: {
     title: "House of Kumaran | Authentic South Indian Foods",
     description:
       "From the kitchens of Madras to your table. Handcrafted podis, pickles, sweets & savouries.",
     type: "website",
+    locale: "en_US",
+    siteName: "House of Kumaran",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "House of Kumaran | Authentic South Indian Foods",
+    description:
+      "From the kitchens of Madras to your table. Handcrafted podis, pickles, sweets & savouries.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    // Add your verification codes here when available
+    // google: "your-google-verification-code",
   },
 };
 
@@ -92,13 +121,13 @@ export default function RootLayout({
         className={`${playfair.variable} ${inter.variable} ${ibmPlexMono.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
-        <CartProvider>
+        <ShopifyCartProvider>
           <WishlistProvider>
             <RecentlyViewedProvider>
               <AuthProvider>{children}</AuthProvider>
             </RecentlyViewedProvider>
           </WishlistProvider>
-        </CartProvider>
+        </ShopifyCartProvider>
         {/* Subtle grain texture overlay */}
         <div className="grain-overlay" aria-hidden="true" />
         <Analytics />

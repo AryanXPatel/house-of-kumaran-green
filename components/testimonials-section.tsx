@@ -2,7 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Star,
+  Quote,
+  ChevronLeft,
+  ChevronRight,
+  Users,
+  ThumbsUp,
+  Sparkles,
+} from "lucide-react";
 
 const testimonials = [
   {
@@ -138,16 +146,34 @@ export function TestimonialsSection() {
               {/* Stats */}
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { value: "4.9", label: "Average Rating", icon: "⭐" },
-                  { value: "10K+", label: "Happy Customers", icon: "😊" },
-                  { value: "98%", label: "Would Recommend", icon: "👍" },
-                  { value: "5K+", label: "5-Star Reviews", icon: "🌟" },
+                  {
+                    value: "4.9",
+                    label: "Average Rating",
+                    icon: <Star className="w-6 h-6 text-[#b8860b]" />,
+                  },
+                  {
+                    value: "10K+",
+                    label: "Happy Customers",
+                    icon: <Users className="w-6 h-6 text-[#b8860b]" />,
+                  },
+                  {
+                    value: "98%",
+                    label: "Would Recommend",
+                    icon: <ThumbsUp className="w-6 h-6 text-[#b8860b]" />,
+                  },
+                  {
+                    value: "5K+",
+                    label: "5-Star Reviews",
+                    icon: <Sparkles className="w-6 h-6 text-[#b8860b]" />,
+                  },
                 ].map((stat, i) => (
                   <div
                     key={i}
                     className="p-5 bg-[#1a472a]/30 rounded-xl border border-[#2a4a35] text-center"
                   >
-                    <span className="text-2xl mb-2 block">{stat.icon}</span>
+                    <span className="flex justify-center mb-2">
+                      {stat.icon}
+                    </span>
                     <p className="text-2xl font-serif font-bold text-[#b8860b]">
                       {stat.value}
                     </p>

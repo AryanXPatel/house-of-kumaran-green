@@ -266,7 +266,7 @@ export default function FAQsPage() {
               Contact Support
             </Link>
             <a
-              href="https://wa.me/919876543210"
+              href="https://wa.me/918667262327"
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-3 border border-[#b8860b]/50 text-[#f5f0e1] rounded-full hover:border-[#b8860b] transition-colors"

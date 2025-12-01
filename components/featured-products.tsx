@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Star, ShoppingBag, ArrowRight, Gift } from "lucide-react";
-import { useCart } from "@/lib/cart-context";
+import { useShopifyCart } from "@/lib/shopify-cart-context";
 import { Product } from "@/lib/types";
 
 // Loading skeleton
@@ -28,7 +28,7 @@ function ProductSkeleton() {
 }
 
 export function FeaturedProducts() {
-  const { addToCart, setIsCartOpen } = useCart();
+  const { addToCart, setIsCartOpen } = useShopifyCart();
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 

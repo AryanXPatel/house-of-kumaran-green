@@ -1,12 +1,25 @@
 // Shopify Storefront API Client
 // Handles all GraphQL queries to the Shopify Storefront API
 
-const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN!;
+const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || "";
 const storefrontAccessToken =
-  process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN!;
+  process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN || "";
 const apiVersion = process.env.NEXT_PUBLIC_SHOPIFY_API_VERSION || "2024-01";
 
-const endpoint = `https://${domain}/api/${apiVersion}/graphql.json`;
+// Validate environment variables (only error when actually making requests)
+function validateEnv() {
+  if (!domain || !storefrontAccessToken) {
+    console.warn(
+      "Shopify environment variables not configured. Using fallback data."
+    );
+    return false;
+  }
+  return true;
+}
+
+const endpoint = domain
+  ? `https://${domain}/api/${apiVersion}/graphql.json`
+  : "";
 
 // Type definitions
 export interface ShopifyImage {
@@ -122,6 +135,11 @@ async function shopifyFetch<T>({
   query: string;
   variables?: Record<string, unknown>;
 }): Promise<T> {
+  // Check if Shopify is configured
+  if (!validateEnv()) {
+    throw new Error("Shopify not configured");
+  }
+
   try {
     const response = await fetch(endpoint, {
       method: "POST",

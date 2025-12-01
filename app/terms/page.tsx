@@ -332,12 +332,13 @@ export default function TermsPage() {
                   </a>
                 </li>
                 <li>
-                  <strong className="text-[#f5f0e1]">Phone:</strong> +91 98765
-                  43210
+                  <strong className="text-[#f5f0e1]">Phone:</strong> +91 86672
+                  62327
                 </li>
                 <li>
-                  <strong className="text-[#f5f0e1]">Address:</strong> 123 Spice
-                  Street, Chennai, Tamil Nadu 600001, India
+                  <strong className="text-[#f5f0e1]">Address:</strong> 3,
+                  Kasthuri 2nd Street, New Laxmipuram, Chennai, Tamil Nadu -
+                  600099, India
                 </li>
               </ul>
             </div>

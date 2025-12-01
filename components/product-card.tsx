@@ -6,7 +6,7 @@ import type { Product } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
 import { Star, ShoppingBag, Heart } from "lucide-react";
-import { useCart } from "@/lib/cart-context";
+import { useShopifyCart } from "@/lib/shopify-cart-context";
 import { useWishlist } from "@/lib/wishlist-context";
 import { useState } from "react";
 
@@ -16,7 +16,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const { addToCart } = useCart();
+  const { addToCart } = useShopifyCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const [isAdding, setIsAdding] = useState(false);
 

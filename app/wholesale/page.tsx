@@ -327,8 +327,8 @@ export default function WholesalePage() {
           </h2>
           <p className="text-[#0d1f14]/70 mb-6">
             Call our wholesale team directly at{" "}
-            <a href="tel:+919876543210" className="font-semibold underline">
-              +91 98765 43210
+            <a href="tel:+919337054587" className="font-semibold underline">
+              +91 93370 54587
             </a>
           </p>
           <p className="text-[#0d1f14]/60 text-sm">

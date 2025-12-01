@@ -82,10 +82,10 @@ export default function ContactPage() {
                       Mon-Sat, 9 AM - 6 PM IST
                     </p>
                     <a
-                      href="tel:+919876543210"
+                      href="tel:+918667262327"
                       className="text-[#b8860b] hover:underline"
                     >
-                      +91 98765 43210
+                      +91 86672 62327
                     </a>
                   </div>
                 </div>
@@ -100,7 +100,7 @@ export default function ContactPage() {
                       Quick responses via WhatsApp
                     </p>
                     <a
-                      href="https://wa.me/919876543210"
+                      href="https://wa.me/918667262327"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[#b8860b] hover:underline"
@@ -119,9 +119,11 @@ export default function ContactPage() {
                     <p className="text-[#f5f0e1]/60 text-sm">
                       House of Kumaran
                       <br />
-                      123 Anna Nagar
+                      3, Kasthuri 2nd Street
                       <br />
-                      Chennai, Tamil Nadu 600040
+                      New Laxmipuram
+                      <br />
+                      Chennai, Tamil Nadu - 600099
                       <br />
                       India
                     </p>

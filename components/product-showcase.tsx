@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Star, ShoppingBag, Heart, ArrowLeft, ArrowRight } from "lucide-react";
-import { useCart } from "@/lib/cart-context";
+import { useShopifyCart } from "@/lib/shopify-cart-context";
 import { Product } from "@/lib/types";
 
 // Loading skeleton
@@ -29,33 +29,38 @@ function ProductSkeleton() {
 
 export function ProductShowcase() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { addToCart, setIsCartOpen } = useCart();
+  const { addToCart, setIsCartOpen } = useShopifyCart();
   const [showcaseProducts, setShowcaseProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const { getNewArrivals, getProducts } = await import(
+        const { getNewAndPopular, getProducts } = await import(
           "@/lib/product-service"
         );
-        const newArrivals = await getNewArrivals();
-        const allProducts = await getProducts();
 
-        // Combine new arrivals with other products
-        const otherProducts = allProducts.filter(
-          (p) => !p.isNew && !p.isBestseller
-        );
-        const combined = [
-          ...newArrivals.slice(0, 3),
-          ...otherProducts.slice(0, 5),
-        ].slice(0, 8);
+        // First try to get from Shopify "New & Popular" collection
+        let newPopularProducts = await getNewAndPopular();
 
-        // If not enough products, fill with any available
-        if (combined.length < 4) {
-          setShowcaseProducts(allProducts.slice(0, 8));
+        // If we have products from the collection, use them
+        if (newPopularProducts.length > 0) {
+          setShowcaseProducts(newPopularProducts.slice(0, 8));
         } else {
-          setShowcaseProducts(combined);
+          // Fallback: mix new arrivals with other products
+          const allProducts = await getProducts();
+          const newArrivals = allProducts.filter((p) => p.isNew);
+          const otherProducts = allProducts.filter(
+            (p) => !p.isNew && !p.isBestseller
+          );
+          const combined = [
+            ...newArrivals.slice(0, 3),
+            ...otherProducts.slice(0, 5),
+          ].slice(0, 8);
+
+          setShowcaseProducts(
+            combined.length >= 4 ? combined : allProducts.slice(0, 8)
+          );
         }
       } catch (error) {
         console.error("Error fetching showcase products:", error);

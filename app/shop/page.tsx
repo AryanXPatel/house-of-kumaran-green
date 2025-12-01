@@ -6,8 +6,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { ProductCard } from "@/components/product-card";
 import { RecentlyViewed } from "@/components/recently-viewed";
-import { categories } from "@/lib/products";
-import { Product } from "@/lib/types";
+import { Product, CategoryInfo } from "@/lib/types";
 import Link from "next/link";
 import {
   Search,
@@ -125,25 +124,34 @@ function ShopContent() {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<CategoryInfo[]>([]);
 
-  // Fetch products from Shopify/static
+  // Fetch products and categories from Shopify/static
   useEffect(() => {
-    async function fetchProducts() {
+    async function fetchData() {
       setIsLoading(true);
       try {
-        const { getProducts } = await import("@/lib/product-service");
-        const fetchedProducts = await getProducts();
+        const { getProducts, getCategoriesWithCounts } = await import(
+          "@/lib/product-service"
+        );
+        const [fetchedProducts, fetchedCategories] = await Promise.all([
+          getProducts(),
+          getCategoriesWithCounts(),
+        ]);
         setProducts(fetchedProducts);
+        setCategories(fetchedCategories);
       } catch (error) {
-        console.error("Error fetching products:", error);
-        // Fallback to static products
-        const { products: staticProducts } = await import("@/lib/products");
+        console.error("Error fetching data:", error);
+        // Fallback to static data
+        const { products: staticProducts, categories: staticCategories } =
+          await import("@/lib/products");
         setProducts(staticProducts);
+        setCategories(staticCategories);
       } finally {
         setIsLoading(false);
       }
     }
-    fetchProducts();
+    fetchData();
   }, []);
 
   // Sync state with URL params on mount and URL changes

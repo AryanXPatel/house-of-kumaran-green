@@ -444,8 +444,8 @@ export default function CookiesPage() {
                   </a>
                 </li>
                 <li>
-                  <strong className="text-[#f5f0e1]">Phone:</strong> +91 98765
-                  43210
+                  <strong className="text-[#f5f0e1]">Phone:</strong> +91 86672
+                  62327
                 </li>
               </ul>
               <p className="text-[#f5f0e1]/70 mt-4">

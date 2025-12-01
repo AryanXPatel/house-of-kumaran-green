@@ -13,7 +13,7 @@ import {
   User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/lib/cart-context";
+import { useShopifyCart } from "@/lib/shopify-cart-context";
 import { useWishlist } from "@/lib/wishlist-context";
 import { useAuth } from "@/lib/auth-context";
 import { CartDrawer } from "@/components/cart-drawer";
@@ -31,7 +31,7 @@ export function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const { totalItems, setIsCartOpen } = useCart();
+  const { totalItems, setIsCartOpen } = useShopifyCart();
   const { wishlistItems } = useWishlist();
   const { isAuthenticated } = useAuth();
 

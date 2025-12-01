@@ -15,7 +15,7 @@ import {
   Check,
   Leaf,
 } from "lucide-react";
-import { useCart } from "@/lib/cart-context";
+import { useShopifyCart } from "@/lib/shopify-cart-context";
 import { useWishlist } from "@/lib/wishlist-context";
 import { useRecentlyViewed } from "@/lib/recently-viewed-context";
 
@@ -27,7 +27,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
-  const { addToCart } = useCart();
+  const { addToCart } = useShopifyCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { addToRecentlyViewed } = useRecentlyViewed();
 

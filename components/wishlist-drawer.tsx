@@ -4,7 +4,7 @@ import { X, Heart, ShoppingBag, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useWishlist } from "@/lib/wishlist-context";
-import { useCart } from "@/lib/cart-context";
+import { useShopifyCart } from "@/lib/shopify-cart-context";
 
 interface WishlistDrawerProps {
   isOpen: boolean;
@@ -13,7 +13,7 @@ interface WishlistDrawerProps {
 
 export function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps) {
   const { wishlistItems, removeFromWishlist, clearWishlist } = useWishlist();
-  const { addToCart, setIsCartOpen } = useCart();
+  const { addToCart, setIsCartOpen } = useShopifyCart();
 
   const handleMoveToCart = (item: (typeof wishlistItems)[0]) => {
     addToCart(item);

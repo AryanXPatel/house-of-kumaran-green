@@ -17,7 +17,6 @@ const footerLinks = {
     { name: "Our Story", href: "/about" },
     { name: "Blog", href: "/blog" },
     { name: "Wholesale", href: "/wholesale" },
-    { name: "Careers", href: "/careers" },
   ],
   support: [
     { name: "Contact Us", href: "/contact" },
@@ -29,10 +28,26 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { icon: Instagram, href: "https://instagram.com", label: "Instagram" },
-  { icon: Facebook, href: "https://facebook.com", label: "Facebook" },
-  { icon: Youtube, href: "https://youtube.com", label: "YouTube" },
-  { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
+  {
+    icon: Instagram,
+    href: "https://instagram.com/houseofkumaran",
+    label: "Instagram",
+  },
+  {
+    icon: Facebook,
+    href: "https://facebook.com/houseofkumaran",
+    label: "Facebook",
+  },
+  {
+    icon: Youtube,
+    href: "https://youtube.com/@houseofkumaran",
+    label: "YouTube",
+  },
+  {
+    icon: Twitter,
+    href: "https://twitter.com/houseofkumaran",
+    label: "Twitter",
+  },
 ];
 
 export function Footer() {
@@ -110,9 +125,10 @@ export function Footer() {
 
             {/* Contact */}
             <div className="space-y-2 text-[#f5f0e1]/50 text-sm">
-              <p>Chennai, Tamil Nadu, India</p>
+              <p>3, Kasthuri 2nd Street, New Laxmipuram</p>
+              <p>Chennai, Tamil Nadu - 600099</p>
               <p>hello@houseofkumaran.com</p>
-              <p>+91 98765 43210</p>
+              <p>+91 86672 62327</p>
             </div>
           </div>
 

@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { categories } from "@/lib/products";
+import { getCategoriesWithCounts } from "@/lib/product-service";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ChevronRight } from "lucide-react";
@@ -11,7 +11,13 @@ export const metadata = {
     "Explore our curated collections of authentic South Indian foods - podis, pickles, sweets, savouries, and more.",
 };
 
-export default function CollectionsPage() {
+// Revalidate every 60 seconds to keep counts fresh
+export const revalidate = 60;
+
+export default async function CollectionsPage() {
+  // Fetch categories with dynamic product counts
+  const categories = await getCategoriesWithCounts();
+
   return (
     <main className="min-h-screen bg-[#0d1f14] text-[#f5f0e1]">
       <Navbar />

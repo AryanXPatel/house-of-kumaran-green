@@ -334,3 +334,27 @@ export async function getPriceRange(): Promise<{ min: number; max: number }> {
     max: Math.max(...prices),
   };
 }
+
+// Get dynamic category counts from actual products
+export async function getCategoriesWithCounts(): Promise<CategoryInfo[]> {
+  const products = await getProducts();
+
+  // Count products per category
+  const categoryCounts: Record<string, number> = {};
+  products.forEach((product) => {
+    const cat = product.category;
+    categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+  });
+
+  // Update static categories with dynamic counts
+  return staticCategories.map((category) => ({
+    ...category,
+    productCount: categoryCounts[category.slug] || 0,
+  }));
+}
+
+// Get total product count
+export async function getTotalProductCount(): Promise<number> {
+  const products = await getProducts();
+  return products.length;
+}

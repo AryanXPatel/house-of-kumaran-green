@@ -6,6 +6,7 @@ import { getProductBySlug, getRelatedProducts } from "@/lib/product-service";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import type { Metadata } from "next";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -15,7 +16,9 @@ interface ProductPageProps {
 export const dynamic = "force-dynamic";
 export const revalidate = 60; // Revalidate every 60 seconds
 
-export async function generateMetadata({ params }: ProductPageProps) {
+export async function generateMetadata({
+  params,
+}: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
 
@@ -23,9 +26,52 @@ export async function generateMetadata({ params }: ProductPageProps) {
     return { title: "Product Not Found" };
   }
 
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://houseofkumaran.com";
+
   return {
     title: `${product.name} | House of Kumaran`,
-    description: product.description,
+    description:
+      product.description ||
+      `Shop ${product.name} - Premium quality from House of Kumaran`,
+    keywords: [
+      product.name,
+      product.category,
+      "House of Kumaran",
+      "authentic Indian products",
+      "premium quality",
+    ],
+    openGraph: {
+      title: `${product.name} | House of Kumaran`,
+      description:
+        product.description ||
+        `Shop ${product.name} - Premium quality from House of Kumaran`,
+      url: `${baseUrl}/product/${slug}`,
+      siteName: "House of Kumaran",
+      images: product.images?.[0]
+        ? [
+            {
+              url: product.images[0],
+              width: 800,
+              height: 800,
+              alt: product.name,
+            },
+          ]
+        : [],
+      locale: "en_US",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${product.name} | House of Kumaran`,
+      description:
+        product.description ||
+        `Shop ${product.name} - Premium quality from House of Kumaran`,
+      images: product.images?.[0] ? [product.images[0]] : [],
+    },
+    alternates: {
+      canonical: `${baseUrl}/product/${slug}`,
+    },
   };
 }
 
@@ -38,9 +84,44 @@ export default async function ProductPage({ params }: ProductPageProps) {
   }
 
   const relatedProducts = await getRelatedProducts(slug, product.category);
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://houseofkumaran.com";
+
+  // JSON-LD Structured Data for Product
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    image: product.images || [],
+    sku: product.id,
+    brand: {
+      "@type": "Brand",
+      name: "House of Kumaran",
+    },
+    offers: {
+      "@type": "Offer",
+      url: `${baseUrl}/product/${slug}`,
+      priceCurrency: "INR",
+      price: product.price,
+      availability: product.inStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      seller: {
+        "@type": "Organization",
+        name: "House of Kumaran",
+      },
+    },
+  };
 
   return (
     <main className="min-h-screen bg-[#0d1f14] text-[#f5f0e1]">
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <Navbar />
 
       {/* Breadcrumb */}

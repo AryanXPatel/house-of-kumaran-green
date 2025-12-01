@@ -1,12 +1,17 @@
 "use client";
 
-import { useCart } from "@/lib/cart-context";
+import { useShopifyCart } from "@/lib/shopify-cart-context";
 import Image from "next/image";
 import Link from "next/link";
-import { X, Minus, Plus, ShoppingBag, Trash2, ArrowRight } from "lucide-react";
-
-// Feature flag for Shopify mode
-const USE_SHOPIFY = process.env.NEXT_PUBLIC_USE_SHOPIFY === "true";
+import {
+  X,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Trash2,
+  ArrowRight,
+  Loader2,
+} from "lucide-react";
 
 export function CartDrawer() {
   const {
@@ -17,17 +22,26 @@ export function CartDrawer() {
     updateQuantity,
     totalPrice,
     totalItems,
-  } = useCart();
-
-  // Get checkout URL from context if using Shopify
-  // For now we'll use the local checkout page, but the integration is ready
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const _checkoutUrl = USE_SHOPIFY ? "/checkout" : "/checkout";
+    isLoading,
+    checkoutUrl,
+    goToCheckout,
+  } = useShopifyCart();
 
   if (!isCartOpen) return null;
 
   const deliveryFee = totalPrice >= 500 ? 0 : 50;
   const finalTotal = totalPrice + deliveryFee;
+
+  const handleCheckout = () => {
+    // If Shopify checkout URL is available, use it
+    if (checkoutUrl) {
+      goToCheckout();
+    } else {
+      // Fallback to local checkout page
+      setIsCartOpen(false);
+      window.location.href = "/checkout";
+    }
+  };
 
   return (
     <>
@@ -189,14 +203,20 @@ export function CartDrawer() {
             </div>
 
             {/* Checkout Button */}
-            <Link
-              href="/checkout"
-              onClick={() => setIsCartOpen(false)}
-              className="flex items-center justify-center gap-2 w-full py-4 bg-[#b8860b] hover:bg-[#d4a017] text-[#0d1f14] font-bold rounded-full transition-colors"
+            <button
+              onClick={handleCheckout}
+              disabled={isLoading}
+              className="flex items-center justify-center gap-2 w-full py-4 bg-[#b8860b] hover:bg-[#d4a017] disabled:opacity-50 text-[#0d1f14] font-bold rounded-full transition-colors"
             >
-              Proceed to Checkout
-              <ArrowRight className="w-5 h-5" />
-            </Link>
+              {isLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>
+                  Proceed to Checkout
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              )}
+            </button>
 
             <Link
               href="/shop"
