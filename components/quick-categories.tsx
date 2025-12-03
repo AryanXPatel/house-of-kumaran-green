@@ -3,31 +3,8 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowRight,
-  Flame,
-  Apple,
-  Cookie,
-  Croissant,
-  Sun,
-  Zap,
-  Leaf,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { CategoryInfo } from "@/lib/types";
-
-// Category icons using Lucide
-const categoryIcons: Record<
-  string,
-  React.ComponentType<{ className?: string }>
-> = {
-  podis: Flame,
-  pickles: Apple,
-  sweets: Cookie,
-  savouries: Croissant,
-  vadams: Sun,
-  "ready-to-mix": Zap,
-  vathals: Leaf,
-};
 
 export function QuickCategories() {
   const [categories, setCategories] = useState<CategoryInfo[]>([]);
@@ -108,14 +85,6 @@ export function QuickCategories() {
                         className="object-cover opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-500"
                       />
                       <div className="absolute inset-0 bg-linear-to-t from-[#0d1f14] via-[#0d1f14]/60 to-transparent" />
-
-                      {/* Category Icon */}
-                      <div className="absolute top-3 right-3">
-                        {(() => {
-                          const Icon = categoryIcons[category.slug] || Flame;
-                          return <Icon className="w-5 h-5 text-[#b8860b]" />;
-                        })()}
-                      </div>
                     </div>
 
                     {/* Content */}

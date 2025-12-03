@@ -56,7 +56,7 @@ export function Navbar() {
         <nav className="mx-auto flex h-16 md:h-20 max-w-[1400px] items-center justify-between px-4 md:px-6 lg:px-10">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 md:gap-3 group">
-            <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-[#b8860b]/50 group-hover:border-[#b8860b] transition-colors">
+            <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden border-2 border-[#b8860b]/50 group-hover:border-[#b8860b] transition-colors">
               <Image
                 src="/images/houseofkumaranlogo.png"
                 alt="House Of Kumaran"
@@ -66,7 +66,7 @@ export function Navbar() {
             </div>
             <div className="hidden sm:block">
               <p className="text-[10px] tracking-[0.3em] text-[#b8860b] uppercase">
-                Made in Madras
+                House of
               </p>
               <h1 className="text-base md:text-lg font-serif font-bold text-[#f5f0e1] tracking-wide">
                 KUMARAN

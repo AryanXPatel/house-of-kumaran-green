@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Star, ShoppingBag, ArrowRight, Gift } from "lucide-react";
+import { Star, ShoppingBag, ArrowRight, Gift, Heart } from "lucide-react";
 import { useShopifyCart } from "@/lib/shopify-cart-context";
+import { useWishlist } from "@/lib/wishlist-context";
 import { Product } from "@/lib/types";
 
 // Loading skeleton
@@ -29,6 +30,7 @@ function ProductSkeleton() {
 
 export function FeaturedProducts() {
   const { addToCart, setIsCartOpen } = useShopifyCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -119,6 +121,28 @@ export function FeaturedProducts() {
                           </span>
                         )}
                       </div>
+
+                      {/* Wishlist button */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleWishlist(product);
+                        }}
+                        className={`absolute top-2 right-2 z-10 w-7 h-7 rounded-full backdrop-blur-sm flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity ${
+                          isInWishlist(product.id)
+                            ? "bg-red-500/20 hover:bg-red-500/30"
+                            : "bg-[#0d1f14]/50 hover:bg-[#0d1f14]/70"
+                        }`}
+                      >
+                        <Heart
+                          className={`w-3.5 h-3.5 ${
+                            isInWishlist(product.id)
+                              ? "fill-red-500 text-red-500"
+                              : "text-[#f5f0e1]"
+                          }`}
+                        />
+                      </button>
 
                       {/* Image */}
                       <div className="relative aspect-square overflow-hidden">

@@ -287,27 +287,29 @@ function ShopContent() {
     <main className="min-h-screen bg-[#0d1f14] text-[#f5f0e1]">
       <Navbar />
 
-      {/* Shipping Info Banner */}
-      <div className="bg-gradient-to-r from-[#1a472a] via-[#0d1f14] to-[#1a472a] border-b border-[#b8860b]/10">
-        <div className="max-w-[1400px] mx-auto px-6 py-3">
-          <div className="flex items-center justify-center gap-6 text-sm">
-            <div className="flex items-center gap-2 text-[#b8860b]">
-              <Truck className="w-4 h-4" />
-              <span className="font-medium">FREE Shipping</span>
-              <span className="text-[#f5f0e1]/60">on orders ₹500+</span>
-            </div>
-            <div className="hidden sm:block w-px h-4 bg-[#b8860b]/30" />
-            <div className="hidden sm:flex items-center gap-2 text-[#f5f0e1]/60">
-              <span>Standard Delivery:</span>
-              <span className="text-[#f5f0e1] font-medium">₹80</span>
-              <span>(orders below ₹500)</span>
+      {/* Shipping Info Banner - positioned after navbar space */}
+      <div className="pt-16 md:pt-20">
+        <div className="bg-gradient-to-r from-[#1a472a] via-[#0d1f14] to-[#1a472a] border-b border-[#b8860b]/10">
+          <div className="max-w-[1400px] mx-auto px-6 py-3">
+            <div className="flex items-center justify-center gap-6 text-sm">
+              <div className="flex items-center gap-2 text-[#b8860b]">
+                <Truck className="w-4 h-4" />
+                <span className="font-medium">FREE Shipping</span>
+                <span className="text-[#f5f0e1]/60">on orders ₹500+</span>
+              </div>
+              <div className="hidden sm:block w-px h-4 bg-[#b8860b]/30" />
+              <div className="hidden sm:flex items-center gap-2 text-[#f5f0e1]/60">
+                <span>Standard Delivery:</span>
+                <span className="text-[#f5f0e1] font-medium">₹80</span>
+                <span>(orders below ₹500)</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Header */}
-      <section className="pt-28 pb-6 px-6 border-b border-[#b8860b]/10">
+      <section className="pt-6 pb-6 px-6 border-b border-[#b8860b]/10">
         <div className="max-w-[1400px] mx-auto">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm mb-6">

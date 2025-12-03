@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star, ShoppingBag, Heart, ArrowLeft, ArrowRight } from "lucide-react";
 import { useShopifyCart } from "@/lib/shopify-cart-context";
+import { useWishlist } from "@/lib/wishlist-context";
 import { Product } from "@/lib/types";
 
 // Loading skeleton
@@ -30,6 +31,7 @@ function ProductSkeleton() {
 export function ProductShowcase() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const { addToCart, setIsCartOpen } = useShopifyCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const [showcaseProducts, setShowcaseProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -179,10 +181,24 @@ export function ProductShowcase() {
 
                       {/* Wishlist button */}
                       <button
-                        onClick={(e) => e.preventDefault()}
-                        className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleWishlist(product);
+                        }}
+                        className={`absolute top-3 right-3 z-10 w-8 h-8 rounded-full backdrop-blur-sm flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity ${
+                          isInWishlist(product.id)
+                            ? "bg-red-500/20 hover:bg-red-500/30"
+                            : "bg-white/80 hover:bg-white"
+                        }`}
                       >
-                        <Heart className="w-4 h-4 text-[#1a472a]" />
+                        <Heart
+                          className={`w-4 h-4 ${
+                            isInWishlist(product.id)
+                              ? "fill-red-500 text-red-500"
+                              : "text-[#1a472a]"
+                          }`}
+                        />
                       </button>
 
                       {/* Image */}
