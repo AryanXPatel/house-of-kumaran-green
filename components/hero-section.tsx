@@ -29,13 +29,27 @@ export function HeroSection() {
         </svg>
       </div>
 
+      {/* Kumaran Family Banner */}
+      <div className="absolute top-20 left-0 right-0 z-20 bg-gradient-to-r from-[#b8860b] via-[#d4a017] to-[#b8860b] py-2.5 px-4 overflow-hidden">
+        <div className="flex items-center justify-center gap-2">
+          <Leaf className="w-4 h-4 text-[#0d1f14]" />
+          <span className="text-[#0d1f14] text-sm md:text-base font-bold">
+            Join Kumaran Family — Get 10% Off Forever!
+          </span>
+          <span className="hidden sm:inline text-[#0d1f14]/80 text-sm">
+            | Free gift hamper on first order
+          </span>
+          <Leaf className="w-4 h-4 text-[#0d1f14]" />
+        </div>
+      </div>
+
       {/* Main content */}
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 text-center">
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 text-center pt-8">
         {/* Tagline */}
         <div className="mb-6 inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-[#2a4a35] bg-[#0d1f14]/50 backdrop-blur-sm">
           <span className="w-2 h-2 rounded-full bg-[#b8860b] animate-pulse" />
           <span className="text-[#f5f0e1]/70 text-sm tracking-[0.15em] uppercase">
-            Est. 2021 in Chennai
+            Est. 2021
           </span>
         </div>
 
@@ -69,21 +83,30 @@ export function HeroSection() {
         </div>
 
         {/* Quick category links */}
-        <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+        <div className="flex flex-wrap items-center justify-center gap-2.5 md:gap-3.5 mb-10">
           {[
             { name: "Podis", slug: "podis" },
-            { name: "Pickles", slug: "pickles" },
+            { name: "Pickles & Thokku", slug: "pickles" },
             { name: "Sweets", slug: "sweets" },
             { name: "Savouries", slug: "savouries" },
+            { name: "Vadams & Appalam", slug: "vadams" },
+            { name: "Ready-to-Mix", slug: "ready-to-mix" },
           ].map((cat) => (
             <Link
               key={cat.slug}
               href={`/shop?category=${cat.slug}`}
-              className="px-4 py-2 text-sm text-[#f5f0e1]/60 hover:text-[#b8860b] border border-[#2a4a35] hover:border-[#b8860b]/50 rounded-full transition-all duration-200"
+              className="px-5 md:px-6 py-2.5 md:py-3 text-sm md:text-base lg:text-lg font-medium text-[#f5f0e1]/70 hover:text-[#b8860b] border border-[#2a4a35] hover:border-[#b8860b]/50 hover:bg-[#b8860b]/10 rounded-full transition-all duration-200"
             >
               {cat.name}
             </Link>
           ))}
+          <Link
+            href="/shop"
+            className="px-5 md:px-6 py-2.5 md:py-3 text-sm md:text-base lg:text-lg font-semibold text-[#b8860b] hover:text-[#0d1f14] border border-[#b8860b] hover:bg-[#b8860b] rounded-full transition-all duration-200 flex items-center gap-2"
+          >
+            All Products
+            <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
+          </Link>
         </div>
 
         {/* Trust badges - Compact */}

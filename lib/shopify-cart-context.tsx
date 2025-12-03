@@ -33,6 +33,11 @@ interface ShopifyCartContextType {
   isLoading: boolean;
   checkoutUrl: string | null;
   goToCheckout: () => void;
+  syncCartWithCustomer: (
+    customerId: string,
+    accessToken: string
+  ) => Promise<void>;
+  saveCartToCustomer: (customerId: string) => Promise<void>;
 }
 
 const ShopifyCartContext = createContext<ShopifyCartContextType | undefined>(
@@ -329,6 +334,93 @@ export function ShopifyCartProvider({ children }: { children: ReactNode }) {
     }
   }, [checkoutUrl]);
 
+  // Sync cart with customer (load their saved cart from cloud)
+  const syncCartWithCustomer = useCallback(
+    async (customerId: string, accessToken: string) => {
+      if (!USE_SHOPIFY || !customerId) return;
+
+      setIsLoading(true);
+      try {
+        // First, try to get customer's saved cart ID from our backend
+        const response = await fetch(
+          `/api/customer/cart?customerId=${customerId}`
+        );
+        const data = await response.json();
+
+        if (data.cartId) {
+          // Try to load the saved cart
+          try {
+            const savedCart = await getCart(data.cartId);
+            if (savedCart && savedCart.lines.edges.length > 0) {
+              // Customer has a saved cart with items - use it
+              setShopifyCartId(data.cartId);
+              localStorage.setItem("shopify-cart-id", data.cartId);
+              syncCartFromShopify(savedCart);
+              setCheckoutUrl(savedCart.checkoutUrl);
+
+              // Also associate cart with customer for checkout
+              try {
+                const { cartBuyerIdentityUpdate } = await import(
+                  "./shopify-customer"
+                );
+                await cartBuyerIdentityUpdate(data.cartId, accessToken);
+              } catch (e) {
+                console.error("Error associating cart with customer:", e);
+              }
+
+              setIsLoading(false);
+              return;
+            }
+          } catch (e) {
+            console.error("Saved cart expired or invalid:", e);
+          }
+        }
+
+        // If no saved cart or it's empty/invalid, use current cart and associate with customer
+        if (shopifyCartId) {
+          try {
+            const { cartBuyerIdentityUpdate } = await import(
+              "./shopify-customer"
+            );
+            await cartBuyerIdentityUpdate(shopifyCartId, accessToken);
+
+            // Save current cart ID to customer's account for cross-device sync
+            await fetch("/api/customer/cart", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ customerId, cartId: shopifyCartId }),
+            });
+          } catch (e) {
+            console.error("Error associating cart with customer:", e);
+          }
+        }
+      } catch (error) {
+        console.error("Error syncing cart with customer:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [shopifyCartId]
+  );
+
+  // Save current cart to customer's account
+  const saveCartToCustomer = useCallback(
+    async (customerId: string) => {
+      if (!USE_SHOPIFY || !customerId || !shopifyCartId) return;
+
+      try {
+        await fetch("/api/customer/cart", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ customerId, cartId: shopifyCartId }),
+        });
+      } catch (error) {
+        console.error("Error saving cart to customer:", error);
+      }
+    },
+    [shopifyCartId]
+  );
+
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
@@ -350,6 +442,8 @@ export function ShopifyCartProvider({ children }: { children: ReactNode }) {
         isLoading,
         checkoutUrl,
         goToCheckout,
+        syncCartWithCustomer,
+        saveCartToCustomer,
       }}
     >
       {children}

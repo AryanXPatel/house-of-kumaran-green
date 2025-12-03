@@ -41,7 +41,7 @@ export function ProductShowcase() {
         );
 
         // First try to get from Shopify "New & Popular" collection
-        let newPopularProducts = await getNewAndPopular();
+        const newPopularProducts = await getNewAndPopular();
 
         // If we have products from the collection, use them
         if (newPopularProducts.length > 0) {

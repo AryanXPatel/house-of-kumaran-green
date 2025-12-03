@@ -17,6 +17,9 @@ interface WishlistContextType {
   isInWishlist: (productId: string) => boolean;
   toggleWishlist: (product: Product) => void;
   clearWishlist: () => void;
+  syncWishlistWithCloud: (customerId: string) => Promise<void>;
+  saveWishlistToCloud: (customerId: string) => Promise<void>;
+  isSyncing: boolean;
 }
 
 const WishlistContext = createContext<WishlistContextType | undefined>(
@@ -26,6 +29,7 @@ const WishlistContext = createContext<WishlistContextType | undefined>(
 export function WishlistProvider({ children }: { children: ReactNode }) {
   const [wishlistItems, setWishlistItems] = useState<Product[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   // Load wishlist from localStorage on mount (client-side only)
   useEffect(() => {
@@ -118,6 +122,76 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, []);
 
+  // Sync wishlist from cloud (load customer's saved wishlist)
+  const syncWishlistWithCloud = useCallback(async (customerId: string) => {
+    if (!customerId) return;
+
+    setIsSyncing(true);
+    try {
+      const response = await fetch(
+        `/api/customer/wishlist?customerId=${customerId}`
+      );
+      const data = await response.json();
+
+      if (
+        data.wishlist &&
+        Array.isArray(data.wishlist) &&
+        data.wishlist.length > 0
+      ) {
+        // Merge cloud wishlist with local wishlist
+        setWishlistItems((localItems) => {
+          const cloudItems = data.wishlist as Product[];
+          const merged = [...localItems];
+
+          // Add cloud items that aren't already in local
+          cloudItems.forEach((cloudItem) => {
+            if (!merged.some((item) => item.id === cloudItem.id)) {
+              merged.push(cloudItem);
+            }
+          });
+
+          // Save merged list to localStorage
+          try {
+            localStorage.setItem("wishlist", JSON.stringify(merged));
+          } catch {}
+
+          return merged;
+        });
+      }
+    } catch (error) {
+      console.error("Error syncing wishlist from cloud:", error);
+    } finally {
+      setIsSyncing(false);
+    }
+  }, []);
+
+  // Save wishlist to cloud
+  const saveWishlistToCloud = useCallback(
+    async (customerId: string) => {
+      if (!customerId || wishlistItems.length === 0) return;
+
+      try {
+        await fetch("/api/customer/wishlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customerId,
+            wishlist: wishlistItems.map((item) => ({
+              id: item.id,
+              name: item.name,
+              slug: item.slug,
+              price: item.price,
+              image: item.image,
+            })),
+          }),
+        });
+      } catch (error) {
+        console.error("Error saving wishlist to cloud:", error);
+      }
+    },
+    [wishlistItems]
+  );
+
   return (
     <WishlistContext.Provider
       value={{
@@ -127,6 +201,9 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         isInWishlist,
         toggleWishlist,
         clearWishlist,
+        syncWishlistWithCloud,
+        saveWishlistToCloud,
+        isSyncing,
       }}
     >
       {children}

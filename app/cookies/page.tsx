@@ -437,10 +437,10 @@ export default function CookiesPage() {
                 <li>
                   <strong className="text-[#f5f0e1]">Email:</strong>{" "}
                   <a
-                    href="mailto:privacy@houseofkumaran.com"
+                    href="mailto:support@houseofkumaran.com"
                     className="text-[#b8860b] hover:underline"
                   >
-                    privacy@houseofkumaran.com
+                    support@houseofkumaran.com
                   </a>
                 </li>
                 <li>

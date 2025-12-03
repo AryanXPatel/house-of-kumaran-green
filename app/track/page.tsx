@@ -12,51 +12,107 @@ import {
   Clock,
   MapPin,
   AlertCircle,
+  ExternalLink,
+  Loader2,
 } from "lucide-react";
 
+// NimbusPost tracking URL
+const NIMBUSPOST_TRACKING_URL = "https://ship.nimbuspost.com/shipping/tracking";
+
 export default function TrackOrderPage() {
-  const [orderNumber, setOrderNumber] = useState("");
+  const [trackingNumber, setTrackingNumber] = useState("");
+  const [trackingType, setTrackingType] = useState<"order" | "awb">("order");
   const [email, setEmail] = useState("");
   const [isTracking, setIsTracking] = useState(false);
   const [trackingResult, setTrackingResult] = useState<null | {
     found: boolean;
     status?: string;
+    awbNumber?: string;
+    courier?: string;
     steps?: { title: string; date: string; completed: boolean }[];
+    error?: string;
   }>(null);
 
-  const handleTrack = (e: React.FormEvent) => {
+  const handleTrack = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsTracking(true);
+    setTrackingResult(null);
 
-    // Simulate tracking (in production, this would call an API)
-    setTimeout(() => {
-      setIsTracking(false);
-      // Demo: Show a sample tracking result
-      if (orderNumber.startsWith("HOK")) {
+    try {
+      if (trackingType === "awb") {
+        // For AWB tracking, redirect to NimbusPost tracking page
+        window.open(`${NIMBUSPOST_TRACKING_URL}/${trackingNumber}`, "_blank");
+        setIsTracking(false);
+        return;
+      }
+
+      // For order number tracking, try to fetch from Shopify
+      // Note: This requires server-side API route for security
+      const response = await fetch(`/api/track-order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderNumber: trackingNumber, email }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
         setTrackingResult({
           found: true,
-          status: "In Transit",
-          steps: [
-            { title: "Order Placed", date: "Nov 28, 2025", completed: true },
-            { title: "Order Confirmed", date: "Nov 28, 2025", completed: true },
-            {
-              title: "Packed & Shipped",
-              date: "Nov 29, 2025",
-              completed: true,
-            },
-            { title: "In Transit", date: "Nov 30, 2025", completed: true },
-            {
-              title: "Out for Delivery",
-              date: "Expected Dec 1",
-              completed: false,
-            },
-            { title: "Delivered", date: "Expected Dec 1", completed: false },
-          ],
+          status: data.fulfillmentStatus || "Processing",
+          awbNumber: data.trackingNumber,
+          courier: data.trackingCompany,
+          steps: data.steps || generateSteps(data.fulfillmentStatus),
         });
       } else {
-        setTrackingResult({ found: false });
+        // Fallback: Show helpful message
+        setTrackingResult({
+          found: false,
+          error: "Order not found. Try using your AWB/tracking number instead.",
+        });
       }
-    }, 1500);
+    } catch {
+      // If API doesn't exist yet, show demo/helpful info
+      setTrackingResult({
+        found: false,
+        error:
+          "Tracking service is being set up. Please use your AWB number to track directly with NimbusPost.",
+      });
+    } finally {
+      setIsTracking(false);
+    }
+  };
+
+  // Generate tracking steps based on fulfillment status
+  const generateSteps = (status: string) => {
+    const allSteps = [
+      { title: "Order Placed", date: "", completed: true },
+      { title: "Order Confirmed", date: "", completed: true },
+      { title: "Packed & Shipped", date: "", completed: false },
+      { title: "In Transit", date: "", completed: false },
+      { title: "Out for Delivery", date: "", completed: false },
+      { title: "Delivered", date: "", completed: false },
+    ];
+
+    const statusMap: Record<string, number> = {
+      UNFULFILLED: 1,
+      PARTIALLY_FULFILLED: 2,
+      FULFILLED: 3,
+      IN_TRANSIT: 3,
+      OUT_FOR_DELIVERY: 4,
+      DELIVERED: 5,
+    };
+
+    const completedCount = statusMap[status] || 1;
+    return allSteps.map((step, index) => ({
+      ...step,
+      completed: index < completedCount,
+    }));
+  };
+
+  const handleDirectTrack = () => {
+    if (trackingNumber) {
+      window.open(`${NIMBUSPOST_TRACKING_URL}/${trackingNumber}`, "_blank");
+    }
   };
 
   return (
@@ -93,36 +149,72 @@ export default function TrackOrderPage() {
             className="bg-[#1a472a]/20 rounded-3xl border border-[#b8860b]/10 p-8"
           >
             <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium mb-2">
+              {/* Tracking Type Toggle */}
+              <div className="flex rounded-full bg-[#0d1f14] border border-[#b8860b]/20 p-1">
+                <button
+                  type="button"
+                  onClick={() => setTrackingType("order")}
+                  className={`flex-1 py-2.5 px-4 rounded-full text-sm font-medium transition-all ${
+                    trackingType === "order"
+                      ? "bg-[#b8860b] text-[#0d1f14]"
+                      : "text-[#f5f0e1]/60 hover:text-[#f5f0e1]"
+                  }`}
+                >
                   Order Number
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g., HOK123456"
-                  value={orderNumber}
-                  onChange={(e) => setOrderNumber(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-xl text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors"
-                />
-                <p className="text-[#f5f0e1]/40 text-sm mt-2">
-                  Find this in your order confirmation email
-                </p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTrackingType("awb")}
+                  className={`flex-1 py-2.5 px-4 rounded-full text-sm font-medium transition-all ${
+                    trackingType === "awb"
+                      ? "bg-[#b8860b] text-[#0d1f14]"
+                      : "text-[#f5f0e1]/60 hover:text-[#f5f0e1]"
+                  }`}
+                >
+                  AWB / Tracking #
+                </button>
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Email Address
+                  {trackingType === "order"
+                    ? "Order Number"
+                    : "AWB / Tracking Number"}
                 </label>
                 <input
-                  type="email"
-                  placeholder="Email used for the order"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  type="text"
+                  placeholder={
+                    trackingType === "order"
+                      ? "e.g., #1001 or HOK123456"
+                      : "e.g., NB123456789"
+                  }
+                  value={trackingNumber}
+                  onChange={(e) => setTrackingNumber(e.target.value)}
                   required
                   className="w-full px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-xl text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors"
                 />
+                <p className="text-[#f5f0e1]/40 text-sm mt-2">
+                  {trackingType === "order"
+                    ? "Find this in your order confirmation email"
+                    : "AWB number from your shipping notification"}
+                </p>
               </div>
+
+              {trackingType === "order" && (
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="Email used for the order"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-xl text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors"
+                  />
+                </div>
+              )}
 
               <button
                 type="submit"
@@ -131,16 +223,37 @@ export default function TrackOrderPage() {
               >
                 {isTracking ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-[#0d1f14]/30 border-t-[#0d1f14] rounded-full animate-spin" />
+                    <Loader2 className="w-5 h-5 animate-spin" />
                     Tracking...
                   </>
                 ) : (
                   <>
-                    <Search className="w-4 h-4" />
-                    Track Order
+                    {trackingType === "awb" ? (
+                      <>
+                        <ExternalLink className="w-4 h-4" />
+                        Track on NimbusPost
+                      </>
+                    ) : (
+                      <>
+                        <Search className="w-4 h-4" />
+                        Track Order
+                      </>
+                    )}
                   </>
                 )}
               </button>
+
+              {/* Direct NimbusPost link */}
+              <p className="text-center text-[#f5f0e1]/40 text-sm">
+                Have your AWB number?{" "}
+                <button
+                  type="button"
+                  onClick={handleDirectTrack}
+                  className="text-[#b8860b] hover:underline"
+                >
+                  Track directly on NimbusPost →
+                </button>
+              </p>
             </div>
           </form>
 
@@ -149,17 +262,58 @@ export default function TrackOrderPage() {
             <div className="mt-8">
               {trackingResult.found ? (
                 <div className="bg-[#1a472a]/20 rounded-3xl border border-[#b8860b]/10 p-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-full bg-[#b8860b]/10 flex items-center justify-center">
-                      <Truck className="w-5 h-5 text-[#b8860b]" />
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-[#b8860b]/10 flex items-center justify-center">
+                        <Truck className="w-5 h-5 text-[#b8860b]" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-[#f5f0e1]/60">
+                          Order Status
+                        </p>
+                        <p className="font-semibold text-[#b8860b]">
+                          {trackingResult.status}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-[#f5f0e1]/60">Order Status</p>
-                      <p className="font-semibold text-[#b8860b]">
-                        {trackingResult.status}
-                      </p>
-                    </div>
+                    {trackingResult.awbNumber && (
+                      <a
+                        href={`${NIMBUSPOST_TRACKING_URL}/${trackingResult.awbNumber}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 text-sm text-[#b8860b] hover:underline"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        Track Live
+                      </a>
+                    )}
                   </div>
+
+                  {/* AWB Info */}
+                  {trackingResult.awbNumber && (
+                    <div className="mb-6 p-4 bg-[#0d1f14] rounded-xl border border-[#b8860b]/10">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-xs text-[#f5f0e1]/40 mb-1">
+                            AWB / Tracking Number
+                          </p>
+                          <p className="font-mono font-semibold">
+                            {trackingResult.awbNumber}
+                          </p>
+                        </div>
+                        {trackingResult.courier && (
+                          <div className="text-right">
+                            <p className="text-xs text-[#f5f0e1]/40 mb-1">
+                              Courier
+                            </p>
+                            <p className="font-semibold text-[#b8860b]">
+                              {trackingResult.courier}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="space-y-4">
                     {trackingResult.steps?.map((step, index) => (
@@ -213,15 +367,23 @@ export default function TrackOrderPage() {
                     Order Not Found
                   </h3>
                   <p className="text-[#f5f0e1]/60 text-sm mb-4">
-                    We couldn&apos;t find an order matching those details.
-                    Please check your order number and email.
+                    {trackingResult.error ||
+                      "We couldn't find an order matching those details. Please check your order number and email."}
                   </p>
-                  <Link
-                    href="/contact"
-                    className="text-[#b8860b] hover:underline text-sm"
-                  >
-                    Contact Support
-                  </Link>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button
+                      onClick={() => setTrackingType("awb")}
+                      className="px-4 py-2 bg-[#b8860b] text-[#0d1f14] rounded-full text-sm font-semibold hover:bg-[#d4a017] transition-colors"
+                    >
+                      Try AWB Tracking
+                    </button>
+                    <Link
+                      href="/contact"
+                      className="px-4 py-2 border border-[#b8860b]/30 text-[#b8860b] rounded-full text-sm font-semibold hover:bg-[#b8860b]/10 transition-colors"
+                    >
+                      Contact Support
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>

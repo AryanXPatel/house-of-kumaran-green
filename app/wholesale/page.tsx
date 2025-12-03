@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import Link from "next/link";
@@ -12,13 +15,8 @@ import {
   Truck,
   BadgePercent,
   HeadphonesIcon,
+  Loader2,
 } from "lucide-react";
-
-export const metadata = {
-  title: "Wholesale | House of Kumaran - Bulk Orders for Businesses",
-  description:
-    "Partner with House of Kumaran for wholesale orders. Authentic South Indian products for restaurants, retailers, and corporate gifting.",
-};
 
 const benefits = [
   {
@@ -71,6 +69,104 @@ const partnerTypes = [
 ];
 
 export default function WholesalePage() {
+  const [formData, setFormData] = useState({
+    contactName: "",
+    businessName: "",
+    email: "",
+    phone: "",
+    businessType: "",
+    volume: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus("idle");
+
+    try {
+      // Using Web3Forms
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          access_key: "73b5ab25-d66d-44b5-a914-aa6e5dedf83d", // Replace with actual key
+          from_name: formData.contactName,
+          subject: `Wholesale Inquiry from ${formData.businessName}`,
+          email: formData.email,
+          phone: formData.phone,
+          business_name: formData.businessName,
+          business_type: formData.businessType,
+          expected_volume: formData.volume || "Not specified",
+          message: formData.message || "No additional message",
+          to: "support@houseofkumaran.com",
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSubmitStatus("success");
+        setFormData({
+          contactName: "",
+          businessName: "",
+          email: "",
+          phone: "",
+          businessType: "",
+          volume: "",
+          message: "",
+        });
+      } else {
+        // Fallback to mailto
+        const mailtoLink = `mailto:support@houseofkumaran.com?subject=${encodeURIComponent(
+          `Wholesale Inquiry from ${formData.businessName}`
+        )}&body=${encodeURIComponent(
+          `Contact Name: ${formData.contactName}\nBusiness Name: ${
+            formData.businessName
+          }\nEmail: ${formData.email}\nPhone: ${
+            formData.phone
+          }\nBusiness Type: ${formData.businessType}\nExpected Volume: ${
+            formData.volume || "Not specified"
+          }\n\nMessage:\n${formData.message || "No additional message"}`
+        )}`;
+        window.location.href = mailtoLink;
+        setSubmitStatus("success");
+      }
+    } catch {
+      // Fallback to mailto
+      const mailtoLink = `mailto:support@houseofkumaran.com?subject=${encodeURIComponent(
+        `Wholesale Inquiry from ${formData.businessName}`
+      )}&body=${encodeURIComponent(
+        `Contact Name: ${formData.contactName}\nBusiness Name: ${
+          formData.businessName
+        }\nEmail: ${formData.email}\nPhone: ${formData.phone}\nBusiness Type: ${
+          formData.businessType
+        }\nExpected Volume: ${
+          formData.volume || "Not specified"
+        }\n\nMessage:\n${formData.message || "No additional message"}`
+      )}`;
+      window.location.href = mailtoLink;
+      setSubmitStatus("success");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <main className="min-h-screen bg-[#0d1f14] text-[#f5f0e1]">
       <Navbar />
@@ -221,101 +317,156 @@ export default function WholesalePage() {
             </p>
           </div>
 
-          <form className="bg-[#1a472a]/20 rounded-3xl border border-[#b8860b]/10 p-8 space-y-6">
-            <div className="grid sm:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Contact Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  className="w-full px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-xl text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors"
-                />
+          {submitStatus === "success" ? (
+            <div className="bg-[#1a472a]/20 rounded-3xl border border-[#b8860b]/10 p-8 text-center">
+              <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-green-500" />
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Business Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  className="w-full px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-xl text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors"
-                />
-              </div>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  required
-                  className="w-full px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-xl text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Phone *
-                </label>
-                <input
-                  type="tel"
-                  required
-                  className="w-full px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-xl text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Business Type *
-              </label>
-              <select
-                required
-                className="w-full px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-xl text-[#f5f0e1] focus:outline-none focus:border-[#b8860b] transition-colors"
+              <h3 className="font-serif text-xl font-bold mb-2">
+                Inquiry Submitted!
+              </h3>
+              <p className="text-[#f5f0e1]/60 mb-6">
+                Thank you for your interest in partnering with House of Kumaran.
+                Our wholesale team will contact you within 24 hours.
+              </p>
+              <button
+                onClick={() => setSubmitStatus("idle")}
+                className="px-6 py-2 border border-[#b8860b]/30 rounded-full text-[#b8860b] hover:bg-[#b8860b]/10 transition-colors"
               >
-                <option value="">Select your business type</option>
-                <option value="retail">Retail Store</option>
-                <option value="restaurant">Restaurant / Hotel</option>
-                <option value="corporate">Corporate Gifting</option>
-                <option value="distributor">Distributor</option>
-                <option value="other">Other</option>
-              </select>
+                Submit Another Inquiry
+              </button>
             </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Expected Monthly Volume
-              </label>
-              <select className="w-full px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-xl text-[#f5f0e1] focus:outline-none focus:border-[#b8860b] transition-colors">
-                <option value="">Select expected volume</option>
-                <option value="50-100">50-100 units</option>
-                <option value="100-500">100-500 units</option>
-                <option value="500-1000">500-1000 units</option>
-                <option value="1000+">1000+ units</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Message (Optional)
-              </label>
-              <textarea
-                rows={4}
-                placeholder="Tell us about your business and requirements..."
-                className="w-full px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-xl text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors resize-none"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-4 bg-[#b8860b] text-[#0d1f14] font-semibold rounded-full hover:bg-[#d4a017] transition-colors"
+          ) : (
+            <form
+              onSubmit={handleSubmit}
+              className="bg-[#1a472a]/20 rounded-3xl border border-[#b8860b]/10 p-8 space-y-6"
             >
-              Submit Inquiry
-            </button>
-          </form>
+              <div className="grid sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Contact Name *
+                  </label>
+                  <input
+                    type="text"
+                    name="contactName"
+                    value={formData.contactName}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-xl text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Business Name *
+                  </label>
+                  <input
+                    type="text"
+                    name="businessName"
+                    value={formData.businessName}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-xl text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-xl text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Phone *
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-xl text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Business Type *
+                </label>
+                <select
+                  name="businessType"
+                  value={formData.businessType}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-xl text-[#f5f0e1] focus:outline-none focus:border-[#b8860b] transition-colors"
+                >
+                  <option value="">Select your business type</option>
+                  <option value="Retail Store">Retail Store</option>
+                  <option value="Restaurant / Hotel">Restaurant / Hotel</option>
+                  <option value="Corporate Gifting">Corporate Gifting</option>
+                  <option value="Distributor">Distributor</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Expected Monthly Volume
+                </label>
+                <select
+                  name="volume"
+                  value={formData.volume}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-xl text-[#f5f0e1] focus:outline-none focus:border-[#b8860b] transition-colors"
+                >
+                  <option value="">Select expected volume</option>
+                  <option value="50-100 units">50-100 units</option>
+                  <option value="100-500 units">100-500 units</option>
+                  <option value="500-1000 units">500-1000 units</option>
+                  <option value="1000+ units">1000+ units</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Message (Optional)
+                </label>
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  rows={4}
+                  placeholder="Tell us about your business and requirements..."
+                  className="w-full px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-xl text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors resize-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-4 bg-[#b8860b] text-[#0d1f14] font-semibold rounded-full hover:bg-[#d4a017] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  "Submit Inquiry"
+                )}
+              </button>
+            </form>
+          )}
         </div>
       </section>
 

@@ -89,6 +89,24 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                   </span>
                 )}
               </div>
+
+              {/* Wishlist Heart - Top Right on Image */}
+              <button
+                onClick={() => toggleWishlist(product)}
+                className={`absolute top-6 right-6 w-12 h-12 rounded-full border flex items-center justify-center transition-all backdrop-blur-sm ${
+                  isWishlisted
+                    ? "border-red-500 bg-red-500/20"
+                    : "border-[#f5f0e1]/30 bg-[#0d1f14]/50 hover:border-[#b8860b] hover:bg-[#0d1f14]/70"
+                }`}
+              >
+                <Heart
+                  className={`w-6 h-6 ${
+                    isWishlisted
+                      ? "fill-red-500 text-red-500"
+                      : "text-[#f5f0e1]"
+                  }`}
+                />
+              </button>
             </div>
 
             {/* Thumbnails */}
@@ -175,29 +193,29 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             {/* Quantity & Add to Cart */}
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
               {/* Quantity Selector */}
-              <div className="flex items-center border border-[#b8860b]/20 rounded-full">
+              <div className="flex items-center border border-[#b8860b]/20 rounded-full h-16 sm:h-14">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-12 h-12 flex items-center justify-center hover:text-[#b8860b] transition-colors"
+                  className="w-16 sm:w-14 h-full flex items-center justify-center hover:text-[#b8860b] transition-colors"
                 >
-                  <Minus className="w-5 h-5" />
+                  <Minus className="w-6 h-6 sm:w-5 sm:h-5" />
                 </button>
-                <span className="w-12 text-center font-semibold">
+                <span className="w-14 sm:w-12 text-center font-bold text-xl sm:text-lg">
                   {quantity}
                 </span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
-                  className="w-12 h-12 flex items-center justify-center hover:text-[#b8860b] transition-colors"
+                  className="w-16 sm:w-14 h-full flex items-center justify-center hover:text-[#b8860b] transition-colors"
                 >
-                  <Plus className="w-5 h-5" />
+                  <Plus className="w-6 h-6 sm:w-5 sm:h-5" />
                 </button>
               </div>
 
-              {/* Add to Cart */}
+              {/* Add to Cart - Much bigger on mobile */}
               <button
                 onClick={handleAddToCart}
                 disabled={!product.inStock}
-                className={`flex-1 flex items-center justify-center gap-3 h-12 rounded-full font-semibold transition-all duration-300 ${
+                className={`flex-1 flex items-center justify-center gap-3 h-16 sm:h-14 rounded-full font-bold text-lg sm:text-base transition-all duration-300 ${
                   product.inStock
                     ? isAdding
                       ? "bg-green-500 text-white scale-105"
@@ -207,33 +225,15 @@ export function ProductDetails({ product }: ProductDetailsProps) {
               >
                 {isAdding ? (
                   <>
-                    <Check className="w-5 h-5" />
+                    <Check className="w-6 h-6 sm:w-5 sm:h-5" />
                     Added to Cart!
                   </>
                 ) : (
                   <>
-                    <ShoppingBag className="w-5 h-5" />
+                    <ShoppingBag className="w-6 h-6 sm:w-5 sm:h-5" />
                     {product.inStock ? "Add to Cart" : "Out of Stock"}
                   </>
                 )}
-              </button>
-
-              {/* Wishlist */}
-              <button
-                onClick={() => toggleWishlist(product)}
-                className={`w-12 h-12 rounded-full border flex items-center justify-center transition-all ${
-                  isWishlisted
-                    ? "border-red-500 bg-red-500/10"
-                    : "border-[#b8860b]/20 hover:border-[#b8860b]"
-                }`}
-              >
-                <Heart
-                  className={`w-5 h-5 ${
-                    isWishlisted
-                      ? "fill-red-500 text-red-500"
-                      : "text-[#f5f0e1]"
-                  }`}
-                />
               </button>
             </div>
 
@@ -243,7 +243,9 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                 <Truck className="w-6 h-6 text-[#b8860b]" />
                 <div>
                   <p className="font-semibold text-sm">Free Shipping</p>
-                  <p className="text-xs text-[#f5f0e1]/50">Orders above ₹500</p>
+                  <p className="text-xs text-[#f5f0e1]/50">
+                    ₹500+ orders | ₹80 below
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-3 p-4 bg-[#1a472a]/30 rounded-xl">

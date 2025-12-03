@@ -6,6 +6,7 @@ import { ShopifyCartProvider } from "@/lib/shopify-cart-context";
 import { WishlistProvider } from "@/lib/wishlist-context";
 import { RecentlyViewedProvider } from "@/lib/recently-viewed-context";
 import { AuthProvider } from "@/lib/auth-context";
+import { CustomerSyncProvider } from "@/lib/customer-sync";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -59,6 +60,22 @@ export const metadata: Metadata = {
   },
   description:
     "Experience the authentic taste of South India with House of Kumaran. Handcrafted podis, pickles, sweets, savouries & more. 100% natural, zero preservatives. Pan-India delivery.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    other: [
+      { rel: "android-chrome-192x192", url: "/android-chrome-192x192.png" },
+      { rel: "android-chrome-512x512", url: "/android-chrome-512x512.png" },
+    ],
+  },
+  manifest: "/site.webmanifest",
   keywords: [
     "South Indian food",
     "authentic podis",
@@ -124,7 +141,9 @@ export default function RootLayout({
         <ShopifyCartProvider>
           <WishlistProvider>
             <RecentlyViewedProvider>
-              <AuthProvider>{children}</AuthProvider>
+              <AuthProvider>
+                <CustomerSyncProvider>{children}</CustomerSyncProvider>
+              </AuthProvider>
             </RecentlyViewedProvider>
           </WishlistProvider>
         </ShopifyCartProvider>

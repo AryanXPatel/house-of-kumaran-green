@@ -168,14 +168,14 @@ export function Navbar() {
                 <Link
                   key={category.slug}
                   href={`/shop?category=${category.slug}`}
-                  className="text-xs text-[#f5f0e1]/60 hover:text-[#b8860b] transition-colors tracking-wide uppercase whitespace-nowrap"
+                  className="text-sm text-[#f5f0e1]/60 hover:text-[#b8860b] transition-colors tracking-wide uppercase whitespace-nowrap"
                 >
                   {category.name}
                 </Link>
               ))}
               <Link
                 href="/shop"
-                className="text-xs text-[#b8860b] hover:text-[#d4a017] transition-colors tracking-wide uppercase whitespace-nowrap font-semibold"
+                className="text-sm text-[#b8860b] hover:text-[#d4a017] transition-colors tracking-wide uppercase whitespace-nowrap font-semibold"
               >
                 All Products →
               </Link>

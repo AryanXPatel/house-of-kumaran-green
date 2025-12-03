@@ -61,10 +61,14 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
-        {/* Wishlist */}
+        {/* Wishlist - Always visible on mobile, hover on desktop */}
         <button
           onClick={handleToggleWishlist}
-          className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-[#0d1f14]/50 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-[#0d1f14]"
+          className={`absolute top-4 right-4 z-10 w-10 h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-all duration-300 hover:bg-[#0d1f14] ${
+            isWishlisted
+              ? "opacity-100 bg-red-500/20"
+              : "opacity-100 sm:opacity-0 sm:group-hover:opacity-100 bg-[#0d1f14]/50"
+          }`}
         >
           <Heart
             className={`w-5 h-5 transition-colors ${
@@ -117,7 +121,7 @@ export function ProductCard({ product }: ProductCardProps) {
             <button
               onClick={handleAddToCart}
               disabled={!product.inStock}
-              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 ${
+              className={`w-12 h-12 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 ${
                 product.inStock
                   ? isAdding
                     ? "bg-green-500 scale-110"

@@ -1,8 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Instagram, Facebook, Youtube, Twitter } from "lucide-react";
+import {
+  Instagram,
+  Facebook,
+  Youtube,
+  Twitter,
+  CheckCircle,
+  Loader2,
+} from "lucide-react";
 
 const footerLinks = {
   shop: [
@@ -51,6 +59,60 @@ const socialLinks = [
 ];
 
 export function Footer() {
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [subscribeStatus, setSubscribeStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setIsSubmitting(true);
+    setSubscribeStatus("idle");
+
+    try {
+      // Using Web3Forms for newsletter signup
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          access_key: "73b5ab25-d66d-44b5-a914-aa6e5dedf83d", // Replace with actual key from web3forms.com
+          subject: "New Newsletter Subscription - Kumaran Family",
+          email: email,
+          message: `New subscriber: ${email} wants to join the Kumaran Family!`,
+          to: "support@houseofkumaran.com",
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSubscribeStatus("success");
+        setEmail("");
+      } else {
+        // Fallback - open mailto
+        window.location.href = `mailto:hello@houseofkumaran.com?subject=Newsletter%20Subscription&body=Please%20add%20me%20to%20your%20newsletter:%20${encodeURIComponent(
+          email
+        )}`;
+        setSubscribeStatus("success");
+        setEmail("");
+      }
+    } catch {
+      // Fallback - open mailto
+      window.location.href = `mailto:hello@houseofkumaran.com?subject=Newsletter%20Subscription&body=Please%20add%20me%20to%20your%20newsletter:%20${encodeURIComponent(
+        email
+      )}`;
+      setSubscribeStatus("success");
+      setEmail("");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <footer className="relative bg-[#0a1810] pt-24 overflow-hidden">
       {/* Decorative top border */}
@@ -80,16 +142,41 @@ export function Footer() {
                 your first order.
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 lg:w-80 px-6 py-4 bg-[#0d1f14] border border-[#2a4a35] rounded-full text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors"
-              />
-              <button className="px-8 py-4 bg-[#b8860b] hover:bg-[#d4a017] text-[#0d1f14] font-semibold rounded-full transition-colors whitespace-nowrap">
-                Subscribe
-              </button>
-            </div>
+
+            {subscribeStatus === "success" ? (
+              <div className="flex items-center gap-3 px-6 py-4 bg-green-500/20 rounded-full text-green-400">
+                <CheckCircle className="w-5 h-5" />
+                <span>Welcome to the Kumaran Family!</span>
+              </div>
+            ) : (
+              <form
+                onSubmit={handleSubscribe}
+                className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto"
+              >
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="Enter your email"
+                  className="flex-1 lg:w-80 px-6 py-4 bg-[#0d1f14] border border-[#2a4a35] rounded-full text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors"
+                />
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-8 py-4 bg-[#b8860b] hover:bg-[#d4a017] text-[#0d1f14] font-semibold rounded-full transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Joining...
+                    </>
+                  ) : (
+                    "Subscribe"
+                  )}
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </div>

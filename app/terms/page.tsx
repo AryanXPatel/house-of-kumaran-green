@@ -163,7 +163,7 @@ export default function TermsPage() {
               <h2 className="font-serif text-2xl font-bold mb-4 text-[#b8860b]">
                 5. Returns and Refunds
               </h2>
-              <p className="text-[#f5f0e1]/70">
+              <p className="text-[#f5f0e1]/70 mb-4">
                 Our return and refund policies are detailed in our{" "}
                 <Link
                   href="/returns"
@@ -173,6 +173,29 @@ export default function TermsPage() {
                 </Link>
                 . Please review it before making a purchase.
               </p>
+
+              <div className="p-4 bg-[#b8860b]/10 border border-[#b8860b]/30 rounded-xl mt-4">
+                <h3 className="font-semibold text-lg mb-2 text-[#b8860b]">
+                  Damaged, Spilled or Expired Products - 60% Refund Guarantee
+                </h3>
+                <p className="text-[#f5f0e1]/70 mb-2">
+                  If your product arrives damaged, spilled, or expired, we offer
+                  a{" "}
+                  <strong className="text-[#f5f0e1]">
+                    60% refund with no questions asked
+                  </strong>
+                  . Simply:
+                </p>
+                <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-1 ml-4">
+                  <li>Contact us within 48 hours of delivery</li>
+                  <li>Share photos of the damaged/expired product</li>
+                  <li>Receive 60% refund within 3-5 business days</li>
+                </ul>
+                <p className="text-[#f5f0e1]/50 text-sm mt-3">
+                  *This policy covers manufacturing defects, transit damage, and
+                  products received past expiry date.
+                </p>
+              </div>
             </div>
 
             <div>
@@ -325,10 +348,10 @@ export default function TermsPage() {
                 <li>
                   <strong className="text-[#f5f0e1]">Email:</strong>{" "}
                   <a
-                    href="mailto:legal@houseofkumaran.com"
+                    href="mailto:support@houseofkumaran.com"
                     className="text-[#b8860b] hover:underline"
                   >
-                    legal@houseofkumaran.com
+                    support@houseofkumaran.com
                   </a>
                 </li>
                 <li>

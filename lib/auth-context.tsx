@@ -22,6 +22,7 @@ interface AuthContextType {
   customer: ShopifyCustomer | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  accessToken: string | null;
   login: (
     email: string,
     password: string
@@ -37,6 +38,7 @@ interface AuthContextType {
     email: string
   ) => Promise<{ success: boolean; error?: string }>;
   refreshCustomer: () => Promise<void>;
+  getCustomerId: () => string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -236,17 +238,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [accessToken]);
 
+  // Helper to get customer ID from the Shopify GID
+  const getCustomerId = useCallback(() => {
+    if (!customer?.id) return null;
+    // Convert "gid://shopify/Customer/123456" to "123456"
+    const match = customer.id.match(/Customer\/(\d+)/);
+    return match ? match[1] : customer.id;
+  }, [customer]);
+
   return (
     <AuthContext.Provider
       value={{
         customer,
         isLoading,
         isAuthenticated: !!customer,
+        accessToken,
         login,
         register,
         logout,
         recoverPassword,
         refreshCustomer,
+        getCustomerId,
       }}
     >
       {children}

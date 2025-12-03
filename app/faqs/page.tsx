@@ -69,7 +69,7 @@ const faqCategories = [
       },
       {
         q: "How do I initiate a return?",
-        a: "Email us at returns@houseofkumaran.com with your order number, photos of the issue, and reason for return. Our team will respond within 24-48 hours.",
+        a: "Email us at support@houseofkumaran.com with your order number, photos of the issue, and reason for return. Our team will respond within 24-48 hours.",
       },
       {
         q: "How long do refunds take?",
