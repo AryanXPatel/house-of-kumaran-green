@@ -138,8 +138,8 @@ export function Footer() {
                 Join the Kumaran Family
               </h3>
               <p className="text-[#f5f0e1]/60">
-                Subscribe for exclusive offers, recipes, and a 10% discount on
-                your first order.
+                Subscribe for exclusive offers, recipes, and 5% off on all
+                orders forever.
               </p>
             </div>
 
@@ -215,7 +215,7 @@ export function Footer() {
               <p>3, Kasthuri 2nd Street, New Laxmipuram</p>
               <p>Chennai, Tamil Nadu - 600099</p>
               <p>hello@houseofkumaran.com</p>
-              <p>+91 86672 62327</p>
+              <p>+91 93370 54587</p>
             </div>
           </div>
 

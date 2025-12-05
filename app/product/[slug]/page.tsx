@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { ProductDetails } from "@/components/product-details";
+import { ProductReviews } from "@/components/product-reviews";
 import { RelatedProducts } from "@/components/related-products";
 import { getProductBySlug, getRelatedProducts } from "@/lib/product-service";
 import { notFound } from "next/navigation";
@@ -158,6 +159,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       {/* Product Details */}
       <ProductDetails product={product} />
+
+      {/* Product Reviews - Judge.me Integration */}
+      <ProductReviews
+        productId={product.shopifyId || product.id}
+        productTitle={product.name}
+        productHandle={product.slug}
+      />
 
       {/* Related Products */}
       {relatedProducts.length > 0 && (

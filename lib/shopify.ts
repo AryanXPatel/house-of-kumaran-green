@@ -681,6 +681,49 @@ export async function removeFromCart(
   return transformCart(data.cartLinesRemove.cart);
 }
 
+// Update cart buyer identity (associates email with cart for checkout)
+export async function updateCartBuyerIdentity(
+  cartId: string,
+  email: string,
+  countryCode?: string
+): Promise<ShopifyCart> {
+  const query = `
+    ${CART_FRAGMENT}
+    mutation CartBuyerIdentityUpdate($cartId: ID!, $buyerIdentity: CartBuyerIdentityInput!) {
+      cartBuyerIdentityUpdate(cartId: $cartId, buyerIdentity: $buyerIdentity) {
+        cart {
+          ...CartFragment
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const buyerIdentity: { email: string; countryCode?: string } = { email };
+  if (countryCode) {
+    buyerIdentity.countryCode = countryCode;
+  }
+
+  const data = await shopifyFetch<{
+    cartBuyerIdentityUpdate: {
+      cart: ShopifyCart;
+      userErrors: { field: string; message: string }[];
+    };
+  }>({
+    query,
+    variables: { cartId, buyerIdentity },
+  });
+
+  if (data.cartBuyerIdentityUpdate.userErrors.length > 0) {
+    throw new Error(data.cartBuyerIdentityUpdate.userErrors[0].message);
+  }
+
+  return transformCart(data.cartBuyerIdentityUpdate.cart);
+}
+
 // ===== UTILITY FUNCTIONS =====
 
 import type { Product, Category } from "./types";

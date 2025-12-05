@@ -28,7 +28,7 @@ export default function CartPage() {
     goToCheckout,
   } = useShopifyCart();
 
-  const deliveryFee = totalPrice >= 500 ? 0 : 50;
+  const deliveryFee = totalPrice >= 399 ? 0 : 50;
   const finalTotal = totalPrice + deliveryFee;
 
   return (
@@ -162,15 +162,15 @@ export default function CartPage() {
                   </h2>
 
                   {/* Delivery Progress */}
-                  {totalPrice < 500 && (
+                  {totalPrice < 399 && (
                     <div className="p-4 bg-[#b8860b]/10 rounded-xl mb-6">
                       <p className="text-sm text-[#b8860b] font-medium">
-                        Add ₹{500 - totalPrice} more for FREE delivery!
+                        Add ₹{399 - totalPrice} more for FREE delivery!
                       </p>
                       <div className="mt-3 h-2 bg-[#0d1f14] rounded-full overflow-hidden">
                         <div
                           className="h-full bg-[#b8860b] rounded-full transition-all duration-500"
-                          style={{ width: `${(totalPrice / 500) * 100}%` }}
+                          style={{ width: `${(totalPrice / 399) * 100}%` }}
                         />
                       </div>
                     </div>
@@ -218,7 +218,7 @@ export default function CartPage() {
                   <div className="mt-6 pt-6 border-t border-[#b8860b]/10 space-y-3">
                     <div className="flex items-center gap-3 text-sm text-[#f5f0e1]/70">
                       <Truck className="w-5 h-5 text-[#b8860b]" />
-                      <span>Free delivery on orders above ₹500</span>
+                      <span>Free delivery on orders above ₹399</span>
                     </div>
                     <div className="flex items-center gap-3 text-sm text-[#f5f0e1]/70">
                       <Shield className="w-5 h-5 text-[#b8860b]" />

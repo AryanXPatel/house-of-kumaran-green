@@ -295,13 +295,13 @@ function ShopContent() {
               <div className="flex items-center gap-2 text-[#b8860b]">
                 <Truck className="w-4 h-4" />
                 <span className="font-medium">FREE Shipping</span>
-                <span className="text-[#f5f0e1]/60">on orders ₹500+</span>
+                <span className="text-[#f5f0e1]/60">on orders ₹399+</span>
               </div>
               <div className="hidden sm:block w-px h-4 bg-[#b8860b]/30" />
               <div className="hidden sm:flex items-center gap-2 text-[#f5f0e1]/60">
                 <span>Standard Delivery:</span>
                 <span className="text-[#f5f0e1] font-medium">₹80</span>
-                <span>(orders below ₹500)</span>
+                <span>(orders below ₹399)</span>
               </div>
             </div>
           </div>

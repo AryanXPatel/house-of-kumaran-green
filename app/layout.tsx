@@ -7,6 +7,7 @@ import { WishlistProvider } from "@/lib/wishlist-context";
 import { RecentlyViewedProvider } from "@/lib/recently-viewed-context";
 import { AuthProvider } from "@/lib/auth-context";
 import { CustomerSyncProvider } from "@/lib/customer-sync";
+import { GoogleAuthProvider } from "@/lib/google-auth-provider";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -138,15 +139,17 @@ export default function RootLayout({
         className={`${playfair.variable} ${inter.variable} ${ibmPlexMono.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
-        <ShopifyCartProvider>
-          <WishlistProvider>
-            <RecentlyViewedProvider>
-              <AuthProvider>
-                <CustomerSyncProvider>{children}</CustomerSyncProvider>
-              </AuthProvider>
-            </RecentlyViewedProvider>
-          </WishlistProvider>
-        </ShopifyCartProvider>
+        <GoogleAuthProvider>
+          <AuthProvider>
+            <ShopifyCartProvider>
+              <WishlistProvider>
+                <RecentlyViewedProvider>
+                  <CustomerSyncProvider>{children}</CustomerSyncProvider>
+                </RecentlyViewedProvider>
+              </WishlistProvider>
+            </ShopifyCartProvider>
+          </AuthProvider>
+        </GoogleAuthProvider>
         {/* Subtle grain texture overlay */}
         <div className="grain-overlay" aria-hidden="true" />
         <Analytics />

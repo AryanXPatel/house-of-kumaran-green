@@ -9,6 +9,7 @@ import { Star, ShoppingBag, Heart } from "lucide-react";
 import { useShopifyCart } from "@/lib/shopify-cart-context";
 import { useWishlist } from "@/lib/wishlist-context";
 import { useState } from "react";
+import { StarRatingBadge } from "./star-rating-badge";
 
 interface ProductCardProps {
   product: Product;
@@ -89,16 +90,26 @@ export function ProductCard({ product }: ProductCardProps) {
 
         {/* Content */}
         <div className="p-5">
-          {/* Rating */}
-          <div className="flex items-center gap-1.5 mb-2">
-            <Star className="w-4 h-4 fill-[#b8860b] text-[#b8860b]" />
-            <span className="text-sm font-semibold text-[#f5f0e1]">
-              {product.rating}
-            </span>
-            <span className="text-sm text-[#f5f0e1]/40">
-              ({product.reviews})
-            </span>
-          </div>
+          {/* Rating - Shows Judge.me reviews if available, falls back to default */}
+          {product.shopifyId ? (
+            <div className="mb-2 min-h-5">
+              <StarRatingBadge
+                productId={product.shopifyId}
+                size="sm"
+                showCount={true}
+              />
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 mb-2">
+              <Star className="w-4 h-4 fill-[#b8860b] text-[#b8860b]" />
+              <span className="text-sm font-semibold text-[#f5f0e1]">
+                {product.rating}
+              </span>
+              <span className="text-sm text-[#f5f0e1]/40">
+                ({product.reviews})
+              </span>
+            </div>
+          )}
 
           {/* Name & Weight */}
           <h3 className="font-serif text-lg font-bold text-[#f5f0e1] mb-1 group-hover:text-[#b8860b] transition-colors">
@@ -121,16 +132,16 @@ export function ProductCard({ product }: ProductCardProps) {
             <button
               onClick={handleAddToCart}
               disabled={!product.inStock}
-              className={`w-12 h-12 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 ${
+              className={`w-14 h-14 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg ${
                 product.inStock
                   ? isAdding
                     ? "bg-green-500 scale-110"
-                    : "bg-[#b8860b] hover:bg-[#f5f0e1] hover:scale-110"
+                    : "bg-[#b8860b] hover:bg-[#d4a017] hover:scale-110 active:scale-95"
                   : "bg-[#f5f0e1]/20 cursor-not-allowed"
               }`}
             >
               <ShoppingBag
-                className={`w-5 h-5 ${
+                className={`w-6 h-6 ${
                   isAdding ? "text-white" : "text-[#0d1f14]"
                 }`}
               />

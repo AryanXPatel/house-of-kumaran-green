@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import {
   X,
   User,
@@ -14,8 +16,12 @@ import {
   Heart,
   MapPin,
   ChevronRight,
+  ExternalLink,
+  Settings,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { useShopifyCart } from "@/lib/shopify-cart-context";
+import { useWishlist } from "@/lib/wishlist-context";
 
 interface AuthDrawerProps {
   isOpen: boolean;
@@ -25,6 +31,41 @@ interface AuthDrawerProps {
 
 type AuthMode = "login" | "register" | "forgot-password" | "account";
 
+// Shopify store domain for account URLs
+const SHOPIFY_STORE_DOMAIN =
+  process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN ||
+  "houseofkumaran.myshopify.com";
+const SHOPIFY_ACCOUNT_URL = `https://${SHOPIFY_STORE_DOMAIN}/account`;
+const SHOPIFY_LOGIN_URL = `https://${SHOPIFY_STORE_DOMAIN}/account/login`;
+
+// Google icon component
+function GoogleIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+        fill="#4285F4"
+      />
+      <path
+        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+        fill="#34A853"
+      />
+      <path
+        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+        fill="#FBBC05"
+      />
+      <path
+        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+        fill="#EA4335"
+      />
+    </svg>
+  );
+}
+
 export function AuthDrawer({
   isOpen,
   onClose,
@@ -32,13 +73,18 @@ export function AuthDrawer({
 }: AuthDrawerProps) {
   const {
     customer,
+    googleCustomer,
     isLoading,
     isAuthenticated,
+    authMethod,
     login,
+    loginWithGoogle,
     register,
     logout,
     recoverPassword,
   } = useAuth();
+  const { restoreCartFromCloud, associateBuyerIdentity } = useShopifyCart();
+  const { restoreWishlistFromCloud } = useWishlist();
   const [mode, setMode] = useState<AuthMode>("login");
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -100,6 +146,48 @@ export function AuthDrawer({
     setMode("login");
   };
 
+  // Handle Google OAuth success
+  const handleGoogleSuccess = async (
+    credentialResponse: CredentialResponse
+  ) => {
+    if (!credentialResponse.credential) {
+      setError("Google login failed: No credential received");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError("");
+
+    const result = await loginWithGoogle(credentialResponse.credential);
+    if (!result.success) {
+      setError(result.error || "Google login failed");
+    } else if (result.data) {
+      // Restore cart and wishlist from Supabase if available
+      if (result.data.savedCartId) {
+        restoreCartFromCloud(result.data.savedCartId);
+      }
+      if (
+        result.data.savedWishlistProductIds &&
+        result.data.savedWishlistProductIds.length > 0
+      ) {
+        restoreWishlistFromCloud(result.data.savedWishlistProductIds);
+      }
+
+      // Associate user email with Shopify cart for checkout
+      // This ensures the user's email is pre-filled at Shopify checkout
+      if (result.data.email) {
+        associateBuyerIdentity(result.data.email);
+      }
+    }
+
+    setIsSubmitting(false);
+  };
+
+  // Handle Google OAuth error
+  const handleGoogleError = () => {
+    setError("Google login failed. Please try again.");
+  };
+
   const resetForm = () => {
     setFormData({ email: "", password: "", firstName: "", lastName: "" });
     setError("");
@@ -108,8 +196,14 @@ export function AuthDrawer({
 
   if (!isOpen) return null;
 
-  // If authenticated, show account view
-  const showAccount = isAuthenticated && customer;
+  // If authenticated, show account view (support both email and Google auth)
+  const showAccount = isAuthenticated && (customer || googleCustomer);
+
+  // Get display name from either customer type
+  const displayName =
+    customer?.firstName || googleCustomer?.name?.split(" ")[0] || "there";
+  const displayEmail = customer?.email || googleCustomer?.email || "";
+  const displayPhone = customer?.phone;
 
   return (
     <>
@@ -127,7 +221,7 @@ export function AuthDrawer({
             <User className="w-6 h-6 text-[#b8860b]" />
             <h2 className="text-xl font-serif font-bold text-[#f5f0e1]">
               {showAccount
-                ? `Hi, ${customer.firstName || "there"}!`
+                ? `Hi, ${displayName}!`
                 : mode === "login"
                 ? "Sign In"
                 : mode === "register"
@@ -154,16 +248,51 @@ export function AuthDrawer({
             <div className="space-y-6">
               {/* Customer Info */}
               <div className="p-4 bg-[#1a472a]/30 rounded-xl border border-[#2a4a35]">
-                <p className="text-[#f5f0e1]">{customer.email}</p>
-                {customer.phone && (
+                {/* Show Google profile picture if available */}
+                {googleCustomer?.picture && (
+                  <div className="flex items-center gap-3 mb-3">
+                    <img
+                      src={googleCustomer.picture}
+                      alt="Profile"
+                      className="w-10 h-10 rounded-full"
+                    />
+                    <div>
+                      <p className="text-[#f5f0e1] font-medium">
+                        {googleCustomer.name}
+                      </p>
+                      {authMethod === "google" && (
+                        <span className="text-xs text-[#b8860b]">
+                          Signed in with Google
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+                <p className="text-[#f5f0e1]">{displayEmail}</p>
+                {displayPhone && (
                   <p className="text-[#f5f0e1]/60 text-sm mt-1">
-                    {customer.phone}
+                    {displayPhone}
                   </p>
                 )}
               </div>
 
               {/* Quick Links */}
               <div className="space-y-2">
+                {/* My Account Page Link */}
+                <Link
+                  href="/account"
+                  onClick={onClose}
+                  className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-[#b8860b]/20 to-[#d4a017]/10 rounded-xl border border-[#b8860b]/30 hover:border-[#b8860b]/50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <Settings className="w-5 h-5 text-[#b8860b]" />
+                    <span className="text-[#f5f0e1] font-semibold">
+                      My Account
+                    </span>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-[#b8860b]" />
+                </Link>
+
                 <button
                   onClick={() => {
                     onClose();
@@ -178,8 +307,8 @@ export function AuthDrawer({
                   <ChevronRight className="w-5 h-5 text-[#f5f0e1]/50" />
                 </button>
 
-                {/* Orders - Link to Shopify */}
-                {customer.orders.edges.length > 0 && (
+                {/* Orders - Show only for email auth with Storefront API data */}
+                {customer && customer.orders.edges.length > 0 && (
                   <div className="p-4 bg-[#1a472a]/20 rounded-xl border border-[#2a4a35]/50">
                     <div className="flex items-center gap-3 mb-3">
                       <Package className="w-5 h-5 text-[#b8860b]" />
@@ -222,8 +351,8 @@ export function AuthDrawer({
                   </div>
                 )}
 
-                {/* Default Address */}
-                {customer.defaultAddress && (
+                {/* Default Address - Show only for email auth */}
+                {customer && customer.defaultAddress && (
                   <div className="p-4 bg-[#1a472a]/20 rounded-xl border border-[#2a4a35]/50">
                     <div className="flex items-center gap-3 mb-2">
                       <MapPin className="w-5 h-5 text-[#b8860b]" />
@@ -254,10 +383,59 @@ export function AuthDrawer({
                 <LogOut className="w-5 h-5" />
                 Sign Out
               </button>
+
+              {/* Manage Account on Shopify */}
+              <a
+                href={SHOPIFY_ACCOUNT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 py-3 border border-[#2a4a35] hover:border-[#b8860b]/50 text-[#f5f0e1]/70 hover:text-[#f5f0e1] font-medium rounded-full transition-colors"
+              >
+                <ExternalLink className="w-4 h-4" />
+                Manage Account
+              </a>
             </div>
           ) : (
             /* Auth Forms */
             <div className="space-y-6">
+              {/* Google Sign-In Button - Primary CTA */}
+              {(mode === "login" || mode === "register") && (
+                <div className="space-y-4">
+                  {/* Actual Google OAuth Login */}
+                  <div className="flex justify-center">
+                    {isSubmitting ? (
+                      <div className="w-full flex items-center justify-center gap-3 py-4 bg-white text-gray-800 font-semibold rounded-full border border-gray-200 shadow-sm">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Signing in...
+                      </div>
+                    ) : (
+                      <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={handleGoogleError}
+                        useOneTap
+                        theme="outline"
+                        size="large"
+                        text="continue_with"
+                        shape="pill"
+                        width="350"
+                      />
+                    )}
+                  </div>
+
+                  {/* Divider */}
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-[#2a4a35]" />
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                      <span className="px-4 bg-[#0d1f14] text-[#f5f0e1]/50">
+                        or continue with email
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {error && (
                 <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
                   {error}

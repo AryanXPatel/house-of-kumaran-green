@@ -26,14 +26,15 @@ export function CTASection() {
             </p>
 
             {/* Promo Code Banner */}
-            <div className="flex items-center gap-3 p-4 bg-[#0d1f14]/10 rounded-xl mb-6">
-              <Gift className="w-6 h-6 text-[#0d1f14]" />
+            <div className="flex items-center gap-4 p-5 bg-[#0d1f14]/15 rounded-2xl mb-6 border-2 border-[#0d1f14]/20">
+              <Gift className="w-8 h-8 text-[#0d1f14]" />
               <div>
-                <p className="font-semibold text-[#0d1f14]">
-                  First order? Get 10% off!
+                <p className="font-bold text-lg text-[#0d1f14]">
+                  Join the Kumaran Family!
                 </p>
-                <p className="text-sm text-[#0d1f14]/70">
-                  Use code: <span className="font-bold">NAMASTE</span>
+                <p className="text-[#0d1f14]/80">
+                  <span className="font-bold">First order?</span> Free gift
+                  hamper! • <span className="font-bold">5% off forever</span>
                 </p>
               </div>
             </div>
@@ -57,7 +58,7 @@ export function CTASection() {
             {/* Trust badges - compact grid */}
             <div className="grid grid-cols-3 gap-4">
               {[
-                { icon: Truck, text: "Free shipping ₹500+" },
+                { icon: Truck, text: "Free shipping ₹399+" },
                 { icon: ShieldCheck, text: "Quality guarantee" },
                 { icon: RefreshCw, text: "Easy returns" },
               ].map((badge, i) => (

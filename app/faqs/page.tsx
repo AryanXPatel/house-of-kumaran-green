@@ -17,7 +17,7 @@ const faqCategories = [
       },
       {
         q: "Do you offer free shipping?",
-        a: "Yes! We offer free shipping on all orders above ₹500. For orders below ₹500, shipping charges vary from ₹50 to ₹100 depending on your location.",
+        a: "Yes! We offer free shipping on all orders above ₹399. For orders below ₹399, shipping charges vary from ₹50 to ₹100 depending on your location.",
       },
       {
         q: "Can I track my order?",

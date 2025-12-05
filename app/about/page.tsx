@@ -113,8 +113,8 @@ export default function AboutPage() {
             Ready to Taste the Difference?
           </h2>
           <p className="text-[#0d1f14]/70 text-lg mb-8 max-w-xl mx-auto">
-            Experience the authentic flavors of South India. Use code NAMASTE
-            for 10% off your first order.
+            Experience the authentic flavors of South India. Join the Kumaran
+            Family for 5% off forever + free gift hamper on your first order.
           </p>
           <Link
             href="/shop"

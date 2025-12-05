@@ -156,21 +156,21 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             </div>
 
             {/* Name */}
-            <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4">
               {product.name}
             </h1>
 
             {/* Price */}
-            <div className="flex items-baseline gap-4 mb-6">
-              <span className="text-4xl font-bold text-[#b8860b]">
+            <div className="flex items-baseline gap-3 sm:gap-4 mb-4 sm:mb-6">
+              <span className="text-3xl sm:text-4xl font-bold text-[#b8860b]">
                 ₹{product.price}
               </span>
               {product.originalPrice && (
                 <>
-                  <span className="text-xl text-[#f5f0e1]/40 line-through">
+                  <span className="text-lg sm:text-xl text-[#f5f0e1]/40 line-through">
                     ₹{product.originalPrice}
                   </span>
-                  <span className="px-3 py-1 bg-green-500/20 text-green-400 text-sm font-semibold rounded-full">
+                  <span className="px-2 sm:px-3 py-1 bg-green-500/20 text-green-400 text-xs sm:text-sm font-semibold rounded-full">
                     Save ₹{product.originalPrice - product.price}
                   </span>
                 </>
@@ -178,7 +178,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             </div>
 
             {/* Weight */}
-            <div className="flex items-center gap-2 mb-6 text-[#f5f0e1]/70">
+            <div className="flex items-center gap-2 mb-4 sm:mb-6 text-[#f5f0e1]/70 text-sm sm:text-base">
               <span>Net Weight:</span>
               <span className="font-semibold text-[#f5f0e1]">
                 {product.weight}
@@ -186,36 +186,36 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             </div>
 
             {/* Description */}
-            <p className="text-lg text-[#f5f0e1]/70 leading-relaxed mb-8">
+            <p className="text-sm sm:text-lg text-[#f5f0e1]/70 leading-relaxed mb-6 sm:mb-8">
               {product.longDescription || product.description}
             </p>
 
             {/* Quantity & Add to Cart */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8">
               {/* Quantity Selector */}
-              <div className="flex items-center border border-[#b8860b]/20 rounded-full h-16 sm:h-14">
+              <div className="flex items-center border border-[#b8860b]/20 rounded-full h-14 sm:h-14">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-16 sm:w-14 h-full flex items-center justify-center hover:text-[#b8860b] transition-colors"
+                  className="w-14 sm:w-14 h-full flex items-center justify-center hover:text-[#b8860b] transition-colors"
                 >
-                  <Minus className="w-6 h-6 sm:w-5 sm:h-5" />
+                  <Minus className="w-5 h-5 sm:w-5 sm:h-5" />
                 </button>
-                <span className="w-14 sm:w-12 text-center font-bold text-xl sm:text-lg">
+                <span className="w-12 sm:w-12 text-center font-bold text-lg sm:text-lg">
                   {quantity}
                 </span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
-                  className="w-16 sm:w-14 h-full flex items-center justify-center hover:text-[#b8860b] transition-colors"
+                  className="w-14 sm:w-14 h-full flex items-center justify-center hover:text-[#b8860b] transition-colors"
                 >
-                  <Plus className="w-6 h-6 sm:w-5 sm:h-5" />
+                  <Plus className="w-5 h-5 sm:w-5 sm:h-5" />
                 </button>
               </div>
 
-              {/* Add to Cart - Much bigger on mobile */}
+              {/* Add to Cart */}
               <button
                 onClick={handleAddToCart}
                 disabled={!product.inStock}
-                className={`flex-1 flex items-center justify-center gap-3 h-16 sm:h-14 rounded-full font-bold text-lg sm:text-base transition-all duration-300 ${
+                className={`flex-1 flex items-center justify-center gap-2 sm:gap-3 h-14 sm:h-14 rounded-full font-bold text-base sm:text-base transition-all duration-300 ${
                   product.inStock
                     ? isAdding
                       ? "bg-green-500 text-white scale-105"
@@ -225,48 +225,62 @@ export function ProductDetails({ product }: ProductDetailsProps) {
               >
                 {isAdding ? (
                   <>
-                    <Check className="w-6 h-6 sm:w-5 sm:h-5" />
+                    <Check className="w-5 h-5 sm:w-5 sm:h-5" />
                     Added to Cart!
                   </>
                 ) : (
                   <>
-                    <ShoppingBag className="w-6 h-6 sm:w-5 sm:h-5" />
+                    <ShoppingBag className="w-5 h-5 sm:w-5 sm:h-5" />
                     {product.inStock ? "Add to Cart" : "Out of Stock"}
                   </>
                 )}
               </button>
             </div>
 
-            {/* Trust Badges */}
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              <div className="flex items-center gap-3 p-4 bg-[#1a472a]/30 rounded-xl">
-                <Truck className="w-6 h-6 text-[#b8860b]" />
-                <div>
-                  <p className="font-semibold text-sm">Free Shipping</p>
-                  <p className="text-xs text-[#f5f0e1]/50">
-                    ₹500+ orders | ₹80 below
+            {/* Trust Badges - Compact on mobile */}
+            <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-8">
+              <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-[#1a472a]/30 rounded-xl">
+                <Truck className="w-5 h-5 sm:w-6 sm:h-6 text-[#b8860b] shrink-0" />
+                <div className="min-w-0">
+                  <p className="font-semibold text-xs sm:text-sm truncate">
+                    Free Shipping
+                  </p>
+                  <p className="text-[10px] sm:text-xs text-[#f5f0e1]/50">
+                    ₹399+ orders
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-[#1a472a]/30 rounded-xl">
-                <Shield className="w-6 h-6 text-[#b8860b]" />
-                <div>
-                  <p className="font-semibold text-sm">Quality Assured</p>
-                  <p className="text-xs text-[#f5f0e1]/50">100% Authentic</p>
+              <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-[#1a472a]/30 rounded-xl">
+                <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-[#b8860b] shrink-0" />
+                <div className="min-w-0">
+                  <p className="font-semibold text-xs sm:text-sm truncate">
+                    Zero Preservatives
+                  </p>
+                  <p className="text-[10px] sm:text-xs text-[#f5f0e1]/50">
+                    100% Natural
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-[#1a472a]/30 rounded-xl">
-                <Clock className="w-6 h-6 text-[#b8860b]" />
-                <div>
-                  <p className="font-semibold text-sm">Fresh Made</p>
-                  <p className="text-xs text-[#f5f0e1]/50">Made to order</p>
+              <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-[#1a472a]/30 rounded-xl">
+                <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-[#b8860b] shrink-0" />
+                <div className="min-w-0">
+                  <p className="font-semibold text-xs sm:text-sm truncate">
+                    100% Handmade
+                  </p>
+                  <p className="text-[10px] sm:text-xs text-[#f5f0e1]/50">
+                    Fresh Batch
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-[#1a472a]/30 rounded-xl">
-                <Leaf className="w-6 h-6 text-[#b8860b]" />
-                <div>
-                  <p className="font-semibold text-sm">Zero Preservatives</p>
-                  <p className="text-xs text-[#f5f0e1]/50">All natural</p>
+              <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-[#1a472a]/30 rounded-xl">
+                <Leaf className="w-5 h-5 sm:w-6 sm:h-6 text-[#b8860b] shrink-0" />
+                <div className="min-w-0">
+                  <p className="font-semibold text-xs sm:text-sm truncate">
+                    Fresh Oil
+                  </p>
+                  <p className="text-[10px] sm:text-xs text-[#f5f0e1]/50">
+                    Authentic Madras
+                  </p>
                 </div>
               </div>
             </div>

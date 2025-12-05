@@ -6,9 +6,11 @@ import {
   useState,
   useEffect,
   useCallback,
+  useRef,
   ReactNode,
 } from "react";
 import type { Product } from "./types";
+import { useAuth } from "./auth-context";
 
 interface WishlistContextType {
   wishlistItems: Product[];
@@ -17,8 +19,7 @@ interface WishlistContextType {
   isInWishlist: (productId: string) => boolean;
   toggleWishlist: (product: Product) => void;
   clearWishlist: () => void;
-  syncWishlistWithCloud: (customerId: string) => Promise<void>;
-  saveWishlistToCloud: (customerId: string) => Promise<void>;
+  restoreWishlistFromCloud: (productIds: string[]) => Promise<void>;
   isSyncing: boolean;
 }
 
@@ -30,6 +31,20 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const [wishlistItems, setWishlistItems] = useState<Product[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
+  const { authMethod, syncWishlistToCloud } = useAuth();
+
+  // Use ref to avoid sync function being a dependency that triggers useEffect
+  const syncFnRef = useRef(syncWishlistToCloud);
+  // Track if we've done the initial sync to prevent empty array sync
+  const hasLoadedFromStorage = useRef(false);
+  // Track if we've already fetched from cloud to prevent duplicate fetches
+  const hasFetchedFromCloud = useRef(false);
+
+  // Keep sync function ref updated
+  useEffect(() => {
+    syncFnRef.current = syncWishlistToCloud;
+  }, [syncWishlistToCloud]);
 
   // Load wishlist from localStorage on mount (client-side only)
   useEffect(() => {
@@ -49,12 +64,92 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem("wishlist");
       } catch {}
     }
+    hasLoadedFromStorage.current = true;
     setIsInitialized(true);
   }, []);
 
+  // Fetch wishlist from cloud when user is already logged in with Google
+  // This ensures cross-device sync by using cloud as source of truth
+  useEffect(() => {
+    if (
+      !isInitialized ||
+      authMethod !== "google" ||
+      hasFetchedFromCloud.current
+    )
+      return;
+
+    const fetchFromCloud = async () => {
+      hasFetchedFromCloud.current = true;
+      setIsRestoring(true);
+
+      try {
+        // Fetch saved wishlist product IDs from Supabase
+        const response = await fetch("/api/user/sync?type=wishlist");
+        if (!response.ok) {
+          console.log("Could not fetch wishlist from cloud");
+          return;
+        }
+
+        const result = await response.json();
+        if (!result.success || !result.data || !Array.isArray(result.data)) {
+          console.log("No cloud wishlist found or invalid data");
+          return;
+        }
+
+        const cloudProductIds = result.data as string[];
+        console.log(
+          `Fetched ${cloudProductIds.length} wishlist items from cloud`
+        );
+
+        if (cloudProductIds.length === 0) {
+          // Cloud wishlist is empty - sync local to cloud instead
+          if (wishlistItems.length > 0) {
+            const productIds = wishlistItems.map((p) => p.id);
+            syncFnRef.current(productIds);
+          }
+          return;
+        }
+
+        // Fetch product details for cloud items
+        const productPromises = cloudProductIds.map(async (id) => {
+          try {
+            const res = await fetch(`/api/products/${id}`);
+            if (res.ok) return await res.json();
+            return null;
+          } catch {
+            return null;
+          }
+        });
+
+        const products = await Promise.all(productPromises);
+        const validProducts = products.filter(Boolean) as Product[];
+
+        if (validProducts.length > 0) {
+          // Replace local wishlist with cloud wishlist (cloud is source of truth)
+          setWishlistItems(validProducts);
+          localStorage.setItem("wishlist", JSON.stringify(validProducts));
+          console.log(
+            `Restored ${validProducts.length} wishlist items from cloud`
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching wishlist from cloud:", error);
+      } finally {
+        setTimeout(() => setIsRestoring(false), 100);
+      }
+    };
+
+    fetchFromCloud();
+  }, [isInitialized, authMethod, wishlistItems]);
+
   // Save wishlist to localStorage whenever it changes (only after initialization)
+  // Also sync to Supabase for Google auth users (but not during restoration)
   useEffect(() => {
     if (!isInitialized || typeof window === "undefined") return;
+
+    // Guard: Don't sync empty wishlist unless we're sure it's intentional
+    // (i.e., user has actually loaded from storage first)
+    if (!hasLoadedFromStorage.current) return;
 
     try {
       // Limit data size to prevent quota issues
@@ -74,13 +169,21 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         isNew: p.isNew,
       }));
       localStorage.setItem("wishlist", JSON.stringify(dataToSave));
+
+      // Sync product IDs to Supabase for Google auth users
+      // Skip sync during restoration to prevent overwriting cloud data
+      if (authMethod === "google" && !isRestoring) {
+        const productIds = wishlistItems.map((p) => p.id);
+        // Use ref to call sync function (avoids dependency that triggers effect)
+        syncFnRef.current(productIds);
+      }
     } catch (error) {
       console.error("Error saving wishlist to localStorage:", error);
       try {
         localStorage.removeItem("wishlist");
       } catch {}
     }
-  }, [wishlistItems, isInitialized]);
+  }, [wishlistItems, isInitialized, authMethod, isRestoring]);
 
   const addToWishlist = useCallback((product: Product) => {
     if (!product || !product.id) return;
@@ -122,29 +225,37 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, []);
 
-  // Sync wishlist from cloud (load customer's saved wishlist)
-  const syncWishlistWithCloud = useCallback(async (customerId: string) => {
-    if (!customerId) return;
+  // Restore wishlist from Supabase (called after Google login)
+  // Fetches product details for saved product IDs
+  const restoreWishlistFromCloud = useCallback(async (productIds: string[]) => {
+    if (!productIds || productIds.length === 0) return;
 
     setIsSyncing(true);
+    setIsRestoring(true); // Prevent sync during restoration
     try {
-      const response = await fetch(
-        `/api/customer/wishlist?customerId=${customerId}`
-      );
-      const data = await response.json();
+      // Fetch product details for each ID
+      const productPromises = productIds.map(async (id) => {
+        try {
+          const response = await fetch(`/api/products/${id}`);
+          if (response.ok) {
+            return await response.json();
+          }
+          return null;
+        } catch {
+          return null;
+        }
+      });
 
-      if (
-        data.wishlist &&
-        Array.isArray(data.wishlist) &&
-        data.wishlist.length > 0
-      ) {
+      const products = await Promise.all(productPromises);
+      const validProducts = products.filter(Boolean) as Product[];
+
+      if (validProducts.length > 0) {
         // Merge cloud wishlist with local wishlist
         setWishlistItems((localItems) => {
-          const cloudItems = data.wishlist as Product[];
           const merged = [...localItems];
 
           // Add cloud items that aren't already in local
-          cloudItems.forEach((cloudItem) => {
+          validProducts.forEach((cloudItem) => {
             if (!merged.some((item) => item.id === cloudItem.id)) {
               merged.push(cloudItem);
             }
@@ -159,38 +270,13 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         });
       }
     } catch (error) {
-      console.error("Error syncing wishlist from cloud:", error);
+      console.error("Error restoring wishlist from cloud:", error);
     } finally {
       setIsSyncing(false);
+      // Use setTimeout to ensure the state update happens after the wishlist is set
+      setTimeout(() => setIsRestoring(false), 100);
     }
   }, []);
-
-  // Save wishlist to cloud
-  const saveWishlistToCloud = useCallback(
-    async (customerId: string) => {
-      if (!customerId || wishlistItems.length === 0) return;
-
-      try {
-        await fetch("/api/customer/wishlist", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            customerId,
-            wishlist: wishlistItems.map((item) => ({
-              id: item.id,
-              name: item.name,
-              slug: item.slug,
-              price: item.price,
-              image: item.image,
-            })),
-          }),
-        });
-      } catch (error) {
-        console.error("Error saving wishlist to cloud:", error);
-      }
-    },
-    [wishlistItems]
-  );
 
   return (
     <WishlistContext.Provider
@@ -201,8 +287,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         isInWishlist,
         toggleWishlist,
         clearWishlist,
-        syncWishlistWithCloud,
-        saveWishlistToCloud,
+        restoreWishlistFromCloud,
         isSyncing,
       }}
     >

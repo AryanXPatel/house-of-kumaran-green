@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
     }
 
     const metafieldValue = data.data?.customer?.metafield?.value;
-
+    
     if (metafieldValue) {
       try {
         const wishlist = JSON.parse(metafieldValue);

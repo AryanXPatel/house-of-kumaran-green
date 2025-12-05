@@ -201,26 +201,26 @@ export function FeaturedProducts() {
               })}
         </div>
 
-        {/* Quick action banner */}
-        <div className="mt-10 p-6 bg-gradient-to-r from-[#1a472a] to-[#0d1f14] rounded-2xl border border-[#b8860b]/20 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-[#b8860b]/20 flex items-center justify-center">
-              <Gift className="w-6 h-6 text-[#b8860b]" />
+        {/* Prominent Kumaran Family Banner */}
+        <div className="mt-10 p-8 md:p-10 bg-gradient-to-r from-[#b8860b] via-[#d4a017] to-[#b8860b] rounded-3xl shadow-2xl shadow-[#b8860b]/20 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col md:flex-row items-center gap-5 text-center md:text-left">
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#0d1f14]/20 flex items-center justify-center">
+              <Gift className="w-8 h-8 md:w-10 md:h-10 text-[#0d1f14]" />
             </div>
             <div>
-              <p className="font-serif text-lg font-bold text-[#f5f0e1]">
-                First Order Discount!
+              <p className="font-serif text-2xl md:text-3xl font-bold text-[#0d1f14] mb-1">
+                Join the Kumaran Family
               </p>
-              <p className="text-[#f5f0e1]/60 text-sm">
-                Use code{" "}
-                <span className="text-[#b8860b] font-semibold">NAMASTE</span>{" "}
-                for 10% off
+              <p className="text-[#0d1f14]/80 text-base md:text-lg">
+                <span className="font-bold">First order?</span> Free gift
+                hamper! • <span className="font-bold">5% off forever</span> on
+                all orders
               </p>
             </div>
           </div>
           <Link
             href="/shop"
-            className="px-6 py-3 bg-[#b8860b] hover:bg-[#d4a017] text-[#0d1f14] font-semibold rounded-full transition-colors whitespace-nowrap"
+            className="px-8 py-4 bg-[#0d1f14] hover:bg-[#1a2f20] text-[#f5f0e1] font-bold text-lg rounded-full transition-colors whitespace-nowrap shadow-lg"
           >
             Shop Now
           </Link>

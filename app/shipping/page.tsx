@@ -22,25 +22,25 @@ const shippingZones = [
     zone: "South India",
     states: "Tamil Nadu, Kerala, Karnataka, Andhra Pradesh, Telangana",
     time: "2-4 business days",
-    cost: "Free above ₹500, else ₹50",
+    cost: "Free above ₹399, else ₹50",
   },
   {
     zone: "West & Central India",
     states: "Maharashtra, Gujarat, Madhya Pradesh, Rajasthan, Goa",
     time: "4-6 business days",
-    cost: "Free above ₹500, else ₹70",
+    cost: "Free above ₹399, else ₹70",
   },
   {
     zone: "North India",
     states: "Delhi NCR, Punjab, Haryana, UP, Uttarakhand",
     time: "5-7 business days",
-    cost: "Free above ₹500, else ₹80",
+    cost: "Free above ₹399, else ₹80",
   },
   {
     zone: "East & Northeast India",
     states: "West Bengal, Odisha, Bihar, Assam, and NE states",
     time: "7-10 business days",
-    cost: "Free above ₹500, else ₹100",
+    cost: "Free above ₹399, else ₹100",
   },
 ];
 
@@ -90,7 +90,7 @@ export default function ShippingPage() {
               </div>
               <h3 className="font-semibold mb-2">Free Shipping</h3>
               <p className="text-[#f5f0e1]/60 text-sm">
-                On all orders above ₹500
+                On all orders above ₹399
               </p>
             </div>
 

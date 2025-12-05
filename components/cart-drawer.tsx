@@ -29,7 +29,7 @@ export function CartDrawer() {
 
   if (!isCartOpen) return null;
 
-  const deliveryFee = totalPrice >= 500 ? 0 : 80;
+  const deliveryFee = totalPrice >= 399 ? 0 : 80;
   const finalTotal = totalPrice + deliveryFee;
 
   const handleCheckout = () => {
@@ -166,15 +166,15 @@ export function CartDrawer() {
         {items.length > 0 && (
           <div className="p-6 border-t border-[#b8860b]/10 space-y-4">
             {/* Delivery Info */}
-            {totalPrice < 500 && (
+            {totalPrice < 399 && (
               <div className="p-3 bg-[#b8860b]/10 rounded-lg">
                 <p className="text-sm text-[#b8860b]">
-                  Add ₹{500 - totalPrice} more for free delivery!
+                  Add ₹{399 - totalPrice} more for free delivery!
                 </p>
                 <div className="mt-2 h-1.5 bg-[#0d1f14] rounded-full overflow-hidden">
                   <div
                     className="h-full bg-[#b8860b] rounded-full transition-all duration-500"
-                    style={{ width: `${(totalPrice / 500) * 100}%` }}
+                    style={{ width: `${(totalPrice / 399) * 100}%` }}
                   />
                 </div>
               </div>

@@ -145,6 +145,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error saving cart:", error);
-    return NextResponse.json({ error: "Failed to save cart" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to save cart" },
+      { status: 500 }
+    );
   }
 }

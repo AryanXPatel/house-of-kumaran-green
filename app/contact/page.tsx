@@ -149,7 +149,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-semibold mb-1">Email Us</h3>
                     <p className="text-[#f5f0e1]/60 text-sm mb-2">
-                      For general inquiries and support
+                      Usually replies within 6-8 hours (excl. weekends)
                     </p>
                     <a
                       href="mailto:hello@houseofkumaran.com"
@@ -170,10 +170,10 @@ export default function ContactPage() {
                       Mon-Sat, 9 AM - 6 PM IST
                     </p>
                     <a
-                      href="tel:+918667262327"
+                      href="tel:+919337054587"
                       className="text-[#b8860b] hover:underline"
                     >
-                      +91 86672 62327
+                      +91 93370 54587
                     </a>
                   </div>
                 </div>
@@ -185,15 +185,15 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-semibold mb-1">WhatsApp</h3>
                     <p className="text-[#f5f0e1]/60 text-sm mb-2">
-                      Quick responses via WhatsApp
+                      Mon-Sat, 9 AM - 6 PM IST
                     </p>
                     <a
-                      href="https://wa.me/918667262327"
+                      href="https://wa.me/917358407027"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[#b8860b] hover:underline"
                     >
-                      Chat with us
+                      +91 73584 07027
                     </a>
                   </div>
                 </div>
@@ -418,7 +418,8 @@ export default function ContactPage() {
             <p>Sunday: Closed</p>
           </div>
           <p className="text-[#f5f0e1]/40 text-sm mt-4">
-            We typically respond to emails within 24 hours on business days.
+            We typically respond to emails within 6-8 hours (excluding
+            weekends).
           </p>
         </div>
       </section>

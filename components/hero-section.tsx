@@ -29,30 +29,8 @@ export function HeroSection() {
         </svg>
       </div>
 
-      {/* Kumaran Family Banner */}
-      <div className="absolute top-20 left-0 right-0 z-20 bg-gradient-to-r from-[#b8860b] via-[#d4a017] to-[#b8860b] py-2.5 px-4 overflow-hidden">
-        <div className="flex items-center justify-center gap-2">
-          <Leaf className="w-4 h-4 text-[#0d1f14]" />
-          <span className="text-[#0d1f14] text-sm md:text-base font-bold">
-            Join Kumaran Family — Get 10% Off Forever!
-          </span>
-          <span className="hidden sm:inline text-[#0d1f14]/80 text-sm">
-            | Free gift hamper on first order
-          </span>
-          <Leaf className="w-4 h-4 text-[#0d1f14]" />
-        </div>
-      </div>
-
       {/* Main content */}
       <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 text-center pt-8">
-        {/* Tagline */}
-        <div className="mb-6 inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-[#2a4a35] bg-[#0d1f14]/50 backdrop-blur-sm">
-          <span className="w-2 h-2 rounded-full bg-[#b8860b] animate-pulse" />
-          <span className="text-[#f5f0e1]/70 text-sm tracking-[0.15em] uppercase">
-            Est. 2021
-          </span>
-        </div>
-
         {/* Main headline - slightly smaller */}
         <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-[#f5f0e1] leading-[0.95] tracking-tight mb-6">
           <span className="block">The Taste of</span>
@@ -82,38 +60,47 @@ export function HeroSection() {
           </Link>
         </div>
 
-        {/* Quick category links */}
-        <div className="flex flex-wrap items-center justify-center gap-2.5 md:gap-3.5 mb-10">
-          {[
-            { name: "Podis", slug: "podis" },
-            { name: "Pickles & Thokku", slug: "pickles" },
-            { name: "Sweets", slug: "sweets" },
-            { name: "Savouries", slug: "savouries" },
-            { name: "Vadams & Appalam", slug: "vadams" },
-            { name: "Ready-to-Mix", slug: "ready-to-mix" },
-          ].map((cat) => (
+        {/* Quick category links with visual demarcation */}
+        <div className="mb-10">
+          <p className="text-[#b8860b] text-xs tracking-[0.2em] uppercase mb-4">
+            Shop by Category
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
+            {[
+              { name: "Podis", slug: "podis" },
+              { name: "Pickles & Thokku", slug: "pickles" },
+              { name: "Sweets", slug: "sweets" },
+              { name: "Savouries", slug: "savouries" },
+              { name: "Vadams & Appalam", slug: "vadams" },
+              { name: "Ready-to-Mix", slug: "ready-to-mix" },
+            ].map((cat, index, arr) => (
+              <div key={cat.slug} className="flex items-center gap-3 md:gap-4">
+                <Link
+                  href={`/shop?category=${cat.slug}`}
+                  className="px-5 md:px-6 py-2.5 md:py-3 text-sm md:text-base lg:text-lg font-medium text-[#f5f0e1]/80 hover:text-[#0d1f14] border border-[#b8860b]/40 hover:border-[#b8860b] hover:bg-[#b8860b] rounded-full transition-all duration-200"
+                >
+                  {cat.name}
+                </Link>
+                {index < arr.length - 1 && (
+                  <span className="hidden md:block w-1 h-1 rounded-full bg-[#b8860b]/50" />
+                )}
+              </div>
+            ))}
             <Link
-              key={cat.slug}
-              href={`/shop?category=${cat.slug}`}
-              className="px-5 md:px-6 py-2.5 md:py-3 text-sm md:text-base lg:text-lg font-medium text-[#f5f0e1]/70 hover:text-[#b8860b] border border-[#2a4a35] hover:border-[#b8860b]/50 hover:bg-[#b8860b]/10 rounded-full transition-all duration-200"
+              href="/shop"
+              className="px-5 md:px-6 py-2.5 md:py-3 text-sm md:text-base lg:text-lg font-semibold text-[#0d1f14] bg-[#b8860b] hover:bg-[#d4a017] border border-[#b8860b] rounded-full transition-all duration-200 flex items-center gap-2"
             >
-              {cat.name}
+              All Products
+              <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
             </Link>
-          ))}
-          <Link
-            href="/shop"
-            className="px-5 md:px-6 py-2.5 md:py-3 text-sm md:text-base lg:text-lg font-semibold text-[#b8860b] hover:text-[#0d1f14] border border-[#b8860b] hover:bg-[#b8860b] rounded-full transition-all duration-200 flex items-center gap-2"
-          >
-            All Products
-            <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
-          </Link>
+          </div>
         </div>
 
         {/* Trust badges - Compact */}
         <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 text-[#f5f0e1]/50">
           <div className="flex items-center gap-2">
             <Truck className="w-4 h-4 text-[#b8860b]" />
-            <span className="text-xs md:text-sm">Free Shipping ₹500+</span>
+            <span className="text-xs md:text-sm">Free Shipping ₹399+</span>
           </div>
           <div className="flex items-center gap-2">
             <Leaf className="w-4 h-4 text-[#b8860b]" />
