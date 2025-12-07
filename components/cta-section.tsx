@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Truck, ShieldCheck, RefreshCw, Gift } from "lucide-react";
+import { ArrowRight, Truck, ShieldCheck, RefreshCw } from "lucide-react";
 
 export function CTASection() {
   return (
@@ -24,20 +24,6 @@ export function CTASection() {
               Join thousands of families across India who have made House of
               Kumaran a part of their kitchen.
             </p>
-
-            {/* Promo Code Banner */}
-            <div className="flex items-center gap-4 p-5 bg-[#0d1f14]/15 rounded-2xl mb-6 border-2 border-[#0d1f14]/20">
-              <Gift className="w-8 h-8 text-[#0d1f14]" />
-              <div>
-                <p className="font-bold text-lg text-[#0d1f14]">
-                  Join the Kumaran Family!
-                </p>
-                <p className="text-[#0d1f14]/80">
-                  <span className="font-bold">First order?</span> Free gift
-                  hamper! • <span className="font-bold">5% off forever</span>
-                </p>
-              </div>
-            </div>
 
             <div className="flex flex-col sm:flex-row gap-3 mb-8">
               <Link

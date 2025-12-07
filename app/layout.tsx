@@ -144,7 +144,9 @@ export default function RootLayout({
             <ShopifyCartProvider>
               <WishlistProvider>
                 <RecentlyViewedProvider>
-                  <CustomerSyncProvider>{children}</CustomerSyncProvider>
+                  <CustomerSyncProvider>
+                    {children}
+                  </CustomerSyncProvider>
                 </RecentlyViewedProvider>
               </WishlistProvider>
             </ShopifyCartProvider>

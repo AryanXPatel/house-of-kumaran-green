@@ -6,7 +6,7 @@ export const categories: CategoryInfo[] = [
     name: "Podis",
     tamilName: "பொடி",
     description: "Traditional spice powders ground fresh using stone grinders",
-    image: "/placeholder.svg?height=600&width=600",
+    image: "/images/Category/Podi-Category.png",
     productCount: 15,
   },
   {
@@ -14,7 +14,7 @@ export const categories: CategoryInfo[] = [
     name: "Pickles & Thokku",
     tamilName: "ஊறுகாய்",
     description: "Sun-ripened pickles made with cold-pressed gingelly oil",
-    image: "/placeholder.svg?height=600&width=600",
+    image: "/images/Category/Pickle-Thokku-Category.png",
     productCount: 10,
   },
   {
@@ -22,7 +22,7 @@ export const categories: CategoryInfo[] = [
     name: "Sweets",
     tamilName: "இனிப்பு",
     description: "Handcrafted traditional sweets using pure ghee and jaggery",
-    image: "/placeholder.svg?height=600&width=600",
+    image: "/images/Category/Sweets-Category.png",
     productCount: 7,
   },
   {
@@ -30,7 +30,7 @@ export const categories: CategoryInfo[] = [
     name: "Savouries",
     tamilName: "காரம்",
     description: "Crispy snacks made with rice flour and traditional recipes",
-    image: "/placeholder.svg?height=600&width=600",
+    image: "/images/Category/Savouries-Category.png",
     productCount: 7,
   },
   {
@@ -38,7 +38,7 @@ export const categories: CategoryInfo[] = [
     name: "Vadams & Appalam",
     tamilName: "வடகம்",
     description: "Sun-dried rice crisps and papads made the traditional way",
-    image: "/placeholder.svg?height=600&width=600",
+    image: "/images/Category/Vadam-Category.png",
     productCount: 12,
   },
   {
@@ -46,7 +46,7 @@ export const categories: CategoryInfo[] = [
     name: "Ready-to-Mix",
     tamilName: "கலவை",
     description: "Instant mixes for quick traditional South Indian meals",
-    image: "/placeholder.svg?height=600&width=600",
+    image: "/images/Category/Ready-To-Mix-Category.png",
     productCount: 8,
   },
   {
@@ -54,7 +54,7 @@ export const categories: CategoryInfo[] = [
     name: "Vathals",
     tamilName: "வத்தல்",
     description: "Sun-dried vegetables for authentic South Indian curries",
-    image: "/placeholder.svg?height=600&width=600",
+    image: "/images/Category/Vathal-Category.png",
     productCount: 4,
   },
 ];

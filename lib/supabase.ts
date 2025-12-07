@@ -25,6 +25,7 @@ export interface SupabaseUser {
   picture: string | null;
   cart_id: string | null;
   wishlist_product_ids: string[];
+  shopify_customer_id: string | null; // Shopify Admin API customer GID
   created_at: string;
   updated_at: string;
 }

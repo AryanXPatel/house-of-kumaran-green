@@ -31,22 +31,27 @@ export async function getUserByEmail(
 export async function upsertUser(
   email: string,
   name?: string | null,
-  picture?: string | null
+  picture?: string | null,
+  shopifyCustomerId?: string | null
 ): Promise<SupabaseUser> {
+  // Build the upsert data - only include shopify_customer_id if provided
+  const upsertData: Record<string, unknown> = {
+    email: email.toLowerCase(),
+    name: name || null,
+    picture: picture || null,
+  };
+
+  // Only update shopify_customer_id if explicitly provided
+  if (shopifyCustomerId !== undefined) {
+    upsertData.shopify_customer_id = shopifyCustomerId;
+  }
+
   const { data, error } = await supabase
     .from("users")
-    .upsert(
-      {
-        email: email.toLowerCase(),
-        name: name || null,
-        picture: picture || null,
-        // Don't overwrite cart_id and wishlist_product_ids if user exists
-      },
-      {
-        onConflict: "email",
-        ignoreDuplicates: false,
-      }
-    )
+    .upsert(upsertData, {
+      onConflict: "email",
+      ignoreDuplicates: false,
+    })
     .select()
     .single();
 
@@ -132,4 +137,43 @@ export async function getWishlistProductIds(email: string): Promise<string[]> {
   }
 
   return data?.wishlist_product_ids || [];
+}
+
+/**
+ * Update user's Shopify customer ID
+ */
+export async function updateShopifyCustomerId(
+  email: string,
+  shopifyCustomerId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from("users")
+    .update({ shopify_customer_id: shopifyCustomerId })
+    .eq("email", email.toLowerCase());
+
+  if (error) {
+    console.error("Error updating Shopify customer ID:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get user's Shopify customer ID
+ */
+export async function getShopifyCustomerId(
+  email: string
+): Promise<string | null> {
+  const { data, error } = await supabase
+    .from("users")
+    .select("shopify_customer_id")
+    .eq("email", email.toLowerCase())
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") return null;
+    console.error("Error fetching Shopify customer ID:", error);
+    throw error;
+  }
+
+  return data?.shopify_customer_id || null;
 }

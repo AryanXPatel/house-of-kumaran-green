@@ -25,14 +25,38 @@ export async function GET(
       getProductRating(productId),
     ]);
 
+    // Use rating data from the count endpoint
+    let averageRating = ratingData.average;
+    let totalReviews = ratingData.count;
+
+    // If the count endpoint didn't return proper data, we need to calculate from reviews
+    // (fallback for Judge.me API issues with external_id)
+    if (averageRating === 0 || totalReviews === 0) {
+      // If we already have enough reviews in this request, use them
+      if (reviewsData.reviews.length > 0 && reviewsData.reviews.length >= perPage) {
+        // We might not have all reviews, fetch more to get accurate count
+        const allReviewsData = await fetchProductReviews(productId, 1, 100);
+        if (allReviewsData.reviews.length > 0) {
+          const sum = allReviewsData.reviews.reduce((acc, r) => acc + r.rating, 0);
+          averageRating = Math.round((sum / allReviewsData.reviews.length) * 100) / 100;
+          totalReviews = allReviewsData.reviews.length;
+        }
+      } else if (reviewsData.reviews.length > 0) {
+        // We have all the reviews (less than perPage), calculate from them
+        const sum = reviewsData.reviews.reduce((acc, r) => acc + r.rating, 0);
+        averageRating = Math.round((sum / reviewsData.reviews.length) * 100) / 100;
+        totalReviews = reviewsData.reviews.length;
+      }
+    }
+
     return NextResponse.json({
       success: true,
       data: {
         reviews: reviewsData.reviews,
         currentPage: reviewsData.currentPage,
         perPage: reviewsData.perPage,
-        averageRating: ratingData.average,
-        totalReviews: ratingData.count,
+        averageRating: averageRating,
+        totalReviews: totalReviews,
       },
     });
   } catch (error) {

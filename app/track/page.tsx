@@ -14,29 +14,55 @@ import {
   AlertCircle,
   ExternalLink,
   Loader2,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 
 // NimbusPost tracking URL
 const NIMBUSPOST_TRACKING_URL = "https://ship.nimbuspost.com/shipping/tracking";
+
+interface TrackingEvent {
+  timestamp: string;
+  status: string;
+  location: string;
+  message: string;
+}
+
+interface TrackingStep {
+  title: string;
+  date: string;
+  completed: boolean;
+  location?: string;
+}
+
+interface TrackingResultData {
+  found: boolean;
+  status?: string;
+  statusColor?: string;
+  awbNumber?: string;
+  courier?: string;
+  origin?: string;
+  destination?: string;
+  deliveredDate?: string;
+  steps?: TrackingStep[];
+  trackingHistory?: TrackingEvent[];
+  source?: string;
+  error?: string;
+}
 
 export default function TrackOrderPage() {
   const [trackingNumber, setTrackingNumber] = useState("");
   const [trackingType, setTrackingType] = useState<"order" | "awb">("order");
   const [email, setEmail] = useState("");
   const [isTracking, setIsTracking] = useState(false);
-  const [trackingResult, setTrackingResult] = useState<null | {
-    found: boolean;
-    status?: string;
-    awbNumber?: string;
-    courier?: string;
-    steps?: { title: string; date: string; completed: boolean }[];
-    error?: string;
-  }>(null);
+  const [showFullHistory, setShowFullHistory] = useState(false);
+  const [trackingResult, setTrackingResult] = useState<TrackingResultData | null>(null);
 
   const handleTrack = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsTracking(true);
     setTrackingResult(null);
+    setShowFullHistory(false);
 
     try {
       if (trackingType === "awb") {
@@ -46,8 +72,7 @@ export default function TrackOrderPage() {
         return;
       }
 
-      // For order number tracking, try to fetch from Shopify
-      // Note: This requires server-side API route for security
+      // For order number tracking, fetch from our API
       const response = await fetch(`/api/track-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -58,20 +83,25 @@ export default function TrackOrderPage() {
         const data = await response.json();
         setTrackingResult({
           found: true,
-          status: data.fulfillmentStatus || "Processing",
+          status: data.fulfillmentStatus || data.status || "Processing",
+          statusColor: data.statusColor || "processing",
           awbNumber: data.trackingNumber,
           courier: data.trackingCompany,
+          origin: data.origin,
+          destination: data.destination,
+          deliveredDate: data.deliveredDate,
           steps: data.steps || generateSteps(data.fulfillmentStatus),
+          trackingHistory: data.trackingHistory || [],
+          source: data.source,
         });
       } else {
-        // Fallback: Show helpful message
+        const errorData = await response.json();
         setTrackingResult({
           found: false,
-          error: "Order not found. Try using your AWB/tracking number instead.",
+          error: errorData.error || "Order not found. Try using your AWB/tracking number instead.",
         });
       }
     } catch {
-      // If API doesn't exist yet, show demo/helpful info
       setTrackingResult({
         found: false,
         error:
@@ -83,8 +113,8 @@ export default function TrackOrderPage() {
   };
 
   // Generate tracking steps based on fulfillment status
-  const generateSteps = (status: string) => {
-    const allSteps = [
+  const generateSteps = (status: string): TrackingStep[] => {
+    const allSteps: TrackingStep[] = [
       { title: "Order Placed", date: "", completed: true },
       { title: "Order Confirmed", date: "", completed: true },
       { title: "Packed & Shipped", date: "", completed: false },
@@ -112,6 +142,38 @@ export default function TrackOrderPage() {
   const handleDirectTrack = () => {
     if (trackingNumber) {
       window.open(`${NIMBUSPOST_TRACKING_URL}/${trackingNumber}`, "_blank");
+    }
+  };
+
+  const getStatusBadgeColor = (color?: string) => {
+    switch (color) {
+      case "delivered":
+        return "bg-green-500/20 text-green-400 border-green-500/30";
+      case "out-for-delivery":
+        return "bg-blue-500/20 text-blue-400 border-blue-500/30";
+      case "in-transit":
+        return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
+      case "shipped":
+        return "bg-purple-500/20 text-purple-400 border-purple-500/30";
+      case "exception":
+        return "bg-red-500/20 text-red-400 border-red-500/30";
+      default:
+        return "bg-[#b8860b]/20 text-[#b8860b] border-[#b8860b]/30";
+    }
+  };
+
+  const formatTrackingDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return dateString;
     }
   };
 
@@ -262,6 +324,7 @@ export default function TrackOrderPage() {
             <div className="mt-8">
               {trackingResult.found ? (
                 <div className="bg-[#1a472a]/20 rounded-3xl border border-[#b8860b]/10 p-8">
+                  {/* Status Header */}
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-[#b8860b]/10 flex items-center justify-center">
@@ -271,9 +334,11 @@ export default function TrackOrderPage() {
                         <p className="text-sm text-[#f5f0e1]/60">
                           Order Status
                         </p>
-                        <p className="font-semibold text-[#b8860b]">
-                          {trackingResult.status}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${getStatusBadgeColor(trackingResult.statusColor)}`}>
+                            {trackingResult.status}
+                          </span>
+                        </div>
                       </div>
                     </div>
                     {trackingResult.awbNumber && (
@@ -312,10 +377,34 @@ export default function TrackOrderPage() {
                           </div>
                         )}
                       </div>
+                      {/* Origin & Destination */}
+                      {(trackingResult.origin || trackingResult.destination) && (
+                        <div className="mt-4 pt-4 border-t border-[#b8860b]/10 flex justify-between text-sm">
+                          {trackingResult.origin && (
+                            <div>
+                              <p className="text-xs text-[#f5f0e1]/40 mb-1">From</p>
+                              <p className="flex items-center gap-1">
+                                <MapPin className="w-3 h-3 text-[#b8860b]" />
+                                {trackingResult.origin}
+                              </p>
+                            </div>
+                          )}
+                          {trackingResult.destination && (
+                            <div className="text-right">
+                              <p className="text-xs text-[#f5f0e1]/40 mb-1">To</p>
+                              <p className="flex items-center gap-1 justify-end">
+                                <MapPin className="w-3 h-3 text-[#b8860b]" />
+                                {trackingResult.destination}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
 
-                  <div className="space-y-4">
+                  {/* Tracking Steps Timeline */}
+                  <div className="space-y-4 mb-6">
                     {trackingResult.steps?.map((step, index) => (
                       <div key={index} className="flex gap-4">
                         <div className="flex flex-col items-center">
@@ -355,10 +444,73 @@ export default function TrackOrderPage() {
                           <p className="text-sm text-[#f5f0e1]/50">
                             {step.date}
                           </p>
+                          {step.location && (
+                            <p className="text-xs text-[#f5f0e1]/40 flex items-center gap-1 mt-1">
+                              <MapPin className="w-3 h-3" />
+                              {step.location}
+                            </p>
+                          )}
                         </div>
                       </div>
                     ))}
                   </div>
+
+                  {/* Full Tracking History */}
+                  {trackingResult.trackingHistory && trackingResult.trackingHistory.length > 0 && (
+                    <div className="border-t border-[#b8860b]/10 pt-4">
+                      <button
+                        onClick={() => setShowFullHistory(!showFullHistory)}
+                        className="flex items-center justify-between w-full text-sm text-[#b8860b] hover:text-[#d4a017] transition-colors"
+                      >
+                        <span className="font-medium">
+                          {showFullHistory ? "Hide" : "Show"} Detailed Tracking History
+                        </span>
+                        {showFullHistory ? (
+                          <ChevronUp className="w-4 h-4" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4" />
+                        )}
+                      </button>
+
+                      {showFullHistory && (
+                        <div className="mt-4 space-y-3 max-h-80 overflow-y-auto pr-2">
+                          {trackingResult.trackingHistory.map((event, index) => (
+                            <div
+                              key={index}
+                              className="p-3 bg-[#0d1f14] rounded-lg border border-[#b8860b]/10"
+                            >
+                              <div className="flex justify-between items-start mb-1">
+                                <span className="font-medium text-sm text-[#f5f0e1]">
+                                  {event.status}
+                                </span>
+                                <span className="text-xs text-[#f5f0e1]/40">
+                                  {formatTrackingDate(event.timestamp)}
+                                </span>
+                              </div>
+                              {event.message && (
+                                <p className="text-xs text-[#f5f0e1]/60 mb-1">
+                                  {event.message}
+                                </p>
+                              )}
+                              {event.location && (
+                                <p className="text-xs text-[#f5f0e1]/40 flex items-center gap-1">
+                                  <MapPin className="w-3 h-3" />
+                                  {event.location}
+                                </p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Source indicator */}
+                  {trackingResult.source && (
+                    <p className="text-xs text-[#f5f0e1]/30 text-center mt-4">
+                      Tracking data from {trackingResult.source === "nimbuspost" ? "NimbusPost" : "Shopify"}
+                    </p>
+                  )}
                 </div>
               ) : (
                 <div className="bg-[#1a472a]/20 rounded-3xl border border-red-500/20 p-8 text-center">

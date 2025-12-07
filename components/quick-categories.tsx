@@ -82,9 +82,9 @@ export function QuickCategories() {
                         src={category.image || "/placeholder.svg"}
                         alt={category.name}
                         fill
-                        className="object-cover opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-500"
+                        className="object-cover opacity-70 group-hover:opacity-90 group-hover:scale-110 transition-all duration-500"
                       />
-                      <div className="absolute inset-0 bg-linear-to-t from-[#0d1f14] via-[#0d1f14]/60 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0d1f14] via-[#0d1f14]/30 to-transparent" />
                     </div>
 
                     {/* Content */}

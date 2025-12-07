@@ -18,6 +18,12 @@ import {
   ChevronRight,
   ExternalLink,
   Settings,
+  Crown,
+  Percent,
+  Sparkles,
+  Gift,
+  Users,
+  Check,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useShopifyCart } from "@/lib/shopify-cart-context";
@@ -96,6 +102,7 @@ export function AuthDrawer({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [joinKumaranFamily, setJoinKumaranFamily] = useState(true);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -119,7 +126,7 @@ export function AuthDrawer({
     setIsSubmitting(true);
     setError("");
 
-    const result = await register(formData);
+    const result = await register(formData, joinKumaranFamily);
     if (!result.success) {
       setError(result.error || "Registration failed");
     }
@@ -158,7 +165,10 @@ export function AuthDrawer({
     setIsSubmitting(true);
     setError("");
 
-    const result = await loginWithGoogle(credentialResponse.credential);
+    const result = await loginWithGoogle(
+      credentialResponse.credential,
+      joinKumaranFamily
+    );
     if (!result.success) {
       setError(result.error || "Google login failed");
     } else if (result.data) {
@@ -248,27 +258,45 @@ export function AuthDrawer({
             <div className="space-y-6">
               {/* Customer Info */}
               <div className="p-4 bg-[#1a472a]/30 rounded-xl border border-[#2a4a35]">
-                {/* Show Google profile picture if available */}
-                {googleCustomer?.picture && (
+                {/* Profile section - always show for Google auth */}
+                {authMethod === "google" && googleCustomer && (
                   <div className="flex items-center gap-3 mb-3">
-                    <img
-                      src={googleCustomer.picture}
-                      alt="Profile"
-                      className="w-10 h-10 rounded-full"
-                    />
+                    {googleCustomer.picture ? (
+                      <img
+                        src={googleCustomer.picture}
+                        alt="Profile"
+                        className="w-12 h-12 rounded-full border-2 border-[#b8860b]/50"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full border-2 border-[#b8860b]/50 bg-[#b8860b]/20 flex items-center justify-center">
+                        <User className="w-6 h-6 text-[#b8860b]" />
+                      </div>
+                    )}
                     <div>
-                      <p className="text-[#f5f0e1] font-medium">
-                        {googleCustomer.name}
+                      <p className="text-[#f5f0e1] font-medium text-lg">
+                        {googleCustomer.name || displayName}
                       </p>
-                      {authMethod === "google" && (
-                        <span className="text-xs text-[#b8860b]">
-                          Signed in with Google
-                        </span>
-                      )}
+                      <span className="text-xs text-[#b8860b]">
+                        Signed in with Google
+                      </span>
                     </div>
                   </div>
                 )}
-                <p className="text-[#f5f0e1]">{displayEmail}</p>
+                {/* Show name for email auth */}
+                {authMethod === "email" && customer && (
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 rounded-full border-2 border-[#b8860b]/50 bg-[#b8860b]/20 flex items-center justify-center">
+                      <User className="w-6 h-6 text-[#b8860b]" />
+                    </div>
+                    <div>
+                      <p className="text-[#f5f0e1] font-medium text-lg">
+                        {customer.firstName} {customer.lastName}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                <p className="text-[#f5f0e1]/80">{displayEmail}</p>
                 {displayPhone && (
                   <p className="text-[#f5f0e1]/60 text-sm mt-1">
                     {displayPhone}
@@ -384,16 +412,18 @@ export function AuthDrawer({
                 Sign Out
               </button>
 
-              {/* Manage Account on Shopify */}
-              <a
-                href={SHOPIFY_ACCOUNT_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 py-3 border border-[#2a4a35] hover:border-[#b8860b]/50 text-[#f5f0e1]/70 hover:text-[#f5f0e1] font-medium rounded-full transition-colors"
-              >
-                <ExternalLink className="w-4 h-4" />
-                Manage Account
-              </a>
+              {/* Manage Account on Shopify - Only for email auth users */}
+              {authMethod === "email" && (
+                <a
+                  href={SHOPIFY_ACCOUNT_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-center gap-2 py-3 border border-[#2a4a35] hover:border-[#b8860b]/50 text-[#f5f0e1]/70 hover:text-[#f5f0e1] font-medium rounded-full transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  Manage Account
+                </a>
+              )}
             </div>
           ) : (
             /* Auth Forms */
@@ -401,6 +431,72 @@ export function AuthDrawer({
               {/* Google Sign-In Button - Primary CTA */}
               {(mode === "login" || mode === "register") && (
                 <div className="space-y-4">
+                  {/* Enhanced Kumaran Family Section */}
+                  <div className="p-5 bg-gradient-to-br from-[#b8860b]/20 via-[#d4a017]/15 to-[#b8860b]/10 rounded-2xl border border-[#b8860b]/40 mb-4">
+                    {/* Header */}
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#b8860b] to-[#d4a017] flex items-center justify-center shadow-lg">
+                        <Crown className="w-5 h-5 text-[#0d1f14]" />
+                      </div>
+                      <div>
+                        <h3 className="text-[#f5f0e1] font-bold text-lg">
+                          Join the Kumaran Family
+                        </h3>
+                        <p className="text-[#b8860b] text-xs font-medium">
+                          Unlock exclusive benefits
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Benefits List */}
+                    <div className="space-y-2 mb-4">
+                      {[
+                        { icon: Percent, text: "5% OFF on every order, forever" },
+                        { icon: Sparkles, text: "Early access to new products" },
+                        { icon: Gift, text: "Exclusive recipes & cooking tips" },
+                        { icon: Crown, text: "Member-only offers & giveaways" },
+                      ].map((benefit, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <div className="w-5 h-5 rounded-full bg-[#b8860b]/20 flex items-center justify-center flex-shrink-0">
+                            <benefit.icon className="w-3 h-3 text-[#b8860b]" />
+                          </div>
+                          <span className="text-[#f5f0e1]/90 text-sm">
+                            {benefit.text}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Checkbox */}
+                    <label className="flex items-center gap-3 cursor-pointer p-3 bg-[#0d1f14]/40 rounded-xl border border-[#b8860b]/30 hover:border-[#b8860b]/50 transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={joinKumaranFamily}
+                        onChange={(e) => setJoinKumaranFamily(e.target.checked)}
+                        className="w-5 h-5 rounded border-[#b8860b] bg-[#1a472a]/50 text-[#b8860b] focus:ring-[#b8860b] focus:ring-offset-0"
+                      />
+                      <div className="flex-1">
+                        <span className="text-[#f5f0e1] font-semibold text-sm">
+                          Yes, I want these benefits!
+                        </span>
+                        <span className="ml-2 text-xs text-[#b8860b] font-bold bg-[#b8860b]/20 px-2 py-0.5 rounded-full">
+                          FREE
+                        </span>
+                      </div>
+                      {joinKumaranFamily && (
+                        <Check className="w-5 h-5 text-green-400" />
+                      )}
+                    </label>
+
+                    {/* Social Proof */}
+                    <div className="flex items-center justify-center gap-2 mt-3 pt-3 border-t border-[#b8860b]/20">
+                      <Users className="w-4 h-4 text-[#b8860b]/70" />
+                      <span className="text-[#f5f0e1]/60 text-xs">
+                        10,000+ families already joined
+                      </span>
+                    </div>
+                  </div>
+
                   {/* Actual Google OAuth Login */}
                   <div className="flex justify-center">
                     {isSubmitting ? (
@@ -599,6 +695,28 @@ export function AuthDrawer({
                       </button>
                     </div>
                   </div>
+
+                  {/* Join Kumaran Family Checkbox (compact version for email form) */}
+                  <label className="flex items-center gap-3 cursor-pointer p-3 bg-gradient-to-r from-[#b8860b]/15 to-[#d4a017]/10 rounded-xl border border-[#b8860b]/30 hover:border-[#b8860b]/50 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={joinKumaranFamily}
+                      onChange={(e) => setJoinKumaranFamily(e.target.checked)}
+                      className="w-5 h-5 rounded border-[#b8860b] bg-[#1a472a]/50 text-[#b8860b] focus:ring-[#b8860b] focus:ring-offset-0"
+                    />
+                    <div className="flex-1 flex items-center gap-2">
+                      <Crown className="w-4 h-4 text-[#b8860b]" />
+                      <span className="text-[#f5f0e1] font-semibold text-sm">
+                        Join Kumaran Family
+                      </span>
+                      <span className="text-xs text-[#b8860b] font-bold bg-[#b8860b]/20 px-2 py-0.5 rounded-full">
+                        5% OFF
+                      </span>
+                    </div>
+                    {joinKumaranFamily && (
+                      <Check className="w-5 h-5 text-green-400" />
+                    )}
+                  </label>
 
                   <button
                     type="submit"

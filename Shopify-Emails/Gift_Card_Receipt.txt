@@ -1,0 +1,241 @@
+Email subject
+{{ shop.name }} {{ gift_card.initial_value | money_without_trailing_zeros }} gift card{% if gift_card.recipient %} for {% if gift_card.recipient.nickname != blank %}{{ gift_card.recipient.nickname }}{% elsif gift_card.recipient.name != blank %}{{ gift_card.recipient.name }}{% else %}{{ gift_card.recipient.email }}{% endif %}{% endif %}
+Email body (HTML)
+
+{% if gift_card.recipient %}
+  {% if gift_card.recipient.nickname != blank %}
+    {% assign recipient_name = gift_card.recipient.nickname %}
+  {% elsif gift_card.recipient.name != blank %}
+    {% assign recipient_name = gift_card.recipient.name %}
+  {% else %}
+    {% assign recipient_name = gift_card.recipient.email %}
+  {% endif %}
+  {% capture email_title %}
+    {% if gift_card.send_on != blank %}
+      Here's your gift card that will be sent to {{ recipient_name }} on {{ gift_card.send_on | date: '%B %e, %Y' }}.
+    {% else %}
+      Here's your gift card that was sent to {{ recipient_name }}.
+    {% endif %}
+  {% endcapture %}
+{% endif %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{{ email_title }}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--[if mso]>
+    <noscript>
+      <xml>
+        <o:OfficeDocumentSettings>
+          <o:PixelsPerInch>96</o:PixelsPerInch>
+        </o:OfficeDocumentSettings>
+      </xml>
+    </noscript>
+    <![endif]-->
+  </head>
+
+  <body style="margin: 0; padding: 0; background-color: #e5e5e5; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #e5e5e5;">
+      <tr>
+        <td align="center" style="padding: 20px 10px;">
+          <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 8px; overflow: hidden;">
+
+            <!-- ============ HEADER ============ -->
+            <tr>
+              <td style="background-color: #102117; padding: 0;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td style="padding: 24px 30px 16px 30px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td align="center" style="vertical-align: middle;">
+                            {%- if shop.email_logo_url %}
+                              <img src="{{ shop.email_logo_url }}" alt="{{ shop.name }}" width="{{ shop.email_logo_width | default: 150 }}" style="display: block; max-width: 150px; height: auto;">
+                            {%- else %}
+                              <span style="font-family: Georgia, 'Times New Roman', serif; font-size: 22px; color: #f5f0e1; text-decoration: none; font-weight: bold;">{{ shop.name }}</span>
+                            {%- endif %}
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="center" style="padding: 0 30px;">
+                      <span style="font-family: Georgia, 'Times New Roman', serif; font-size: 11px; font-style: italic; color: #b8860b; letter-spacing: 1.5px;">Made in Madras</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 16px 30px 0 30px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td style="border-bottom: 2px solid #b8860b; height: 1px; font-size: 1px; line-height: 1px;">&nbsp;</td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="height: 20px;"></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- ============ MAIN CONTENT ============ -->
+            <tr>
+              <td style="background-color: #ffffff; padding: 32px 30px;">
+                <h2 style="margin: 0 0 16px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 22px; font-weight: normal; color: #1a1a1a; line-height: 1.4; text-align: center;">{{ email_title }}</h2>
+
+                {% if gift_card.recipient and gift_card.message != blank %}
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 20px 0;">
+                    <tr>
+                      <td align="center">
+                        <p style="margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: 16px; font-style: italic; color: #555555; line-height: 1.6;">
+                          "{{ gift_card.message }}"
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                {% endif %}
+
+                <!-- Gift Card Value -->
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0;">
+                  <tr>
+                    <td align="center">
+                      <span style="font-family: Georgia, 'Times New Roman', serif; font-size: 42px; font-weight: bold; color: #b8860b;">
+                        {{ gift_card.initial_value | money_with_currency }}
+                      </span>
+                    </td>
+                  </tr>
+                  {% if gift_card.expires_on %}
+                    <tr>
+                      <td align="center" style="padding-top: 8px;">
+                        <span style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #888888;">
+                          Expires {{ gift_card.expires_on | date: '%B %e, %Y' }}
+                        </span>
+                      </td>
+                    </tr>
+                  {% endif %}
+                </table>
+
+                <!-- Gift Card Image -->
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0;">
+                  <tr>
+                    <td align="center">
+                      <img src="{{ 'gift-card/card.jpg' | shopify_asset_url }}" alt="Gift card" width="240" height="160" style="display: block; border-radius: 8px; border: 1px solid #e5e5e5;">
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Shop Name -->
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 16px 0;">
+                  <tr>
+                    <td align="center">
+                      <span style="font-family: Georgia, 'Times New Roman', serif; font-size: 18px; color: #1a1a1a; font-weight: bold;">{{ shop.name }}</span>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Gift Card Code -->
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0; padding: 20px; background-color: #f9f7f3; border-radius: 8px;">
+                  <tr>
+                    <td align="center">
+                      <span style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #555555; display: block; margin-bottom: 8px;">
+                        Use this code online
+                      </span>
+                      <span style="font-family: 'Courier New', Courier, monospace; font-size: 24px; font-weight: bold; color: #0d1f14; letter-spacing: 3px;">
+                        {{ gift_card.code | format_code }}
+                      </span>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- CTA Buttons -->
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0;">
+                  <tr>
+                    <td align="center">
+                      <!--[if mso]>
+                      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ shop.url }}" style="height:50px;v-text-anchor:middle;width:200px;" arcsize="8%" stroke="f" fillcolor="#b8860b">
+                        <w:anchorlock/>
+                        <center style="color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;">Visit our store</center>
+                      </v:roundrect>
+                      <![endif]-->
+                      <!--[if !mso]><!-->
+                      <a href="{{ shop.url }}" style="display: inline-block; padding: 14px 32px; background-color: #b8860b; color: #ffffff; font-family: Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; border-radius: 4px;">Visit our store</a>
+                      <!--<![endif]-->
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="center" style="padding-top: 16px;">
+                      <a href="{{ gift_card.url }}" style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #b8860b; text-decoration: underline;">View gift card balance</a>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Apple Wallet -->
+                {% if gift_card.pass_url %}
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 16px 0;">
+                    <tr>
+                      <td align="center">
+                        <a href="{{ gift_card.pass_url }}">
+                          <img src="{{ 'gift-card/add-to-apple-wallet.png' | shopify_asset_url }}" alt="Add to Apple Wallet" width="120" height="40" style="display: block;">
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                {% endif %}
+              </td>
+            </tr>
+
+            <!-- ============ FOOTER ============ -->
+            <tr>
+              <td style="background-color: #102117; padding: 0;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td style="padding: 0 30px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td style="border-top: 2px solid #b8860b; height: 1px;"></td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 24px 30px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td align="center">
+                            <p style="margin: 0 0 12px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #f5f0e1;">
+                              Questions? Contact us at
+                              <a href="mailto:{{ shop.email }}" style="color: #b8860b; text-decoration: none;">{{ shop.email }}</a>
+                            </p>
+                            <p style="margin: 0 0 16px 0; font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #888888;">
+                              Chennai, Tamil Nadu, India
+                            </p>
+                            <p style="margin: 0 0 16px 0;">
+                              <a href="https://instagram.com/houseofkumaran" style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #b8860b; text-decoration: none;">
+                                @houseofkumaran
+                              </a>
+                            </p>
+                            <p style="margin: 0 0 16px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 12px; font-style: italic; color: #b8860b; letter-spacing: 1px;">
+                              The Taste of Madras
+                            </p>
+                            <p style="margin: 0; font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #555555;">
+                              &copy; {{ 'now' | date: '%Y' }} House of Kumaran. All rights reserved.
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

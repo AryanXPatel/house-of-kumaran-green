@@ -810,7 +810,7 @@ export function shopifyToProduct(shopifyProduct: ShopifyProduct): Product {
     name: shopifyProduct.title,
     slug: shopifyProduct.handle,
     description: shopifyProduct.description?.substring(0, 200) || "",
-    longDescription: shopifyProduct.description || "",
+    longDescription: shopifyProduct.descriptionHtml || shopifyProduct.description || "",
     price,
     originalPrice: compareAtPrice,
     weight,

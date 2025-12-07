@@ -183,7 +183,7 @@ export default function CartPage() {
                       <span>₹{totalPrice}</span>
                     </div>
                     <div className="flex justify-between text-[#f5f0e1]/70">
-                      <span>Delivery</span>
+                      <span>Shipping</span>
                       <span>
                         {deliveryFee === 0 ? (
                           <span className="text-green-400">FREE</span>

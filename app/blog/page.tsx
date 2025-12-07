@@ -19,8 +19,8 @@ const blogPosts = [
     category: "Recipes",
     date: "Nov 25, 2025",
     readTime: "5 min read",
-    image: "/placeholder.svg?height=400&width=600",
     slug: "art-of-making-podi",
+    image: "/images/Blog/Perfect-Podi.png",
   },
   {
     id: 2,
@@ -30,8 +30,8 @@ const blogPosts = [
     category: "Health",
     date: "Nov 20, 2025",
     readTime: "4 min read",
-    image: "/placeholder.svg?height=400&width=600",
     slug: "health-benefits-pickles",
+    image: "/images/Blog/Pickle-benefit.png",
   },
   {
     id: 3,
@@ -41,8 +41,8 @@ const blogPosts = [
     category: "Story",
     date: "Nov 15, 2025",
     readTime: "6 min read",
-    image: "/placeholder.svg?height=400&width=600",
     slug: "our-journey",
+    image: "/images/Blog/CtoKitchen.png",
   },
   {
     id: 4,
@@ -52,8 +52,8 @@ const blogPosts = [
     category: "Recipes",
     date: "Nov 10, 2025",
     readTime: "3 min read",
-    image: "/placeholder.svg?height=400&width=600",
     slug: "summer-recipes",
+    image: "/images/Blog/Summer-Recipe.png",
   },
   {
     id: 5,
@@ -63,8 +63,8 @@ const blogPosts = [
     category: "Behind the Scenes",
     date: "Nov 5, 2025",
     readTime: "5 min read",
-    image: "/placeholder.svg?height=400&width=600",
     slug: "zero-preservative-science",
+    image: "/images/Blog/Zero-Preservative.png",
   },
   {
     id: 6,
@@ -74,8 +74,8 @@ const blogPosts = [
     category: "Culture",
     date: "Oct 28, 2025",
     readTime: "7 min read",
-    image: "/placeholder.svg?height=400&width=600",
     slug: "chettinad-cuisine",
+    image: "/images/Blog/Regional-Flavour.png",
   },
 ];
 
@@ -90,23 +90,23 @@ const categories = [
 
 export default function BlogPage() {
   return (
-    <main className="min-h-screen bg-[#0d1f14] text-[#f5f0e1]">
+    <main className="min-h-screen bg-background text-foreground">
       <Navbar />
 
       {/* Hero Section */}
       <section className="pt-32 pb-16 px-6 relative overflow-hidden">
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-20 right-10 w-96 h-96 border border-[#b8860b] rounded-full" />
+          <div className="absolute top-20 right-10 w-96 h-96 border border-primary rounded-full" />
         </div>
 
         <div className="max-w-[1400px] mx-auto relative text-center">
-          <p className="text-[#b8860b] text-sm tracking-[0.3em] uppercase mb-4">
+          <p className="text-primary text-sm tracking-[0.3em] uppercase mb-4">
             Our Stories
           </p>
           <h1 className="font-serif text-5xl md:text-6xl font-bold mb-6">
-            The Kumaran <span className="text-[#b8860b]">Blog</span>
+            The Kumaran <span className="text-primary">Blog</span>
           </h1>
-          <p className="text-xl text-[#f5f0e1]/70 max-w-2xl mx-auto">
+          <p className="text-xl text-foreground/70 max-w-2xl mx-auto">
             Recipes, cooking tips, cultural stories, and behind-the-scenes looks
             at how we bring authentic South Indian flavors to your table.
           </p>
@@ -114,7 +114,7 @@ export default function BlogPage() {
       </section>
 
       {/* Categories */}
-      <section className="py-8 px-6 border-y border-[#b8860b]/10">
+      <section className="py-8 px-6 border-y border-border">
         <div className="max-w-[1400px] mx-auto">
           <div className="flex flex-wrap justify-center gap-3">
             {categories.map((category) => (
@@ -122,8 +122,8 @@ export default function BlogPage() {
                 key={category}
                 className={`px-4 py-2 rounded-full text-sm transition-colors ${
                   category === "All"
-                    ? "bg-[#b8860b] text-[#0d1f14] font-semibold"
-                    : "border border-[#b8860b]/30 text-[#f5f0e1]/70 hover:border-[#b8860b]"
+                    ? "bg-primary text-primary-foreground font-semibold"
+                    : "border border-border text-foreground/70 hover:border-primary"
                 }`}
               >
                 {category}
@@ -138,59 +138,62 @@ export default function BlogPage() {
         <div className="max-w-[1400px] mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {blogPosts.map((post) => (
-              <article
+              <Link
                 key={post.id}
-                className="group bg-[#1a472a]/20 rounded-2xl border border-[#b8860b]/10 overflow-hidden hover:border-[#b8860b]/30 transition-colors"
+                href={`/blog/${post.slug}`}
+                className="group block"
               >
-                <div className="relative aspect-[3/2] overflow-hidden">
-                  <Image
-                    src={post.image}
-                    alt={post.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 bg-[#b8860b] text-[#0d1f14] text-xs font-semibold rounded-full">
-                      {post.category}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  <div className="flex items-center gap-4 text-sm text-[#f5f0e1]/50 mb-3">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      {post.date}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      {post.readTime}
-                    </span>
+                <article className="bg-card/20 rounded-2xl border border-border overflow-hidden hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 h-full">
+                  {/* Image */}
+                  <div className="relative aspect-[3/2] overflow-hidden">
+                    <Image
+                      src={post.image}
+                      alt={post.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent" />
+                    <div className="absolute top-4 left-4">
+                      <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full">
+                        {post.category}
+                      </span>
+                    </div>
                   </div>
 
-                  <h2 className="font-serif text-xl font-bold mb-3 group-hover:text-[#b8860b] transition-colors">
-                    {post.title}
-                  </h2>
+                  <div className="p-6">
+                    <div className="flex items-center gap-4 text-sm text-foreground/50 mb-3">
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        {post.date}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        {post.readTime}
+                      </span>
+                    </div>
 
-                  <p className="text-[#f5f0e1]/60 text-sm mb-4 line-clamp-2">
-                    {post.excerpt}
-                  </p>
+                    <h2 className="font-serif text-xl font-bold mb-3 group-hover:text-primary transition-colors">
+                      {post.title}
+                    </h2>
 
-                  <Link
-                    href={`/blog/${post.slug}`}
-                    className="inline-flex items-center gap-2 text-[#b8860b] font-semibold text-sm group-hover:gap-3 transition-all"
-                  >
-                    Read More
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </article>
+                    <p className="text-foreground/60 text-sm mb-4 line-clamp-2">
+                      {post.excerpt}
+                    </p>
+
+                    <span className="inline-flex items-center gap-2 text-primary font-semibold text-sm group-hover:gap-3 transition-all">
+                      Read More
+                      <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </div>
+                </article>
+              </Link>
             ))}
           </div>
 
           {/* Load More */}
           <div className="text-center mt-12">
-            <button className="px-8 py-3 border border-[#b8860b]/50 text-[#f5f0e1] rounded-full hover:border-[#b8860b] transition-colors">
+            <button className="px-8 py-3 border border-border text-foreground rounded-full hover:border-primary transition-colors">
               Load More Articles
             </button>
           </div>
@@ -198,12 +201,12 @@ export default function BlogPage() {
       </section>
 
       {/* Newsletter CTA */}
-      <section className="py-16 px-6 bg-[#0a1810]">
+      <section className="py-16 px-6 bg-sidebar">
         <div className="max-w-xl mx-auto text-center">
           <h2 className="font-serif text-2xl font-bold mb-4">
             Get Recipes in Your Inbox
           </h2>
-          <p className="text-[#f5f0e1]/60 mb-6">
+          <p className="text-foreground/60 mb-6">
             Subscribe to our newsletter for weekly recipes, cooking tips, and
             exclusive offers.
           </p>
@@ -211,9 +214,9 @@ export default function BlogPage() {
             <input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 px-4 py-3 bg-[#0d1f14] border border-[#b8860b]/20 rounded-full text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors"
+              className="flex-1 px-4 py-3 bg-background border border-border rounded-full text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-primary transition-colors"
             />
-            <button className="px-6 py-3 bg-[#b8860b] text-[#0d1f14] font-semibold rounded-full hover:bg-[#d4a017] transition-colors">
+            <button className="px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary/90 transition-colors">
               Subscribe
             </button>
           </div>

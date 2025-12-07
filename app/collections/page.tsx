@@ -87,9 +87,9 @@ export default async function CollectionsPage() {
                     src={category.image || "/placeholder.svg"}
                     alt={category.name}
                     fill
-                    className="object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
+                    className="object-cover opacity-80 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d1f14] via-[#0d1f14]/50 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d1f14] via-[#0d1f14]/25 to-transparent" />
 
                   <div className="absolute inset-0 p-8 flex flex-col justify-end">
                     <p className="text-[#b8860b] text-sm tracking-wider mb-2 font-medium">

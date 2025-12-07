@@ -10,6 +10,11 @@ import {
   Twitter,
   CheckCircle,
   Loader2,
+  Crown,
+  Percent,
+  Sparkles,
+  Gift,
+  Users,
 } from "lucide-react";
 
 const footerLinks = {
@@ -73,19 +78,13 @@ export function Footer() {
     setSubscribeStatus("idle");
 
     try {
-      // Using Web3Forms for newsletter signup
-      const response = await fetch("https://api.web3forms.com/submit", {
+      // Subscribe via Shopify Admin API
+      const response = await fetch("/api/newsletter/subscribe", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          access_key: "73b5ab25-d66d-44b5-a914-aa6e5dedf83d", // Replace with actual key from web3forms.com
-          subject: "New Newsletter Subscription - Kumaran Family",
-          email: email,
-          message: `New subscriber: ${email} wants to join the Kumaran Family!`,
-          to: "support@houseofkumaran.com",
-        }),
+        body: JSON.stringify({ email }),
       });
 
       const result = await response.json();
@@ -94,20 +93,12 @@ export function Footer() {
         setSubscribeStatus("success");
         setEmail("");
       } else {
-        // Fallback - open mailto
-        window.location.href = `mailto:hello@houseofkumaran.com?subject=Newsletter%20Subscription&body=Please%20add%20me%20to%20your%20newsletter:%20${encodeURIComponent(
-          email
-        )}`;
-        setSubscribeStatus("success");
-        setEmail("");
+        console.error("Newsletter subscription failed:", result.error);
+        setSubscribeStatus("error");
       }
-    } catch {
-      // Fallback - open mailto
-      window.location.href = `mailto:hello@houseofkumaran.com?subject=Newsletter%20Subscription&body=Please%20add%20me%20to%20your%20newsletter:%20${encodeURIComponent(
-        email
-      )}`;
-      setSubscribeStatus("success");
-      setEmail("");
+    } catch (error) {
+      console.error("Newsletter subscription error:", error);
+      setSubscribeStatus("error");
     } finally {
       setIsSubmitting(false);
     }
@@ -120,7 +111,7 @@ export function Footer() {
 
       {/* Newsletter section */}
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 mb-20">
-        <div className="relative rounded-3xl bg-[#132a1c] border border-[#2a4a35] p-10 md:p-16 overflow-hidden">
+        <div className="relative rounded-3xl bg-gradient-to-br from-[#132a1c] to-[#0d1f14] border border-[#b8860b]/30 p-8 md:p-12 overflow-hidden">
           {/* Background pattern */}
           <div className="absolute inset-0 opacity-5">
             <div
@@ -132,51 +123,88 @@ export function Footer() {
             />
           </div>
 
-          <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
-            <div className="max-w-xl">
-              <h3 className="font-serif text-3xl md:text-4xl font-bold text-[#f5f0e1] mb-4">
-                Join the Kumaran Family
-              </h3>
-              <p className="text-[#f5f0e1]/60">
-                Subscribe for exclusive offers, recipes, and 5% off on all
-                orders forever.
-              </p>
+          {/* Golden accent line */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#b8860b] to-transparent" />
+
+          <div className="relative">
+            {/* Header with icon */}
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#b8860b] to-[#d4a017] flex items-center justify-center shadow-lg shadow-[#b8860b]/20">
+                <Crown className="w-7 h-7 text-[#0d1f14]" />
+              </div>
+              <div>
+                <h3 className="font-serif text-2xl md:text-3xl font-bold text-[#f5f0e1]">
+                  Join the Kumaran Family
+                </h3>
+                <p className="text-[#b8860b] text-sm font-medium">
+                  Unlock exclusive member benefits
+                </p>
+              </div>
             </div>
 
-            {subscribeStatus === "success" ? (
-              <div className="flex items-center gap-3 px-6 py-4 bg-green-500/20 rounded-full text-green-400">
-                <CheckCircle className="w-5 h-5" />
-                <span>Welcome to the Kumaran Family!</span>
-              </div>
-            ) : (
-              <form
-                onSubmit={handleSubscribe}
-                className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto"
-              >
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="Enter your email"
-                  className="flex-1 lg:w-80 px-6 py-4 bg-[#0d1f14] border border-[#2a4a35] rounded-full text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors"
-                />
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-8 py-4 bg-[#b8860b] hover:bg-[#d4a017] text-[#0d1f14] font-semibold rounded-full transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            {/* Benefits grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              {[
+                { icon: Percent, text: "5% OFF forever" },
+                { icon: Sparkles, text: "Early access" },
+                { icon: Gift, text: "Exclusive recipes" },
+                { icon: Crown, text: "Member offers" },
+              ].map((benefit, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-2 p-3 bg-[#b8860b]/10 rounded-xl border border-[#b8860b]/20"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Joining...
-                    </>
-                  ) : (
-                    "Subscribe"
-                  )}
-                </button>
-              </form>
-            )}
+                  <benefit.icon className="w-4 h-4 text-[#b8860b]" />
+                  <span className="text-[#f5f0e1]/80 text-sm font-medium">
+                    {benefit.text}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Form and social proof row */}
+            <div className="flex flex-col lg:flex-row lg:items-center gap-6">
+              {subscribeStatus === "success" ? (
+                <div className="flex items-center gap-3 px-6 py-4 bg-green-500/20 rounded-full text-green-400">
+                  <CheckCircle className="w-5 h-5" />
+                  <span className="font-semibold">Welcome to the Kumaran Family!</span>
+                </div>
+              ) : (
+                <form
+                  onSubmit={handleSubscribe}
+                  className="flex flex-col sm:flex-row gap-3 flex-1"
+                >
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="Enter your email"
+                    className="flex-1 lg:max-w-sm px-6 py-4 bg-[#0d1f14] border border-[#2a4a35] rounded-full text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 focus:outline-none focus:border-[#b8860b] transition-colors"
+                  />
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="px-8 py-4 bg-gradient-to-r from-[#b8860b] to-[#d4a017] hover:from-[#d4a017] hover:to-[#b8860b] text-[#0d1f14] font-bold rounded-full transition-all whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-[#b8860b]/20"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Joining...
+                      </>
+                    ) : (
+                      "Join Free"
+                    )}
+                  </button>
+                </form>
+              )}
+
+              {/* Social proof */}
+              <div className="flex items-center gap-2 text-[#f5f0e1]/50 lg:border-l lg:border-[#2a4a35] lg:pl-6">
+                <Users className="w-4 h-4 text-[#b8860b]" />
+                <span className="text-sm">10,000+ families joined</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -187,13 +215,15 @@ export function Footer() {
           {/* Logo & description */}
           <div className="col-span-2">
             <Link href="/" className="inline-flex items-center gap-3 mb-6">
-              <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#b8860b]/30">
+              <div className="w-14 h-14 min-w-[56px] rounded-full overflow-hidden border-2 border-[#b8860b]/30 flex-shrink-0">
                 <Image
                   src="/images/houseofkumaranlogo.png"
                   alt="House Of Kumaran"
                   width={56}
                   height={56}
-                  className="object-cover"
+                  className="object-cover w-full h-full"
+                  priority
+                  unoptimized
                 />
               </div>
               <div>
@@ -215,7 +245,6 @@ export function Footer() {
               <p>3, Kasthuri 2nd Street, New Laxmipuram</p>
               <p>Chennai, Tamil Nadu - 600099</p>
               <p>hello@houseofkumaran.com</p>
-              <p>+91 93370 54587</p>
             </div>
           </div>
 

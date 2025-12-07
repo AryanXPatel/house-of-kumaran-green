@@ -176,31 +176,72 @@ export default function TermsPage() {
 
               <div className="p-4 bg-[#b8860b]/10 border border-[#b8860b]/30 rounded-xl mt-4">
                 <h3 className="font-semibold text-lg mb-2 text-[#b8860b]">
-                  Damaged, Spilled or Expired Products - 60% Refund Guarantee
+                  Damaged, Spilled, Missing or Expired Products - 70% Refund
+                  Guarantee
                 </h3>
                 <p className="text-[#f5f0e1]/70 mb-2">
-                  If your product arrives damaged, spilled, or expired, we offer
-                  a{" "}
+                  If your product arrives damaged, spilled, missing, or expired,
+                  we offer a{" "}
                   <strong className="text-[#f5f0e1]">
-                    60% refund with no questions asked
+                    70% refund with no questions asked
                   </strong>
                   . Simply:
                 </p>
                 <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-1 ml-4">
-                  <li>Contact us within 48 hours of delivery</li>
-                  <li>Share photos of the damaged/expired product</li>
-                  <li>Receive 60% refund within 3-5 business days</li>
+                  <li>Contact us within 3 days of delivery</li>
+                  <li>
+                    Share an unpacking video showing the issue (MANDATORY)
+                  </li>
+                  <li>Receive 70% refund within 3-5 business days</li>
                 </ul>
                 <p className="text-[#f5f0e1]/50 text-sm mt-3">
-                  *This policy covers manufacturing defects, transit damage, and
-                  products received past expiry date.
+                  *This policy covers manufacturing defects, transit damage,
+                  spillage, missing items, and products received past expiry
+                  date. An unpacking video is mandatory for all claims - photos
+                  alone will not be accepted.
                 </p>
               </div>
             </div>
 
             <div>
               <h2 className="font-serif text-2xl font-bold mb-4 text-[#b8860b]">
-                6. Intellectual Property
+                6. Unpacking Video Requirement for Damage/Spillage/Missing Item
+                Claims
+              </h2>
+              <div className="p-4 bg-[#b8860b]/10 border border-[#b8860b]/30 rounded-xl mb-4">
+                <p className="text-[#f5f0e1]/70 mb-3">
+                  <strong className="text-[#f5f0e1]">IMPORTANT:</strong> To
+                  raise any complaint regarding damaged products, spillage,
+                  missing items, or expired products, customers{" "}
+                  <strong className="text-[#b8860b]">
+                    MUST provide an unpacking video
+                  </strong>
+                  .
+                </p>
+                <p className="text-[#f5f0e1]/70 mb-3">
+                  The unpacking video must clearly show:
+                </p>
+                <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-1 ml-4">
+                  <li>The sealed/unopened outer packaging of the parcel</li>
+                  <li>The unboxing process from start to finish</li>
+                  <li>
+                    The condition of all items inside (damaged, spilled,
+                    missing, or expired)
+                  </li>
+                  <li>Any visible defects, spillage, or expiry dates</li>
+                </ul>
+                <p className="text-[#f5f0e1]/50 text-sm mt-3">
+                  ⚠️ Claims without an unpacking video will not be eligible for
+                  the 70% refund guarantee. Photos alone are NOT sufficient. We
+                  recommend recording the unboxing of all deliveries as a
+                  precaution.
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="font-serif text-2xl font-bold mb-4 text-[#b8860b]">
+                7. Intellectual Property
               </h2>
               <p className="text-[#f5f0e1]/70 mb-4">
                 All content on this website, including but not limited to:
@@ -221,7 +262,7 @@ export default function TermsPage() {
 
             <div>
               <h2 className="font-serif text-2xl font-bold mb-4 text-[#b8860b]">
-                7. User Accounts
+                8. User Accounts
               </h2>
               <p className="text-[#f5f0e1]/70 mb-4">
                 If you create an account, you are responsible for:
@@ -241,7 +282,7 @@ export default function TermsPage() {
 
             <div>
               <h2 className="font-serif text-2xl font-bold mb-4 text-[#b8860b]">
-                8. Prohibited Activities
+                9. Prohibited Activities
               </h2>
               <p className="text-[#f5f0e1]/70 mb-4">You agree not to:</p>
               <ul className="list-disc list-inside text-[#f5f0e1]/70 space-y-2 ml-4">
@@ -257,7 +298,7 @@ export default function TermsPage() {
 
             <div>
               <h2 className="font-serif text-2xl font-bold mb-4 text-[#b8860b]">
-                9. Food Safety and Allergens
+                10. Food Safety and Allergens
               </h2>
               <p className="text-[#f5f0e1]/70 mb-4">
                 Our products may contain allergens including but not limited to:
@@ -278,7 +319,7 @@ export default function TermsPage() {
 
             <div>
               <h2 className="font-serif text-2xl font-bold mb-4 text-[#b8860b]">
-                10. Limitation of Liability
+                11. Limitation of Liability
               </h2>
               <p className="text-[#f5f0e1]/70 mb-4">
                 To the maximum extent permitted by law, House of Kumaran and its
@@ -298,7 +339,7 @@ export default function TermsPage() {
 
             <div>
               <h2 className="font-serif text-2xl font-bold mb-4 text-[#b8860b]">
-                11. Indemnification
+                12. Indemnification
               </h2>
               <p className="text-[#f5f0e1]/70">
                 You agree to indemnify and hold harmless House of Kumaran, its
@@ -310,7 +351,7 @@ export default function TermsPage() {
 
             <div>
               <h2 className="font-serif text-2xl font-bold mb-4 text-[#b8860b]">
-                12. Governing Law and Disputes
+                13. Governing Law and Disputes
               </h2>
               <p className="text-[#f5f0e1]/70 mb-4">
                 These Terms shall be governed by the laws of India. Any disputes
@@ -328,7 +369,7 @@ export default function TermsPage() {
 
             <div>
               <h2 className="font-serif text-2xl font-bold mb-4 text-[#b8860b]">
-                13. Severability
+                14. Severability
               </h2>
               <p className="text-[#f5f0e1]/70">
                 If any provision of these Terms is found to be unenforceable,

@@ -1,0 +1,415 @@
+Email subject
+Your order has been picked up ({{ name }})
+Email body (HTML)
+{% capture email_title %}Your order has been picked up{% endcapture %}
+{% capture email_body %}Thank you for shopping at {{ shop_name }}{% endcapture %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{{ email_title }}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--[if mso]>
+    <noscript>
+      <xml>
+        <o:OfficeDocumentSettings>
+          <o:PixelsPerInch>96</o:PixelsPerInch>
+        </o:OfficeDocumentSettings>
+      </xml>
+    </noscript>
+    <![endif]-->
+  </head>
+
+  <body style="margin: 0; padding: 0; background-color: #e5e5e5; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #e5e5e5;">
+      <tr>
+        <td align="center" style="padding: 20px 10px;">
+          <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 8px; overflow: hidden;">
+
+            <!-- ============ HEADER ============ -->
+            <tr>
+              <td style="background-color: #102117; padding: 0;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td style="padding: 24px 30px 16px 30px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td style="vertical-align: middle;" width="60%">
+                            {%- if shop.email_logo_url %}
+                              <img src="{{ shop.email_logo_url }}" alt="{{ shop.name }}" width="{{ shop.email_logo_width | default: 150 }}" style="display: block; max-width: 150px; height: auto;">
+                            {%- else %}
+                              <span style="font-family: Georgia, 'Times New Roman', serif; font-size: 22px; color: #f5f0e1; text-decoration: none; font-weight: bold;">{{ shop.name }}</span>
+                            {%- endif %}
+                          </td>
+                          <td style="vertical-align: middle; text-align: right;" width="40%">
+                            <span style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #f5f0e1; letter-spacing: 0.5px;">
+                              Order {{ order_name }}
+                            </span>
+                            {%- if po_number %}
+                              <br>
+                              <span style="font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #f5f0e1; opacity: 0.7;">
+                                PO #{{ po_number }}
+                              </span>
+                            {%- endif %}
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 0 30px;">
+                      <span style="font-family: Georgia, 'Times New Roman', serif; font-size: 11px; font-style: italic; color: #b8860b; letter-spacing: 1.5px;">Made in Madras</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 16px 30px 0 30px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td style="border-bottom: 2px solid #b8860b; height: 1px; font-size: 1px; line-height: 1px;">&nbsp;</td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="height: 20px;"></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- ============ MAIN CONTENT ============ -->
+            <tr>
+              <td style="background-color: #ffffff; padding: 32px 30px;">
+                <h2 style="margin: 0 0 12px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 26px; font-weight: normal; color: #1a1a1a; line-height: 1.3;">{{ email_title }}</h2>
+
+                <p style="margin: 0 0 20px 0; font-family: Arial, Helvetica, sans-serif; font-size: 15px; color: #333333; line-height: 1.6;">{{ email_body }}</p>
+
+                <!-- CTA Button -->
+                {% if shop.url %}
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0;">
+                    <tr>
+                      <td>
+                        <!--[if mso]>
+                        <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ shop.url }}" style="height:50px;v-text-anchor:middle;width:200px;" arcsize="8%" stroke="f" fillcolor="#b8860b">
+                          <w:anchorlock/>
+                          <center style="color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;">Visit our store</center>
+                        </v:roundrect>
+                        <![endif]-->
+                        <!--[if !mso]><!-->
+                        <a href="{{ shop.url }}" style="display: inline-block; padding: 14px 32px; background-color: #b8860b; color: #ffffff; font-family: Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; border-radius: 4px;">Visit our store</a>
+                        <!--<![endif]-->
+                      </td>
+                    </tr>
+                  </table>
+                {% endif %}
+              </td>
+            </tr>
+
+            <!-- ============ ORDER SUMMARY ============ -->
+            <tr>
+              <td style="background-color: #f9f7f3; padding: 24px 30px; border-top: 1px solid #e5e5e5;">
+                <h3 style="margin: 0 0 20px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 18px; font-weight: normal; color: #1a1a1a; letter-spacing: 0.5px;">Order summary</h3>
+
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  {% for line in subtotal_line_items %}
+                    {% unless line.nested_line_child? %}
+                      {% assign is_parent = false %}
+                      {% if line.bundle_parent? or line.nested_line_parent? %}
+                        {% assign is_parent = true %}
+                      {% endif %}
+
+                      <tr>
+                        <td style="padding: 16px 0; border-bottom: 1px solid #e5e5e5;">
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                              <td style="width: 70px; vertical-align: top; padding-right: 16px;">
+                                {% if line.image %}
+                                  <img src="{{ line | img_url: 'compact_cropped' }}" alt="{{ line.title }}" width="60" height="60" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                {% else %}
+                                  <div style="width: 60px; height: 60px; background-color: #f5f0e1; border: 1px solid #e5e5e5; border-radius: 4px;"></div>
+                                {% endif %}
+                              </td>
+                              <td style="vertical-align: top;">
+                                {% if line.presentment_title %}
+                                  {% assign line_title = line.presentment_title %}
+                                {% elsif line.title %}
+                                  {% assign line_title = line.title %}
+                                {% else %}
+                                  {% assign line_title = line.product.title %}
+                                {% endif %}
+                                {% assign line_display = line.quantity %}
+
+                                <span style="font-family: Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; color: #1a1a1a; line-height: 1.4;">{{ line_title }}&nbsp;&times;&nbsp;{{ line_display }}</span>
+                                <br>
+                                {% if line.variant.title != 'Default Title' and is_parent == false %}
+                                  <span style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ line.variant.title }}</span><br>
+                                {% elsif line.variant.title != 'Default Title' and line.nested_line_parent? %}
+                                  <span style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ line.variant.title }}</span><br>
+                                {% endif %}
+
+                                {% for group in line.groups %}
+                                  {% if group.deliverable? %}
+                                    <span style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">For: {{ group.display_title }}</span><br>
+                                  {% else %}
+                                    <span style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">Part of: {{ group.display_title }}</span><br>
+                                  {% endif %}
+                                {% endfor %}
+
+                                {% if line.selling_plan_allocation %}
+                                  <span style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ line.selling_plan_allocation.selling_plan.name }}</span><br>
+                                {% endif %}
+
+                                {% if line.refunded_quantity > 0 %}
+                                  <span style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #8b0000;">Refunded</span>
+                                {% endif %}
+
+                                {% if line.discount_allocations %}
+                                  {% for discount_allocation in line.discount_allocations %}
+                                    {% if discount_allocation.discount_application.target_selection != 'all' %}
+                                      <p style="margin: 8px 0 0 0;">
+                                        <span style="display: inline-block; padding: 4px 8px; background-color: #f5f0e1; border-radius: 4px; font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #b8860b;">
+                                          {{ discount_allocation.discount_application.title | upcase }} (-{{ discount_allocation.amount | money }})
+                                        </span>
+                                      </p>
+                                    {% endif %}
+                                  {% endfor %}
+                                {% endif %}
+                              </td>
+                              <td style="width: 100px; vertical-align: top; text-align: right;">
+                                {% if line.original_line_price != line.final_line_price %}
+                                  <span style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #888888; text-decoration: line-through;">{{ line.original_line_price | money }}</span><br>
+                                {% endif %}
+                                <span style="font-family: Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; color: #1a1a1a;">
+                                  {% if line.final_line_price > 0 %}
+                                    {{ line.final_line_price | money }}
+                                  {% else %}
+                                    Free
+                                  {% endif %}
+                                </span>
+                                {% if line.unit_price_measurement %}
+                                  <br><span style="font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #888888;">{{ line.unit_price | unit_price_with_measurement: line.unit_price_measurement }}</span>
+                                {% endif %}
+                              </td>
+                            </tr>
+                          </table>
+
+                          {% if line.nested_line_parent? %}
+                            {% for child_line in line.nested_lines %}
+                              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 8px; padding-left: 20px;">
+                                <tr>
+                                  <td style="width: 50px; vertical-align: top; padding-right: 12px;">
+                                    {% if child_line.image %}
+                                      <img src="{{ child_line | img_url: 'compact_cropped' }}" alt="{{ child_line.title }}" width="40" height="40" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                    {% else %}
+                                      <div style="width: 40px; height: 40px; background-color: #f5f0e1; border: 1px solid #e5e5e5; border-radius: 4px;"></div>
+                                    {% endif %}
+                                  </td>
+                                  <td style="vertical-align: top;">
+                                    {% if child_line.product.title %}
+                                      {% assign item_title = child_line.product.title %}
+                                    {% else %}
+                                      {% assign item_title = child_line.title %}
+                                    {% endif %}
+                                    <span style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #333333;">{{ item_title }}&nbsp;&times;&nbsp;{{ child_line.quantity }}</span>
+                                    {% if child_line.variant.title != 'Default Title' %}
+                                      <br><span style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #555555;">{{ child_line.variant.title }}</span>
+                                    {% endif %}
+                                  </td>
+                                </tr>
+                              </table>
+                            {% endfor %}
+                          {% endif %}
+                        </td>
+                      </tr>
+                    {% endunless %}
+                  {% endfor %}
+                </table>
+              </td>
+            </tr>
+
+            <!-- ============ TOTALS SECTION ============ -->
+            <tr>
+              <td style="background-color: #ffffff; padding: 24px 30px; border-top: 1px solid #e5e5e5;">
+                {% assign total_order_discount_amount = 0 %}
+                {% assign has_shipping_discount = false %}
+                {% assign epsilon = 0.00001 %}
+
+                {% for discount_application in discount_applications %}
+                  {% if discount_application.target_selection == 'all' and discount_application.target_type == 'line_item' %}
+                    {% assign order_discount_count = order_discount_count | plus: 1 %}
+                    {% assign total_order_discount_amount = total_order_discount_amount | plus: discount_application.total_allocated_amount %}
+                  {% endif %}
+                  {% if discount_application.target_type == 'shipping_line' %}
+                    {% assign has_shipping_discount = true %}
+                    {% assign shipping_discount_title = discount_application.title %}
+                    {% assign discount_value_price = discount_application.total_allocated_amount %}
+                    {% assign shipping_amount_minus_discount_value_price = shipping_price | minus: discount_value_price %}
+                    {% assign shipping_amount_minus_discount_value_price_abs = shipping_amount_minus_discount_value_price | abs %}
+                    {% assign discount_application_value_type = discount_application.value_type | strip %}
+                    {% if shipping_amount_minus_discount_value_price_abs < epsilon or discount_application_value_type == 'percentage' and discount_application.value == 100 %}
+                      {% assign free_shipping = true %}
+                    {% else %}
+                      {% assign discounted_shipping_price = shipping_amount_minus_discount_value_price %}
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Subtotal</td>
+                    <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ subtotal_price | plus: total_order_discount_amount | money }}</td>
+                  </tr>
+
+                  {% if order_discount_count > 0 %}
+                    <tr>
+                      <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">
+                        {% if order_discount_count == 1 %}Order discount{% else %}Order discounts{% endif %}
+                      </td>
+                      <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #b8860b; text-align: right; font-weight: bold;">-{{ total_order_discount_amount | money }}</td>
+                    </tr>
+                    {% for discount_application in discount_applications %}
+                      {% if discount_application.target_selection == 'all' and discount_application.target_type != 'shipping_line' %}
+                        <tr>
+                          <td colspan="2" style="padding: 4px 0 8px 0;">
+                            <span style="display: inline-block; padding: 4px 8px; background-color: #f5f0e1; border-radius: 4px; font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #b8860b;">
+                              {{ discount_application.title }} (-{{ discount_application.total_allocated_amount | money }})
+                            </span>
+                          </td>
+                        </tr>
+                      {% endif %}
+                    {% endfor %}
+                  {% endif %}
+
+                  {% unless retail_delivery_only %}
+                    {% if delivery_method == 'pick-up' %}
+                      <tr>
+                        <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Pickup</td>
+                        <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ shipping_price | money }}</td>
+                      </tr>
+                    {% else %}
+                      {% if has_shipping_discount %}
+                        {% if free_shipping == true %}
+                          <tr>
+                            <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Shipping</td>
+                            <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; text-align: right;">
+                              {% if shipping_price != 0 %}<span style="text-decoration: line-through; color: #888888;">{{ shipping_price | money }}</span>&nbsp;{% endif %}
+                              <span style="color: #b8860b; font-weight: bold;">Free</span>
+                            </td>
+                          </tr>
+                        {% else %}
+                          <tr>
+                            <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Shipping</td>
+                            <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; text-align: right;">
+                              <span style="text-decoration: line-through; color: #888888;">{{ shipping_price | money }}</span>&nbsp;
+                              <span style="color: #1a1a1a; font-weight: bold;">{{ discounted_shipping_price | money }}</span>
+                            </td>
+                          </tr>
+                        {% endif %}
+                        <tr>
+                          <td colspan="2" style="padding: 4px 0 8px 0;">
+                            <span style="display: inline-block; padding: 4px 8px; background-color: #f5f0e1; border-radius: 4px; font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #b8860b;">
+                              {{ shipping_discount_title }}{% if discount_value_price != 0 %} (-{{ discount_value_price | money }}){% endif %}
+                            </span>
+                          </td>
+                        </tr>
+                      {% else %}
+                        <tr>
+                          <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Shipping</td>
+                          <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ shipping_price | money }}</td>
+                        </tr>
+                      {% endif %}
+                    {% endif %}
+                  {% endunless %}
+
+                  {% if total_duties %}
+                    <tr>
+                      <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Duties</td>
+                      <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ total_duties | money }}</td>
+                    </tr>
+                  {% endif %}
+
+                  <tr>
+                    <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Taxes</td>
+                    <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ tax_price | money }}</td>
+                  </tr>
+
+                  {% if total_tip and total_tip > 0 %}
+                    <tr>
+                      <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Tip</td>
+                      <td style="padding: 8px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ total_tip | money }}</td>
+                    </tr>
+                  {% endif %}
+                </table>
+
+                <!-- Total -->
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 16px; border-top: 2px solid #0d1f14; padding-top: 16px;">
+                  <tr>
+                    <td style="padding: 8px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 18px; color: #1a1a1a;">Total</td>
+                    <td style="padding: 8px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 18px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ total_price | money_with_currency }}</td>
+                  </tr>
+                  {% if total_discounts > 0 %}
+                    <tr>
+                      <td></td>
+                      <td style="padding: 8px 0; text-align: right;">
+                        <span style="display: inline-block; padding: 4px 12px; background-color: #f5f0e1; border-radius: 4px; font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #b8860b;">
+                          You saved {{ total_discounts | money }}
+                        </span>
+                      </td>
+                    </tr>
+                  {% endif %}
+                </table>
+              </td>
+            </tr>
+
+            <!-- ============ FOOTER ============ -->
+            <tr>
+              <td style="background-color: #102117; padding: 0;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td style="padding: 0 30px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td style="border-top: 2px solid #b8860b; height: 1px;"></td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 24px 30px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td align="center">
+                            <p style="margin: 0 0 12px 0; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #f5f0e1;">
+                              Questions? Contact us at
+                              <a href="mailto:{{ shop.email }}" style="color: #b8860b; text-decoration: none;">{{ shop.email }}</a>
+                            </p>
+                            <p style="margin: 0 0 16px 0; font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #888888;">
+                              Chennai, Tamil Nadu, India
+                            </p>
+                            <p style="margin: 0 0 16px 0;">
+                              <a href="https://instagram.com/houseofkumaran" style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #b8860b; text-decoration: none;">
+                                @houseofkumaran
+                              </a>
+                            </p>
+                            <p style="margin: 0 0 16px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 12px; font-style: italic; color: #b8860b; letter-spacing: 1px;">
+                              The Taste of Madras
+                            </p>
+                            <p style="margin: 0; font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #555555;">
+                              &copy; {{ 'now' | date: '%Y' }} House of Kumaran. All rights reserved.
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

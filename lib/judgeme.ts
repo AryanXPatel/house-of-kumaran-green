@@ -110,6 +110,65 @@ function validateConfig(): boolean {
   return true;
 }
 
+// Cache for internal product IDs to avoid repeated API calls
+const internalIdCache: Record<string, { id: string | null; timestamp: number }> = {};
+const INTERNAL_ID_CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
+
+/**
+ * Get Judge.me's internal product ID from Shopify's external product ID
+ * Judge.me requires internal IDs for fetching product-specific reviews
+ */
+async function getInternalProductId(externalId: string): Promise<string | null> {
+  // Check cache first
+  const cached = internalIdCache[externalId];
+  if (cached && Date.now() - cached.timestamp < INTERNAL_ID_CACHE_DURATION) {
+    return cached.id;
+  }
+
+  const apiToken = PRIVATE_API_TOKEN || PUBLIC_API_TOKEN;
+  if (!apiToken) {
+    return null;
+  }
+
+  try {
+    const params = new URLSearchParams({
+      shop_domain: SHOP_DOMAIN,
+      api_token: apiToken,
+      external_id: externalId,
+    });
+
+    const response = await fetch(`${API_BASE_URL}/products/-1?${params}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const internalId = data.product?.id?.toString() || null;
+
+      // Cache the result
+      internalIdCache[externalId] = {
+        id: internalId,
+        timestamp: Date.now(),
+      };
+
+      return internalId;
+    }
+  } catch (error) {
+    console.error("Error fetching internal product ID:", error);
+  }
+
+  // Cache null result to avoid repeated failed requests
+  internalIdCache[externalId] = {
+    id: null,
+    timestamp: Date.now(),
+  };
+
+  return null;
+}
+
 /**
  * Fetch reviews for a specific product
  * Uses private API token for server-side calls
@@ -138,10 +197,19 @@ export async function fetchProductReviews(
     // Clean the product ID (remove Shopify GID prefix if present)
     const cleanProductId = productId.replace("gid://shopify/Product/", "");
 
+    // Get Judge.me's internal product ID (required for fetching product-specific reviews)
+    const internalProductId = await getInternalProductId(cleanProductId);
+
+    if (!internalProductId) {
+      // Product doesn't exist in Judge.me yet - no reviews
+      return { reviews: [], currentPage: 1, perPage: 10 };
+    }
+
+    // Use product_id (internal ID) instead of external_id for the reviews endpoint
     const params = new URLSearchParams({
       shop_domain: SHOP_DOMAIN,
       api_token: apiToken,
-      external_id: cleanProductId,
+      product_id: internalProductId,
       page: page.toString(),
       per_page: perPage.toString(),
     });
@@ -219,10 +287,19 @@ export async function getProductRating(
   try {
     const cleanProductId = productId.replace("gid://shopify/Product/", "");
 
+    // Get Judge.me's internal product ID (required for accurate product-specific counts)
+    const internalProductId = await getInternalProductId(cleanProductId);
+
+    if (!internalProductId) {
+      // Product doesn't exist in Judge.me yet - no reviews
+      return { average: 0, count: 0 };
+    }
+
+    // Use product_id (internal ID) for the count endpoint
     const params = new URLSearchParams({
       shop_domain: SHOP_DOMAIN,
       api_token: apiToken,
-      external_id: cleanProductId,
+      product_id: internalProductId,
     });
 
     const response = await fetch(`${API_BASE_URL}/reviews/count?${params}`, {

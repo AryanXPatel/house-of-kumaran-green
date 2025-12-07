@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SignJWT, jwtVerify } from "jose";
-import { upsertUser, getUserByEmail } from "@/lib/supabase-user";
+import {
+  upsertUser,
+  getUserByEmail,
+  updateShopifyCustomerId,
+} from "@/lib/supabase-user";
+import {
+  getOrCreateShopifyCustomer,
+  isAdminApiConfigured,
+} from "@/lib/shopify-admin";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
@@ -87,7 +95,7 @@ async function createSessionToken(
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { credential } = body;
+    const { credential, joinKumaranFamily } = body;
 
     if (!credential) {
       return NextResponse.json(
@@ -123,6 +131,42 @@ export async function POST(request: NextRequest) {
     const user = await upsertUser(email, name, picture);
     console.log("User upserted in Supabase:", user.email);
 
+    // Step 2.5: Create/sync Shopify customer (if Admin API is configured)
+    let shopifyCustomerId: string | null = null;
+    if (isAdminApiConfigured()) {
+      try {
+        const shopifyResult = await getOrCreateShopifyCustomer(
+          email,
+          name || email.split("@")[0],
+          picture,
+          joinKumaranFamily || false // New parameter
+        );
+        if (shopifyResult) {
+          shopifyCustomerId = shopifyResult.customerId;
+          console.log(
+            `Shopify customer ${shopifyResult.isNew ? "created" : "found"}:`,
+            shopifyCustomerId
+          );
+
+          // Save Shopify customer ID to Supabase for future lookups
+          try {
+            await updateShopifyCustomerId(email, shopifyCustomerId);
+            console.log("Shopify customer ID saved to Supabase");
+          } catch (saveError) {
+            console.error(
+              "Failed to save Shopify customer ID to Supabase:",
+              saveError
+            );
+          }
+        }
+      } catch (error) {
+        // Log but don't fail - Shopify sync is nice-to-have
+        console.error("Shopify customer sync failed:", error);
+      }
+    } else {
+      console.log("Shopify Admin API not configured, skipping customer sync");
+    }
+
     // Step 3: Generate session token
     const sessionToken = await createSessionToken(
       email,
@@ -142,15 +186,25 @@ export async function POST(request: NextRequest) {
         picture: picture || null,
         verifiedEmail: true,
         authMethod: "google",
+        shopifyCustomerId, // Shopify customer ID for cart association
       },
       // Return saved cart and wishlist for restoration
       savedCartId: user.cart_id,
       savedWishlistProductIds: user.wishlist_product_ids || [],
     });
 
-    // Set httpOnly cookie for session
-    response.cookies.set("hok_session", sessionToken, {
+    // Set httpOnly cookie for session (hok_auth_token is checked by middleware)
+    response.cookies.set("hok_auth_token", sessionToken, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      path: "/",
+    });
+
+    // Also set a non-httpOnly status cookie for client-side auth checks
+    response.cookies.set("hok_auth_status", "authenticated", {
+      httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 30, // 30 days

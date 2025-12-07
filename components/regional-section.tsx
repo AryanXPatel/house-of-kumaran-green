@@ -8,19 +8,19 @@ const regions = [
     name: "Chennai Specials",
     description: "The authentic taste of Madras",
     products: ["Idly Podi", "Filter Coffee", "Murukku"],
-    image: "/placeholder.svg?height=400&width=600",
+    image: "/images/Story/Chennai-Specials.png",
   },
   {
     name: "Thanjavur Traditions",
     description: "From the delta heartland",
     products: ["Degree Coffee", "Sweet Pongal Mix", "Thokku"],
-    image: "/placeholder.svg?height=400&width=600",
+    image: "/images/Story/Thanjavur.png",
   },
   {
     name: "Chettinad Flavours",
     description: "Bold, spicy, unforgettable",
     products: ["Chettinad Masala", "Pepper Podi", "Kuzhambu Podi"],
-    image: "/placeholder.svg?height=400&width=600",
+    image: "/images/Story/Chettinad.png",
   },
 ]
 

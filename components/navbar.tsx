@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Search,
   ShoppingBag,
@@ -11,7 +12,18 @@ import {
   ArrowRight,
   Heart,
   User,
+  Loader2,
 } from "lucide-react";
+
+// Type for search results
+interface SearchResult {
+  id: string;
+  name: string;
+  slug: string;
+  image: string;
+  price: number;
+  category: string;
+}
 import { Button } from "@/components/ui/button";
 import { useShopifyCart } from "@/lib/shopify-cart-context";
 import { useWishlist } from "@/lib/wishlist-context";
@@ -25,6 +37,7 @@ import { categories } from "@/lib/products";
 const quickCategoryLinks = categories.slice(0, 6);
 
 export function Navbar() {
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [showCategoryBar, setShowCategoryBar] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -34,6 +47,80 @@ export function Navbar() {
   const { totalItems, setIsCartOpen } = useShopifyCart();
   const { wishlistItems } = useWishlist();
   const { isAuthenticated } = useAuth();
+
+  // Search state
+  const [searchInputValue, setSearchInputValue] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [totalResults, setTotalResults] = useState(0);
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Debounced search function
+  const performSearch = useCallback(async (query: string) => {
+    if (query.length < 2) {
+      setSearchResults([]);
+      setTotalResults(0);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+      const data = await response.json();
+      setSearchResults(data.products || []);
+      setTotalResults(data.total || 0);
+    } catch (error) {
+      console.error("Search error:", error);
+      setSearchResults([]);
+      setTotalResults(0);
+    } finally {
+      setIsSearching(false);
+    }
+  }, []);
+
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchInputValue.trim()) {
+        performSearch(searchInputValue.trim());
+      } else {
+        setSearchResults([]);
+        setTotalResults(0);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchInputValue, performSearch]);
+
+  // Clear search state when closing
+  const handleCloseSearch = () => {
+    setIsSearchOpen(false);
+    setSearchInputValue("");
+    setSearchResults([]);
+    setTotalResults(0);
+  };
+
+  // Handle search submission (Enter key or See All Results)
+  const handleSearchSubmit = () => {
+    if (searchInputValue.trim()) {
+      router.push(`/shop?search=${encodeURIComponent(searchInputValue.trim())}`);
+      handleCloseSearch();
+    }
+  };
+
+  // Handle keyboard events in search input
+  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSearchSubmit();
+    } else if (e.key === "Escape") {
+      handleCloseSearch();
+    }
+  };
+
+  // Handle clicking a search result
+  const handleResultClick = (slug: string) => {
+    router.push(`/product/${slug}`);
+    handleCloseSearch();
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -269,15 +356,15 @@ export function Navbar() {
 
       {/* Search Overlay */}
       {isSearchOpen && (
-        <div className="fixed inset-0 z-[60] bg-[#0d1f14]/98 backdrop-blur-xl flex items-start justify-center pt-32">
-          <div className="w-full max-w-2xl px-6">
+        <div className="fixed inset-0 z-[60] bg-[#0d1f14]/98 backdrop-blur-xl flex items-start justify-center pt-24 md:pt-32 overflow-y-auto">
+          <div className="w-full max-w-2xl px-6 pb-8">
             <div className="flex items-center justify-between mb-8">
               <p className="text-[#b8860b] tracking-[0.2em] uppercase text-sm">
                 Search
               </p>
               <button
-                onClick={() => setIsSearchOpen(false)}
-                className="text-[#f5f0e1]"
+                onClick={handleCloseSearch}
+                className="text-[#f5f0e1] hover:text-[#b8860b] transition-colors"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -287,48 +374,126 @@ export function Navbar() {
                 type="text"
                 placeholder="What are you looking for?"
                 autoFocus
-                className="w-full bg-transparent border-b-2 border-[#2a4a35] focus:border-[#b8860b] py-4 text-2xl md:text-3xl font-serif text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 outline-none transition-colors"
+                value={searchInputValue}
+                onChange={(e) => setSearchInputValue(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
+                className="w-full bg-transparent border-b-2 border-[#2a4a35] focus:border-[#b8860b] py-4 text-2xl md:text-3xl font-serif text-[#f5f0e1] placeholder:text-[#f5f0e1]/30 outline-none transition-colors pr-12"
               />
+              {isSearching && (
+                <Loader2 className="absolute right-0 top-1/2 -translate-y-1/2 w-6 h-6 text-[#b8860b] animate-spin" />
+              )}
             </div>
-            <div className="mt-12">
-              <p className="text-[#f5f0e1]/50 text-sm mb-4">Popular searches</p>
-              <div className="flex flex-wrap gap-3">
-                {[
-                  "Idly Podi",
-                  "Mysore Pak",
-                  "Pickle",
-                  "Murukku",
-                  "Sambar Podi",
-                ].map((term) => (
-                  <Link
-                    key={term}
-                    href={`/shop?search=${encodeURIComponent(term)}`}
-                    onClick={() => setIsSearchOpen(false)}
-                    className="px-4 py-2 border border-[#2a4a35] rounded-full text-[#f5f0e1]/70 hover:border-[#b8860b] hover:text-[#b8860b] transition-colors"
-                  >
-                    {term}
-                  </Link>
-                ))}
+
+            {/* Live Search Results */}
+            {searchInputValue.length >= 2 && (
+              <div className="mt-6">
+                {isSearching ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="w-8 h-8 text-[#b8860b] animate-spin" />
+                  </div>
+                ) : searchResults.length > 0 ? (
+                  <div className="space-y-2">
+                    <p className="text-[#f5f0e1]/50 text-sm mb-4">
+                      Found {totalResults} {totalResults === 1 ? "product" : "products"}
+                    </p>
+                    <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                      {searchResults.map((product) => (
+                        <button
+                          key={product.id}
+                          onClick={() => handleResultClick(product.slug)}
+                          className="w-full flex items-center gap-4 p-3 rounded-lg bg-[#1a472a]/30 hover:bg-[#1a472a]/50 border border-[#2a4a35] hover:border-[#b8860b]/50 transition-all group text-left"
+                        >
+                          <div className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-[#1a472a]">
+                            <Image
+                              src={product.image}
+                              alt={product.name}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-[#f5f0e1] font-medium truncate group-hover:text-[#b8860b] transition-colors">
+                              {product.name}
+                            </h4>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-xs px-2 py-0.5 rounded-full bg-[#b8860b]/10 text-[#b8860b] capitalize">
+                                {product.category}
+                              </span>
+                              <span className="text-[#f5f0e1]/60 text-sm">
+                                ₹{product.price}
+                              </span>
+                            </div>
+                          </div>
+                          <ArrowRight className="w-4 h-4 text-[#f5f0e1]/30 group-hover:text-[#b8860b] transition-colors flex-shrink-0" />
+                        </button>
+                      ))}
+                    </div>
+                    {totalResults > 6 && (
+                      <button
+                        onClick={handleSearchSubmit}
+                        className="w-full mt-4 py-3 text-center text-[#b8860b] hover:text-[#d4a017] font-medium transition-colors border border-[#b8860b]/30 hover:border-[#b8860b] rounded-lg"
+                      >
+                        See all {totalResults} results →
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-[#f5f0e1]/50">
+                      No products found for &quot;{searchInputValue}&quot;
+                    </p>
+                    <p className="text-[#f5f0e1]/30 text-sm mt-2">
+                      Try different keywords or browse categories below
+                    </p>
+                  </div>
+                )}
               </div>
-            </div>
-            {/* Quick category access in search */}
-            <div className="mt-8">
-              <p className="text-[#f5f0e1]/50 text-sm mb-4">
-                Browse categories
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {quickCategoryLinks.map((category) => (
-                  <Link
-                    key={category.slug}
-                    href={`/shop?category=${category.slug}`}
-                    onClick={() => setIsSearchOpen(false)}
-                    className="px-4 py-2 bg-[#1a472a]/50 rounded-full text-[#f5f0e1]/70 hover:bg-[#b8860b]/20 hover:text-[#b8860b] transition-colors text-sm"
-                  >
-                    {category.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
+            )}
+
+            {/* Popular Searches - Show when no search input */}
+            {searchInputValue.length < 2 && (
+              <>
+                <div className="mt-12">
+                  <p className="text-[#f5f0e1]/50 text-sm mb-4">Popular searches</p>
+                  <div className="flex flex-wrap gap-3">
+                    {[
+                      "Idly Podi",
+                      "Mysore Pak",
+                      "Pickle",
+                      "Murukku",
+                      "Sambar Podi",
+                    ].map((term) => (
+                      <Link
+                        key={term}
+                        href={`/shop?search=${encodeURIComponent(term)}`}
+                        onClick={handleCloseSearch}
+                        className="px-4 py-2 border border-[#2a4a35] rounded-full text-[#f5f0e1]/70 hover:border-[#b8860b] hover:text-[#b8860b] transition-colors"
+                      >
+                        {term}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+                {/* Quick category access in search */}
+                <div className="mt-8">
+                  <p className="text-[#f5f0e1]/50 text-sm mb-4">
+                    Browse categories
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {quickCategoryLinks.map((category) => (
+                      <Link
+                        key={category.slug}
+                        href={`/shop?category=${category.slug}`}
+                        onClick={handleCloseSearch}
+                        className="px-4 py-2 bg-[#1a472a]/50 rounded-full text-[#f5f0e1]/70 hover:bg-[#b8860b]/20 hover:text-[#b8860b] transition-colors text-sm"
+                      >
+                        {category.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

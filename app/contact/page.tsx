@@ -5,7 +5,6 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import {
   Mail,
-  Phone,
   MapPin,
   Clock,
   Send,
@@ -162,28 +161,10 @@ export default function ContactPage() {
 
                 <div className="flex items-start gap-4 p-6 bg-[#1a472a]/20 rounded-2xl border border-[#b8860b]/10">
                   <div className="w-12 h-12 rounded-full bg-[#b8860b]/10 flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-5 h-5 text-[#b8860b]" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Call Us</h3>
-                    <p className="text-[#f5f0e1]/60 text-sm mb-2">
-                      Mon-Sat, 9 AM - 6 PM IST
-                    </p>
-                    <a
-                      href="tel:+919337054587"
-                      className="text-[#b8860b] hover:underline"
-                    >
-                      +91 93370 54587
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4 p-6 bg-[#1a472a]/20 rounded-2xl border border-[#b8860b]/10">
-                  <div className="w-12 h-12 rounded-full bg-[#b8860b]/10 flex items-center justify-center flex-shrink-0">
                     <MessageSquare className="w-5 h-5 text-[#b8860b]" />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-1">WhatsApp</h3>
+                    <h3 className="font-semibold mb-1">WhatsApp Support</h3>
                     <p className="text-[#f5f0e1]/60 text-sm mb-2">
                       Mon-Sat, 9 AM - 6 PM IST
                     </p>
@@ -193,7 +174,7 @@ export default function ContactPage() {
                       rel="noopener noreferrer"
                       className="text-[#b8860b] hover:underline"
                     >
-                      +91 73584 07027
+                      Chat with us on WhatsApp
                     </a>
                   </div>
                 </div>

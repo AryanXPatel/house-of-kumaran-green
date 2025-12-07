@@ -43,12 +43,12 @@ export default function ReturnsPage() {
           </h1>
           <p className="text-xl text-[#f5f0e1]/70 max-w-2xl">
             Your satisfaction is our priority. We stand behind every product we
-            sell with our hassle-free return policy and quality guarantee.
+            sell with our hassle-free return policy and 70% refund guarantee.
           </p>
         </div>
       </section>
 
-      {/* 60% Refund Guarantee Banner */}
+      {/* 70% Refund Guarantee Banner */}
       <section className="py-8 px-6">
         <div className="max-w-[1400px] mx-auto">
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#b8860b]/20 via-[#d4a017]/10 to-[#b8860b]/20 border-2 border-[#b8860b]/40 p-8 md:p-10">
@@ -59,19 +59,20 @@ export default function ReturnsPage() {
               </div>
               <div className="flex-1 text-center md:text-left">
                 <h2 className="font-serif text-2xl md:text-3xl font-bold mb-3">
-                  60% Refund Guarantee —{" "}
+                  70% Refund Guarantee —{" "}
                   <span className="text-[#b8860b]">No Questions Asked</span>
                 </h2>
                 <p className="text-[#f5f0e1]/70 text-lg max-w-2xl">
-                  Received a damaged, spilled, or expired product? We&apos;ll
-                  refund 60% of your purchase instantly. No hassle, no
-                  arguments, no complicated process.
+                  Received a damaged, spilled, missing, or expired product?
+                  We&apos;ll refund 70% of your purchase instantly with a simple
+                  unpacking video. No hassle, no arguments, no complicated
+                  process.
                 </p>
               </div>
               <div className="flex-shrink-0">
                 <div className="text-center px-6 py-4 bg-[#0d1f14] rounded-2xl border border-[#b8860b]/30">
                   <BadgePercent className="w-8 h-8 text-[#b8860b] mx-auto mb-2" />
-                  <p className="text-3xl font-bold text-[#b8860b]">60%</p>
+                  <p className="text-3xl font-bold text-[#b8860b]">70%</p>
                   <p className="text-sm text-[#f5f0e1]/60">Guaranteed</p>
                 </div>
               </div>
@@ -88,9 +89,9 @@ export default function ReturnsPage() {
               <div className="w-14 h-14 rounded-full bg-[#b8860b]/10 flex items-center justify-center mx-auto mb-4">
                 <Clock className="w-7 h-7 text-[#b8860b]" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">7-Day Window</h3>
+              <h3 className="font-semibold text-lg mb-2">3-Day Window</h3>
               <p className="text-[#f5f0e1]/60 text-sm">
-                Report issues within 7 days of delivery for full assistance
+                Report issues within 3 days of delivery for full assistance
               </p>
             </div>
 
@@ -127,16 +128,16 @@ export default function ReturnsPage() {
         </div>
       </section>
 
-      {/* 60% Refund Details */}
+      {/* 70% Refund Details */}
       <section className="py-16 px-6 bg-[#0a1810]">
         <div className="max-w-[1400px] mx-auto">
           <div className="text-center mb-12">
             <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">
-              How Our 60% Guarantee Works
+              How Our 70% Guarantee Works
             </h2>
             <p className="text-[#f5f0e1]/60 max-w-2xl mx-auto">
               We believe in transparency. If your product arrives damaged,
-              spilled, or expired, here&apos;s exactly what happens:
+              spilled, missing, or expired, here&apos;s exactly what happens:
             </p>
           </div>
 
@@ -147,8 +148,8 @@ export default function ReturnsPage() {
               </div>
               <h3 className="font-semibold text-lg mb-2">Report the Issue</h3>
               <p className="text-[#f5f0e1]/60 text-sm">
-                Contact us within 48 hours of delivery via WhatsApp or email
-                with your order number
+                Contact us within 3 days of delivery via WhatsApp or email with
+                your order number
               </p>
             </div>
 
@@ -156,10 +157,13 @@ export default function ReturnsPage() {
               <div className="w-16 h-16 rounded-full bg-[#b8860b] flex items-center justify-center mx-auto mb-4 text-[#0d1f14] font-bold text-xl">
                 2
               </div>
-              <h3 className="font-semibold text-lg mb-2">Share Photos</h3>
+              <h3 className="font-semibold text-lg mb-2">
+                Share Unpacking Video
+              </h3>
               <p className="text-[#f5f0e1]/60 text-sm">
-                Send clear photos showing the damage, spillage, or expiry date
-                on the product
+                Send a video of you opening the parcel showing the damage,
+                spillage, missing items, or expiry date. Photos alone are not
+                sufficient.
               </p>
             </div>
 
@@ -167,9 +171,9 @@ export default function ReturnsPage() {
               <div className="w-16 h-16 rounded-full bg-[#b8860b] flex items-center justify-center mx-auto mb-4 text-[#0d1f14] font-bold text-xl">
                 3
               </div>
-              <h3 className="font-semibold text-lg mb-2">Get 60% Refund</h3>
+              <h3 className="font-semibold text-lg mb-2">Get 70% Refund</h3>
               <p className="text-[#f5f0e1]/60 text-sm">
-                Receive 60% refund to your original payment method within 3-5
+                Receive 70% refund to your original payment method within 3-5
                 business days
               </p>
             </div>
@@ -177,7 +181,8 @@ export default function ReturnsPage() {
 
           <div className="mt-10 p-6 bg-[#0d1f14] rounded-2xl border border-[#b8860b]/20 max-w-3xl mx-auto">
             <h4 className="font-semibold text-[#b8860b] mb-3">
-              What&apos;s Covered Under 60% Guarantee:
+              What&apos;s Covered Under 70% Guarantee (Unpacking Video
+              Required):
             </h4>
             <ul className="grid sm:grid-cols-2 gap-3 text-[#f5f0e1]/70 text-sm">
               <li className="flex items-center gap-2">
@@ -205,6 +210,23 @@ export default function ReturnsPage() {
                 Manufacturing defects
               </li>
             </ul>
+            <div className="mt-4 p-4 bg-[#b8860b]/10 border border-[#b8860b]/30 rounded-xl">
+              <div className="flex items-start gap-3">
+                <Camera className="w-5 h-5 text-[#b8860b] flex-shrink-0 mt-0.5" />
+                <div>
+                  <h5 className="font-semibold text-[#b8860b] mb-1">
+                    📹 Mandatory Unpacking Video Required
+                  </h5>
+                  <p className="text-[#f5f0e1]/70 text-sm">
+                    To claim the 70% refund, you must provide a video recording
+                    of you opening the parcel. The video should clearly show the
+                    outer packaging, unboxing process, and the
+                    damaged/spilled/missing/expired product. Photos alone will
+                    not be accepted for refund claims.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -275,9 +297,9 @@ export default function ReturnsPage() {
                   </p>
                 </div>
                 <div className="p-4 bg-[#0d1f14] rounded-xl">
-                  <h4 className="font-semibold mb-1">Reports After 7 Days</h4>
+                  <h4 className="font-semibold mb-1">Reports After 3 Days</h4>
                   <p className="text-[#f5f0e1]/60 text-sm">
-                    Issues must be reported within 7 days of delivery
+                    Issues must be reported within 3 days of delivery
                   </p>
                 </div>
                 <div className="p-4 bg-[#0d1f14] rounded-xl">
@@ -321,7 +343,7 @@ export default function ReturnsPage() {
                   Fastest response • Usually within 2 hours
                 </p>
                 <a
-                  href="https://wa.me/918667262327?text=Hi,%20I%20need%20help%20with%20a%20return"
+                  href="https://wa.me/917358407027?text=Hi,%20I%20need%20help%20with%20a%20return"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition-colors"
@@ -369,9 +391,9 @@ export default function ReturnsPage() {
                   </span>
                 </div>
                 <div className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-[#b8860b] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#f5f0e1]/70 text-sm">
-                    Clear photos of issue
+                  <Camera className="w-5 h-5 text-[#b8860b] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#f5f0e1]/70 text-sm font-semibold">
+                    📹 Unpacking video (REQUIRED)
                   </span>
                 </div>
                 <div className="flex items-start gap-3">
@@ -467,7 +489,7 @@ export default function ReturnsPage() {
               <ArrowRight className="w-4 h-4" />
             </Link>
             <a
-              href="https://wa.me/918667262327"
+              href="https://wa.me/917358407027"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 bg-[#0d1f14]/10 text-[#0d1f14] font-semibold rounded-full hover:bg-[#0d1f14]/20 transition-colors border border-[#0d1f14]/30"

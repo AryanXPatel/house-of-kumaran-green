@@ -49,16 +49,20 @@ interface AuthContextType {
     password: string
   ) => Promise<{ success: boolean; error?: string }>;
   loginWithGoogle: (
-    credential: string
+    credential: string,
+    joinKumaranFamily?: boolean
   ) => Promise<{ success: boolean; error?: string; data?: GoogleLoginData }>;
   syncCartToCloud: (cartId: string | null) => Promise<void>;
   syncWishlistToCloud: (productIds: string[]) => Promise<void>;
-  register: (data: {
-    email: string;
-    password: string;
-    firstName?: string;
-    lastName?: string;
-  }) => Promise<{ success: boolean; error?: string }>;
+  register: (
+    data: {
+      email: string;
+      password: string;
+      firstName?: string;
+      lastName?: string;
+    },
+    joinKumaranFamily?: boolean
+  ) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   recoverPassword: (
     email: string
@@ -209,12 +213,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const register = useCallback(
-    async (data: {
-      email: string;
-      password: string;
-      firstName?: string;
-      lastName?: string;
-    }) => {
+    async (
+      data: {
+        email: string;
+        password: string;
+        firstName?: string;
+        lastName?: string;
+      },
+      joinKumaranFamily?: boolean
+    ) => {
       setIsLoading(true);
       try {
         const result = await customerCreate({
@@ -235,6 +242,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (result.customer) {
           // Auto-login after registration
           const loginResult = await login(data.email, data.password);
+
+          // If user opted to join Kumaran Family, call the API to add tags
+          if (loginResult.success && joinKumaranFamily) {
+            try {
+              await fetch("/api/customer/register-family", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: data.email }),
+              });
+            } catch (err) {
+              console.error("Failed to join Kumaran Family:", err);
+              // Don't fail registration if family join fails
+            }
+          }
+
           return loginResult;
         }
 
@@ -343,7 +365,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Google OAuth login with Supabase
   const loginWithGoogle = useCallback(
     async (
-      credential: string
+      credential: string,
+      joinKumaranFamily: boolean = false
     ): Promise<{
       success: boolean;
       error?: string;
@@ -356,7 +379,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ credential }),
+          body: JSON.stringify({ credential, joinKumaranFamily }),
         });
 
         const data = await response.json();

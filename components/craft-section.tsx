@@ -35,7 +35,7 @@ export function CraftSection() {
       {/* Background image with overlay */}
       <div className="absolute inset-0">
         <Image
-          src="/placeholder.svg?height=1200&width=1920"
+          src="/images/Story/1.Source.png"
           alt="Traditional kitchen"
           fill
           className="object-cover opacity-10"
@@ -87,7 +87,7 @@ export function CraftSection() {
               <div className="space-y-4">
                 <div className="aspect-[3/4] rounded-2xl overflow-hidden">
                   <Image
-                    src="/placeholder.svg?height=600&width=400"
+                    src="/images/Story/1.Source.png"
                     alt="Stone grinding"
                     width={400}
                     height={600}
@@ -96,7 +96,7 @@ export function CraftSection() {
                 </div>
                 <div className="aspect-square rounded-2xl overflow-hidden">
                   <Image
-                    src="/placeholder.svg?height=400&width=400"
+                    src="/images/Story/2.Prepare.png"
                     alt="Sun drying"
                     width={400}
                     height={400}
@@ -107,7 +107,7 @@ export function CraftSection() {
               <div className="space-y-4 pt-8">
                 <div className="aspect-square rounded-2xl overflow-hidden">
                   <Image
-                    src="/placeholder.svg?height=400&width=400"
+                    src="/images/Story/3.Perfect.png"
                     alt="Traditional spices"
                     width={400}
                     height={400}
@@ -116,7 +116,7 @@ export function CraftSection() {
                 </div>
                 <div className="aspect-[3/4] rounded-2xl overflow-hidden">
                   <Image
-                    src="/placeholder.svg?height=600&width=400"
+                    src="/images/Story/4.Pack.png"
                     alt="Traditional cooking"
                     width={400}
                     height={600}

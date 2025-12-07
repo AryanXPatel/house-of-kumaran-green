@@ -131,13 +131,13 @@ export function ProductShowcase() {
           <div className="flex items-center gap-3">
             <button
               onClick={prevSlide}
-              className="w-10 h-10 rounded-full border-2 border-[#1a472a]/20 hover:border-[#1a472a] hover:bg-[#1a472a] hover:text-[#f5f0e1] flex items-center justify-center transition-all"
+              className="w-10 h-10 rounded-full border-2 border-[#1a472a]/20 hover:border-[#1a472a] hover:bg-[#1a472a] hover:text-[#f5f0e1] text-[#1a472a] flex items-center justify-center transition-all"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
             <button
               onClick={nextSlide}
-              className="w-10 h-10 rounded-full border-2 border-[#1a472a]/20 hover:border-[#1a472a] hover:bg-[#1a472a] hover:text-[#f5f0e1] flex items-center justify-center transition-all"
+              className="w-10 h-10 rounded-full border-2 border-[#1a472a]/20 hover:border-[#1a472a] hover:bg-[#1a472a] hover:text-[#f5f0e1] text-[#1a472a] flex items-center justify-center transition-all"
             >
               <ArrowRight className="w-4 h-4" />
             </button>

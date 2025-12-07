@@ -1,0 +1,1488 @@
+Email subject
+Order {{name}} confirmed
+
+
+
+Email body (HTML)
+{% assign delivery_method_types = delivery_agreements | map: 'delivery_method_type' | uniq %}
+{% if delivery_method_types.size > 1 %}
+  {% assign has_split_cart = true %}
+{% else %}
+  {% assign has_split_cart = false %}
+{% endif %}
+
+{% capture email_title %}
+  {% if has_pending_payment %}
+    Thank you for your order!
+  {% else %}
+    Thank you for your purchase!
+  {% endif %}
+{% endcapture %}
+{% capture email_body %}
+  {% if has_pending_payment %}
+    {% if buyer_action_required %}
+      You'll get a confirmation email after completing your payment.
+    {% else %}
+      Your payment is being processed. You'll get an email when your order is confirmed.
+    {% endif %}
+  {% else %}
+    {% if requires_shipping %}
+    {% case delivery_method %}
+        {% when 'pick-up' %}
+          You'll receive an email when your order is ready for pickup.
+        {% when 'local' %}
+          Hi {{ customer.first_name }}, we're getting your order ready for delivery.
+        {% else %}
+          We're getting your order ready to be shipped. We will notify you when it has been sent.
+      {% endcase %}
+        {% if delivery_instructions != blank  %}
+          <p style="margin: 10px 0 0 0;"><b>Delivery information:</b> {{ delivery_instructions }}</p>
+        {% endif %}
+       {% if consolidated_estimated_delivery_time %}
+        {% if has_multiple_delivery_methods %}
+          <p style="margin: 16px 0 0 0; font-family: 'Playfair Display', Georgia, 'Times New Roman', serif; font-size: 16px; color: #1a1a1a;">Estimated delivery</p>
+          <p style="margin: 4px 0 0 0;">{{ consolidated_estimated_delivery_time }}</p>
+        {% else %}
+          <p style="margin: 10px 0 0 0;">
+            Estimated delivery <b>{{ consolidated_estimated_delivery_time }}</b>
+          </p>
+        {% endif %}
+       {% endif %}
+    {% endif %}
+  {% endif %}
+  {% assign gift_card_line_items = line_items | where: "gift_card" %}
+  {% assign found_gift_card_with_recipient_email = false %}
+  {% for line_item in gift_card_line_items %}
+    {% if line_item.properties["__shopify_send_gift_card_to_recipient"] and line_item.properties["Recipient email"] %}
+      {% assign found_gift_card_with_recipient_email = true %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+  {% if found_gift_card_with_recipient_email %}
+    <p style="margin: 10px 0 0 0;">Your gift card recipient will receive an email with their gift card code.</p>
+  {% elsif gift_card_line_items.first %}
+    <p style="margin: 10px 0 0 0;">You'll receive separate emails for any gift cards.</p>
+  {% endif %}
+{% endcapture %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{{ email_title }}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--[if mso]>
+    <noscript>
+      <xml>
+        <o:OfficeDocumentSettings>
+          <o:PixelsPerInch>96</o:PixelsPerInch>
+        </o:OfficeDocumentSettings>
+      </xml>
+    </noscript>
+    <![endif]-->
+  </head>
+
+  <body style="margin: 0; padding: 0; background-color: #e5e5e5; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
+    <!-- Outer wrapper table -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #e5e5e5;">
+      <tr>
+        <td align="center" style="padding: 20px 10px;">
+          <!-- Main container - 600px max -->
+          <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 8px; overflow: hidden;">
+
+            <!-- ============ HEADER ============ -->
+            <tr>
+              <td style="background-color: #102117; padding: 0;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td style="padding: 24px 30px 16px 30px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <!-- Logo -->
+                          <td style="vertical-align: middle;" width="60%">
+                            {%- if shop.email_logo_url %}
+                              <img src="{{ shop.email_logo_url }}" alt="{{ shop.name }}" width="{{ shop.email_logo_width | default: 150 }}" style="display: block; max-width: 150px; height: auto;">
+                            {%- else %}
+                              <span style="font-family: 'Playfair Display', Georgia, 'Times New Roman', serif; font-size: 22px; color: #f5f0e1; text-decoration: none; font-weight: bold;">{{ shop.name }}</span>
+                            {%- endif %}
+                          </td>
+                          <!-- Order Number -->
+                          <td style="vertical-align: middle; text-align: right;" width="40%">
+                            <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #f5f0e1; letter-spacing: 0.5px;">
+                              Order {{ order_name }}
+                            </span>
+                            {%- if po_number %}
+                              <br>
+                              <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 11px; color: #f5f0e1; opacity: 0.7;">
+                                PO #{{ po_number }}
+                              </span>
+                            {%- endif %}
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <!-- Tagline -->
+                  <tr>
+                    <td style="padding: 0 30px;">
+                      <span style="font-family: 'Playfair Display', Georgia, 'Times New Roman', serif; font-size: 11px; font-style: italic; color: #C7AA4E; letter-spacing: 1.5px;">Made in Madras</span>
+                    </td>
+                  </tr>
+                  <!-- Gold accent line -->
+                  <tr>
+                    <td style="padding: 16px 30px 0 30px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td style="border-bottom: 2px solid #C7AA4E; height: 1px; font-size: 1px; line-height: 1px;">&nbsp;</td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="height: 20px;"></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- ============ MAIN CONTENT ============ -->
+            <tr>
+              <td style="background-color: #ffffff; padding: 32px 30px;">
+                <!-- Title -->
+                <h2 style="margin: 0 0 12px 0; font-family: 'Playfair Display', Georgia, 'Times New Roman', serif; font-size: 26px; font-weight: normal; color: #1a1a1a; line-height: 1.3;">{{ email_title }}</h2>
+
+                <!-- Body Text -->
+                <p style="margin: 0 0 20px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 15px; color: #333333; line-height: 1.6;">{{ email_body }}</p>
+
+                <!-- Pending Payment Instructions -->
+                {% assign transaction_count = transactions | size %}
+                {% if transaction_count > 0 %}
+                  {% for transaction in transactions %}
+                    {% if transaction.show_buyer_pending_payment_instructions? %}
+                      <p style="margin: 0 0 16px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #333333;">{{transaction.buyer_pending_payment_notice}}</p>
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 16px; border: 1px solid #e5e5e5; border-radius: 4px;">
+                        <tr style="background-color: #f9f7f3;">
+                          {% for instruction in transaction.buyer_pending_payment_instructions %}
+                            <td style="padding: 10px 12px; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555; font-weight: bold; border-bottom: 1px solid #e5e5e5;">{{ instruction.header }}</td>
+                          {% endfor %}
+                          <td style="padding: 10px 12px; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555; font-weight: bold; border-bottom: 1px solid #e5e5e5;">Amount</td>
+                        </tr>
+                        <tr>
+                          {% for instruction in transaction.buyer_pending_payment_instructions %}
+                            <td style="padding: 10px 12px; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a;">{{ instruction.value }}</td>
+                          {% endfor %}
+                          <td style="padding: 10px 12px; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; font-weight: bold;">{{transaction.amount | money}}</td>
+                        </tr>
+                      </table>
+                    {% endif %}
+                  {% endfor%}
+                {% endif %}
+
+                <!-- CTA Button -->
+                {% if order_status_url %}
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0;">
+                    <tr>
+                      <td>
+                        <!--[if mso]>
+                        <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ order_status_url }}" style="height:50px;v-text-anchor:middle;width:200px;" arcsize="8%" stroke="f" fillcolor="#D1B152">
+                          <w:anchorlock/>
+                          <center style="color:#ffffff;font-family:Inter,Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;">View your order</center>
+                        </v:roundrect>
+                        <![endif]-->
+                        <!--[if !mso]><!-->
+                        <a href="{{ order_status_url }}" style="display: inline-block; padding: 14px 32px; background-color: #D1B152; color: #ffffff; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; border-radius: 4px;">View your order</a>
+                        <!--<![endif]-->
+                      </td>
+                    </tr>
+                  </table>
+                  {% if shop.url %}
+                    <p style="margin: 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">
+                      or <a href="{{ shop.url }}" style="color: #C7AA4E; text-decoration: underline;">Visit our store</a>
+                    </p>
+                  {% endif %}
+                {% else %}
+                  {% if shop.url %}
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0;">
+                      <tr>
+                        <td>
+                          <a href="{{ shop.url }}" style="display: inline-block; padding: 14px 32px; background-color: #D1B152; color: #ffffff; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; border-radius: 4px;">Visit our store</a>
+                        </td>
+                      </tr>
+                    </table>
+                  {% endif %}
+                {% endif %}
+              </td>
+            </tr>
+
+            <!-- ============ ORDER SUMMARY SECTION ============ -->
+            <tr>
+              <td style="background-color: #f9f7f3; padding: 24px 30px; border-top: 1px solid #e5e5e5;">
+                <h3 style="margin: 0 0 20px 0; font-family: 'Playfair Display', Georgia, 'Times New Roman', serif; font-size: 18px; font-weight: normal; color: #1a1a1a; letter-spacing: 0.5px;">Order Summary</h3>
+
+                {% if has_split_cart %}
+                  <!-- Split Cart Items -->
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                    {% for line in subtotal_line_items %}
+                      {% unless line.delivery_agreement %}
+                        {% if line.groups.size == 0 %}
+                          {% assign legacy_separator = true %}
+                          {% unless line.nested_line_child? %}
+                            {% assign is_parent = false %}
+                            {% assign is_nested_line_parent = line.nested_line_parent? %}
+                            {% if line.bundle_parent? or line.nested_line_parent? %}
+                              {% assign is_parent = true %}
+                            {% endif %}
+
+                            <tr>
+                              <td style="padding: 16px 0; border-bottom: 1px solid #e5e5e5;">
+                                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                  <tr>
+                                    <!-- Product Image -->
+                                    <td style="width: 70px; vertical-align: top; padding-right: 16px;">
+                                      {% if line.image %}
+                                        <img src="{{ line | img_url: 'compact_cropped' }}" alt="{{ line.title }}" width="60" height="60" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                      {% else %}
+                                        <div style="width: 60px; height: 60px; background-color: #f5f0e1; border: 1px solid #e5e5e5; border-radius: 4px;"></div>
+                                      {% endif %}
+                                    </td>
+                                    <!-- Product Details -->
+                                    <td style="vertical-align: top;">
+                                      {% if line.presentment_title %}
+                                        {% assign line_title = line.presentment_title %}
+                                      {% elsif line.title %}
+                                        {% assign line_title = line.title %}
+                                      {% else %}
+                                        {% assign line_title = line.product.title %}
+                                      {% endif %}
+                                      {% if line.quantity < line.quantity %}
+                                        {% capture line_display %}{{ line.quantity }} of {{ line.quantity }}{% endcapture %}
+                                      {% else %}
+                                        {% assign line_display = line.quantity %}
+                                      {% endif %}
+
+                                      <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; color: #1a1a1a; line-height: 1.4;">{{ line_title }}&nbsp;&times;&nbsp;{{ line_display }}</span>
+                                      <br>
+                                      {% if line.variant.title != 'Default Title' and is_parent == false %}
+                                        <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ line.variant.title }}</span><br>
+                                      {% elsif line.variant.title != 'Default Title' and line.nested_line_parent? %}
+                                        <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ line.variant.title }}</span><br>
+                                      {% elsif line.variant.title != 'Default Title' and line.bundle_parent? and false == false %}
+                                        <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ line.variant.title }}</span><br>
+                                      {% endif %}
+
+                                      {% for group in line.groups %}
+                                        {% if group.deliverable? %}
+                                          <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">For: {{ group.display_title }}</span><br>
+                                        {% else %}
+                                          <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">Part of: {{ group.display_title }}</span><br>
+                                        {% endif %}
+                                      {% endfor %}
+
+                                      {% if line.gift_card and line.properties["__shopify_send_gift_card_to_recipient"] %}
+                                        {% for property in line.properties %}
+                                          {% assign property_first_char = property.first | slice: 0 %}
+                                          {% if property.last != blank and property_first_char != '_' %}
+                                            <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #555555;">
+                                              {{ property.first }}:
+                                              {% if property.last contains '/uploads/' %}
+                                                <a href="{{ property.last }}" style="color: #C7AA4E;" target="_blank">{{ property.last | split: '/' | last }}</a>
+                                              {% else %}
+                                                {{ property.last }}
+                                              {% endif %}
+                                            </span><br>
+                                          {% endif %}
+                                        {% endfor %}
+                                      {% endif %}
+
+                                      {% if line.selling_plan_allocation %}
+                                        <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ line.selling_plan_allocation.selling_plan.name }}</span><br>
+                                      {% endif %}
+
+                                      {% if line.refunded_quantity > 0 %}
+                                        <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #8b0000;">Refunded</span>
+                                      {% endif %}
+
+                                      {% if line.discount_allocations %}
+                                        {% for discount_allocation in line.discount_allocations %}
+                                          {% if discount_allocation.discount_application.target_selection != 'all' %}
+                                            <p style="margin: 8px 0 0 0;">
+                                              <span style="display: inline-block; padding: 4px 8px; background-color: #f5f0e1; border-radius: 4px; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #C7AA4E;">
+                                                {{ discount_allocation.discount_application.title | upcase }} (-{{ discount_allocation.amount | money }})
+                                              </span>
+                                            </p>
+                                          {% endif %}
+                                        {% endfor %}
+                                      {% endif %}
+                                    </td>
+                                    <!-- Price -->
+                                    <td style="width: 100px; vertical-align: top; text-align: right;">
+                                      {% if line.original_line_price != line.final_line_price %}
+                                        <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #888888; text-decoration: line-through;">{{ line.original_line_price | money }}</span><br>
+                                      {% endif %}
+                                      <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; color: #1a1a1a;">
+                                        {% if line.final_line_price > 0 %}
+                                          {{ line.final_line_price | money }}
+                                        {% else %}
+                                          Free
+                                        {% endif %}
+                                      </span>
+                                      {% if line.unit_price_measurement %}
+                                        <br><span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 11px; color: #888888;">{{ line.unit_price | unit_price_with_measurement: line.unit_price_measurement }}</span>
+                                      {% endif %}
+                                    </td>
+                                  </tr>
+                                </table>
+
+                                <!-- Nested Line Items -->
+                                {% if line.nested_line_parent? %}
+                                  {% for child_line in line.nested_lines %}
+                                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 8px; padding-left: 20px;">
+                                      <tr>
+                                        <td style="width: 50px; vertical-align: top; padding-right: 12px;">
+                                          {% if child_line.image %}
+                                            <img src="{{ child_line | img_url: 'compact_cropped' }}" alt="{{ child_line.title }}" width="40" height="40" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                          {% else %}
+                                            <div style="width: 40px; height: 40px; background-color: #f5f0e1; border: 1px solid #e5e5e5; border-radius: 4px;"></div>
+                                          {% endif %}
+                                        </td>
+                                        <td style="vertical-align: top;">
+                                          {% if child_line.product.title %}
+                                            {% assign item_title = child_line.product.title %}
+                                          {% else %}
+                                            {% assign item_title = child_line.title %}
+                                          {% endif %}
+                                          <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #333333;">{{ item_title }}&nbsp;&times;&nbsp;{{ child_line.quantity }}</span>
+                                          {% if child_line.variant.title != 'Default Title' %}
+                                            <br><span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #555555;">{{ child_line.variant.title }}</span>
+                                          {% endif %}
+                                        </td>
+                                      </tr>
+                                    </table>
+                                  {% endfor %}
+                                {% endif %}
+                              </td>
+                            </tr>
+                          {% endunless %}
+                        {% endif %}
+                      {% endunless %}
+                    {% endfor %}
+
+                    <!-- Line Item Groups -->
+                    {% for line_item_group in line_item_groups %}
+                      {% unless line_item_group.components.first.delivery_agreement %}
+                        {% assign legacy_separator = true %}
+                        {% assign final_line_price = 0 %}
+                        {% assign original_line_price = 0 %}
+
+                        {% if line_item_group.deliverable? == false %}
+                          {% for component in line_item_group.components %}
+                            {% assign final_line_price = final_line_price | plus: component.final_line_price %}
+                            {% assign original_line_price = original_line_price | plus: component.original_line_price %}
+                          {% endfor %}
+                        {% endif %}
+
+                        {% if line_item_group.deliverable? %}
+                          {% assign parent_line_item = line_item_group.parent_sales_line_item %}
+                          {% assign final_line_price = parent_line_item.final_line_price %}
+                          {% assign original_line_price = parent_line_item.original_line_price %}
+                        {% endif %}
+
+                        <tr>
+                          <td style="padding: 16px 0; border-bottom: 1px solid #e5e5e5;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                              <tr>
+                                <td style="width: 70px; vertical-align: top; padding-right: 16px;">
+                                  {% if parent_line_item and parent_line_item.image %}
+                                    <img src="{{ parent_line_item | img_url: 'compact_cropped' }}" width="60" height="60" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                  {% elsif line_item_group.image %}
+                                    <img src="{{ line_item_group | img_url: 'compact_cropped' }}" width="60" height="60" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                  {% else %}
+                                    <div style="width: 60px; height: 60px; background-color: #f5f0e1; border: 1px solid #e5e5e5; border-radius: 4px;"></div>
+                                  {% endif %}
+                                </td>
+                                <td style="vertical-align: top;">
+                                  <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; color: #1a1a1a;">{{ line_item_group.title }}&nbsp;&times;&nbsp;{{ line_item_group.quantity }}</span>
+                                  {% if line_item_group.variant and line_item_group.variant.title != 'Default Title' %}
+                                    <br><span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ line_item_group.variant.title }}</span>
+                                  {% endif %}
+                                </td>
+                                <td style="width: 100px; vertical-align: top; text-align: right;">
+                                  {% if original_line_price != final_line_price %}
+                                    <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #888888; text-decoration: line-through;">{{ original_line_price | money }}</span><br>
+                                  {% endif %}
+                                  <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; color: #1a1a1a;">
+                                    {% if final_line_price > 0 %}{{ final_line_price | money }}{% else %}Free{% endif %}
+                                  </span>
+                                </td>
+                              </tr>
+                            </table>
+
+                            <!-- Bundle Components -->
+                            {% if line_item_group.deliverable? == false %}
+                              {% for component in line_item_group.components %}
+                                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 8px; padding-left: 20px;">
+                                  <tr>
+                                    <td style="width: 50px; vertical-align: top; padding-right: 12px;">
+                                      {% if component.image %}
+                                        <img src="{{ component | img_url: 'compact_cropped' }}" width="40" height="40" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                      {% else %}
+                                        <div style="width: 40px; height: 40px; background-color: #f5f0e1; border: 1px solid #e5e5e5; border-radius: 4px;"></div>
+                                      {% endif %}
+                                    </td>
+                                    <td style="vertical-align: top;">
+                                      {% if component.product.title %}
+                                        {% assign component_title = component.product.title %}
+                                      {% else %}
+                                        {% assign component_title = component.title %}
+                                      {% endif %}
+                                      <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #333333;">{{ component.quantity }}&nbsp;&times;&nbsp;{{ component_title }}</span>
+                                      {% if component.variant.title != 'Default Title' %}
+                                        <br><span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #555555;">{{ component.variant.title }}</span>
+                                      {% endif %}
+                                    </td>
+                                  </tr>
+                                </table>
+                              {% endfor %}
+                            {% endif %}
+
+                            {% if line_item_group.deliverable? %}
+                              {% for component in line_item_group.components %}
+                                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 8px; padding-left: 20px;">
+                                  <tr>
+                                    <td style="width: 50px; vertical-align: top; padding-right: 12px;">
+                                      {% if component.image %}
+                                        <img src="{{ component | img_url: 'compact_cropped' }}" width="40" height="40" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                      {% else %}
+                                        <div style="width: 40px; height: 40px; background-color: #f5f0e1; border: 1px solid #e5e5e5; border-radius: 4px;"></div>
+                                      {% endif %}
+                                    </td>
+                                    <td style="vertical-align: top;">
+                                      {% if component.product.title %}
+                                        {% assign component_title = component.product.title %}
+                                      {% else %}
+                                        {% assign component_title = component.title %}
+                                      {% endif %}
+                                      <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #333333;">{{ component_title }}&nbsp;&times;&nbsp;{{ component.quantity }}</span>
+                                      {% if component.variant.title != 'Default Title' %}
+                                        <br><span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #555555;">{{ component.variant.title }}</span>
+                                      {% endif %}
+                                    </td>
+                                    <td style="width: 80px; vertical-align: top; text-align: right;">
+                                      {% if component.original_line_price != component.final_line_price %}
+                                        <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #888888; text-decoration: line-through;">{{ component.original_line_price | money }}</span><br>
+                                      {% endif %}
+                                      <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #1a1a1a;">
+                                        {% if component.final_line_price > 0 %}{{ component.final_line_price | money }}{% else %}Free{% endif %}
+                                      </span>
+                                    </td>
+                                  </tr>
+                                </table>
+                              {% endfor %}
+                            {% endif %}
+                          </td>
+                        </tr>
+                      {% endunless %}
+                    {% endfor %}
+                  </table>
+
+                  {% if legacy_separator %}
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 16px 0;">
+                      <tr><td style="border-top: 2px solid #102117;"></td></tr>
+                    </table>
+                  {% endif %}
+
+                  <!-- Delivery Agreements -->
+                  {% for delivery_agreement in delivery_agreements %}
+                    {% if delivery_agreement.line_items != blank %}
+                      {% if delivery_agreements.size > 1 %}
+                        <h4 style="margin: 16px 0 12px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #555555; text-transform: uppercase; letter-spacing: 0.5px;">
+                          {{ delivery_agreement.delivery_method_name }} items
+                        </h4>
+                      {% endif %}
+
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        {% for line in delivery_agreement.non_parent_line_items %}
+                          {% if line.groups.size == 0 %}
+                            {% unless line.nested_line_child? %}
+                              {% assign is_parent = false %}
+                              {% if line.bundle_parent? or line.nested_line_parent? %}
+                                {% assign is_parent = true %}
+                              {% endif %}
+
+                              <tr>
+                                <td style="padding: 16px 0; border-bottom: 1px solid #e5e5e5;">
+                                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                    <tr>
+                                      <td style="width: 70px; vertical-align: top; padding-right: 16px;">
+                                        {% if line.image %}
+                                          <img src="{{ line | img_url: 'compact_cropped' }}" width="60" height="60" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                        {% else %}
+                                          <div style="width: 60px; height: 60px; background-color: #f5f0e1; border: 1px solid #e5e5e5; border-radius: 4px;"></div>
+                                        {% endif %}
+                                      </td>
+                                      <td style="vertical-align: top;">
+                                        {% if line.presentment_title %}
+                                          {% assign line_title = line.presentment_title %}
+                                        {% elsif line.title %}
+                                          {% assign line_title = line.title %}
+                                        {% else %}
+                                          {% assign line_title = line.product.title %}
+                                        {% endif %}
+                                        {% assign line_display = line.quantity %}
+
+                                        <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; color: #1a1a1a;">{{ line_title }}&nbsp;&times;&nbsp;{{ line_display }}</span>
+                                        {% if line.variant.title != 'Default Title' and is_parent == false %}
+                                          <br><span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ line.variant.title }}</span>
+                                        {% endif %}
+
+                                        {% if line.selling_plan_allocation %}
+                                          <br><span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ line.selling_plan_allocation.selling_plan.name }}</span>
+                                        {% endif %}
+
+                                        {% if line.refunded_quantity > 0 %}
+                                          <br><span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #8b0000;">Refunded</span>
+                                        {% endif %}
+
+                                        {% if line.discount_allocations %}
+                                          {% for discount_allocation in line.discount_allocations %}
+                                            {% if discount_allocation.discount_application.target_selection != 'all' %}
+                                              <p style="margin: 8px 0 0 0;">
+                                                <span style="display: inline-block; padding: 4px 8px; background-color: #f5f0e1; border-radius: 4px; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #C7AA4E;">
+                                                  {{ discount_allocation.discount_application.title | upcase }} (-{{ discount_allocation.amount | money }})
+                                                </span>
+                                              </p>
+                                            {% endif %}
+                                          {% endfor %}
+                                        {% endif %}
+                                      </td>
+                                      <td style="width: 100px; vertical-align: top; text-align: right;">
+                                        {% if line.original_line_price != line.final_line_price %}
+                                          <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #888888; text-decoration: line-through;">{{ line.original_line_price | money }}</span><br>
+                                        {% endif %}
+                                        <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; color: #1a1a1a;">
+                                          {% if line.final_line_price > 0 %}{{ line.final_line_price | money }}{% else %}Free{% endif %}
+                                        </span>
+                                        {% if line.unit_price_measurement %}
+                                          <br><span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 11px; color: #888888;">{{ line.unit_price | unit_price_with_measurement: line.unit_price_measurement }}</span>
+                                        {% endif %}
+                                      </td>
+                                    </tr>
+                                  </table>
+
+                                  {% if line.nested_line_parent? %}
+                                    {% for child_line in line.nested_lines %}
+                                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 8px; padding-left: 20px;">
+                                        <tr>
+                                          <td style="width: 50px; vertical-align: top; padding-right: 12px;">
+                                            {% if child_line.image %}
+                                              <img src="{{ child_line | img_url: 'compact_cropped' }}" width="40" height="40" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                            {% else %}
+                                              <div style="width: 40px; height: 40px; background-color: #f5f0e1; border: 1px solid #e5e5e5; border-radius: 4px;"></div>
+                                            {% endif %}
+                                          </td>
+                                          <td style="vertical-align: top;">
+                                            {% if child_line.product.title %}
+                                              {% assign item_title = child_line.product.title %}
+                                            {% else %}
+                                              {% assign item_title = child_line.title %}
+                                            {% endif %}
+                                            <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #333333;">{{ item_title }}&nbsp;&times;&nbsp;{{ child_line.quantity }}</span>
+                                            {% if child_line.variant.title != 'Default Title' %}
+                                              <br><span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #555555;">{{ child_line.variant.title }}</span>
+                                            {% endif %}
+                                          </td>
+                                        </tr>
+                                      </table>
+                                    {% endfor %}
+                                  {% endif %}
+                                </td>
+                              </tr>
+                            {% endunless %}
+                          {% endif %}
+                        {% endfor %}
+
+                        <!-- Delivery Agreement Line Item Groups -->
+                        {% for line_item_group in delivery_agreement.line_item_groups %}
+                          {% assign final_line_price = 0 %}
+                          {% assign original_line_price = 0 %}
+
+                          {% if line_item_group.deliverable? == false %}
+                            {% for component in line_item_group.components %}
+                              {% assign final_line_price = final_line_price | plus: component.final_line_price %}
+                              {% assign original_line_price = original_line_price | plus: component.original_line_price %}
+                            {% endfor %}
+                          {% else %}
+                            {% assign parent_line_item = line_item_group.parent_sales_line_item %}
+                            {% assign final_line_price = parent_line_item.final_line_price %}
+                            {% assign original_line_price = parent_line_item.original_line_price %}
+                          {% endif %}
+
+                          <tr>
+                            <td style="padding: 16px 0; border-bottom: 1px solid #e5e5e5;">
+                              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                  <td style="width: 70px; vertical-align: top; padding-right: 16px;">
+                                    {% if parent_line_item and parent_line_item.image %}
+                                      <img src="{{ parent_line_item | img_url: 'compact_cropped' }}" width="60" height="60" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                    {% elsif line_item_group.image %}
+                                      <img src="{{ line_item_group | img_url: 'compact_cropped' }}" width="60" height="60" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                    {% else %}
+                                      <div style="width: 60px; height: 60px; background-color: #f5f0e1; border: 1px solid #e5e5e5; border-radius: 4px;"></div>
+                                    {% endif %}
+                                  </td>
+                                  <td style="vertical-align: top;">
+                                    <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; color: #1a1a1a;">{{ line_item_group.title }}&nbsp;&times;&nbsp;{{ line_item_group.quantity }}</span>
+                                    {% if line_item_group.variant and line_item_group.variant.title != 'Default Title' %}
+                                      <br><span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ line_item_group.variant.title }}</span>
+                                    {% endif %}
+                                  </td>
+                                  <td style="width: 100px; vertical-align: top; text-align: right;">
+                                    {% if original_line_price != final_line_price %}
+                                      <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #888888; text-decoration: line-through;">{{ original_line_price | money }}</span><br>
+                                    {% endif %}
+                                    <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; color: #1a1a1a;">
+                                      {% if final_line_price > 0 %}{{ final_line_price | money }}{% else %}Free{% endif %}
+                                    </span>
+                                  </td>
+                                </tr>
+                              </table>
+
+                              {% for component in line_item_group.components %}
+                                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 8px; padding-left: 20px;">
+                                  <tr>
+                                    <td style="width: 50px; vertical-align: top; padding-right: 12px;">
+                                      {% if component.image %}
+                                        <img src="{{ component | img_url: 'compact_cropped' }}" width="40" height="40" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                      {% else %}
+                                        <div style="width: 40px; height: 40px; background-color: #f5f0e1; border: 1px solid #e5e5e5; border-radius: 4px;"></div>
+                                      {% endif %}
+                                    </td>
+                                    <td style="vertical-align: top;">
+                                      {% if component.product.title %}
+                                        {% assign component_title = component.product.title %}
+                                      {% else %}
+                                        {% assign component_title = component.title %}
+                                      {% endif %}
+                                      <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #333333;">
+                                        {% if line_item_group.deliverable? %}
+                                          {{ component_title }}&nbsp;&times;&nbsp;{{ component.quantity }}
+                                        {% else %}
+                                          {{ component.quantity }}&nbsp;&times;&nbsp;{{ component_title }}
+                                        {% endif %}
+                                      </span>
+                                      {% if component.variant.title != 'Default Title' %}
+                                        <br><span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #555555;">{{ component.variant.title }}</span>
+                                      {% endif %}
+                                    </td>
+                                    {% if line_item_group.deliverable? %}
+                                      <td style="width: 80px; vertical-align: top; text-align: right;">
+                                        {% if component.original_line_price != component.final_line_price %}
+                                          <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #888888; text-decoration: line-through;">{{ component.original_line_price | money }}</span><br>
+                                        {% endif %}
+                                        <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #1a1a1a;">
+                                          {% if component.final_line_price > 0 %}{{ component.final_line_price | money }}{% else %}Free{% endif %}
+                                        </span>
+                                      </td>
+                                    {% endif %}
+                                  </tr>
+                                </table>
+                              {% endfor %}
+                            </td>
+                          </tr>
+                        {% endfor %}
+                      </table>
+
+                      {% unless forloop.last %}
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 16px 0;">
+                          <tr><td style="border-top: 2px solid #102117;"></td></tr>
+                        </table>
+                      {% endunless %}
+                    {% endif %}
+                  {% endfor %}
+
+                {% else %}
+                  <!-- Standard (Non-Split) Cart Items -->
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                    {% for line in non_parent_line_items %}
+                      {% if line.groups.size == 0 %}
+                        {% unless line.nested_line_child? %}
+                          {% assign is_parent = false %}
+                          {% if line.bundle_parent? or line.nested_line_parent? %}
+                            {% assign is_parent = true %}
+                          {% endif %}
+
+                          <tr>
+                            <td style="padding: 16px 0; border-bottom: 1px solid #e5e5e5;">
+                              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                  <!-- Product Image -->
+                                  <td style="width: 70px; vertical-align: top; padding-right: 16px;">
+                                    {% if line.image %}
+                                      <img src="{{ line | img_url: 'compact_cropped' }}" alt="{{ line.title }}" width="60" height="60" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                    {% else %}
+                                      <div style="width: 60px; height: 60px; background-color: #f5f0e1; border: 1px solid #e5e5e5; border-radius: 4px;"></div>
+                                    {% endif %}
+                                  </td>
+                                  <!-- Product Details -->
+                                  <td style="vertical-align: top;">
+                                    {% if line.presentment_title %}
+                                      {% assign line_title = line.presentment_title %}
+                                    {% elsif line.title %}
+                                      {% assign line_title = line.title %}
+                                    {% else %}
+                                      {% assign line_title = line.product.title %}
+                                    {% endif %}
+                                    {% if line.quantity < line.quantity %}
+                                      {% capture line_display %}{{ line.quantity }} of {{ line.quantity }}{% endcapture %}
+                                    {% else %}
+                                      {% assign line_display = line.quantity %}
+                                    {% endif %}
+
+                                    <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; color: #1a1a1a; line-height: 1.4;">{{ line_title }}&nbsp;&times;&nbsp;{{ line_display }}</span>
+                                    <br>
+                                    {% if line.variant.title != 'Default Title' and is_parent == false %}
+                                      <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ line.variant.title }}</span><br>
+                                    {% elsif line.variant.title != 'Default Title' and line.nested_line_parent? %}
+                                      <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ line.variant.title }}</span><br>
+                                    {% elsif line.variant.title != 'Default Title' and line.bundle_parent? and false == false %}
+                                      <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ line.variant.title }}</span><br>
+                                    {% endif %}
+
+                                    {% for group in line.groups %}
+                                      {% if group.deliverable? %}
+                                        <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">For: {{ group.display_title }}</span><br>
+                                      {% else %}
+                                        <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">Part of: {{ group.display_title }}</span><br>
+                                      {% endif %}
+                                    {% endfor %}
+
+                                    {% if line.gift_card and line.properties["__shopify_send_gift_card_to_recipient"] %}
+                                      {% for property in line.properties %}
+                                        {% assign property_first_char = property.first | slice: 0 %}
+                                        {% if property.last != blank and property_first_char != '_' %}
+                                          <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #555555;">
+                                            {{ property.first }}:
+                                            {% if property.last contains '/uploads/' %}
+                                              <a href="{{ property.last }}" style="color: #C7AA4E;" target="_blank">{{ property.last | split: '/' | last }}</a>
+                                            {% else %}
+                                              {{ property.last }}
+                                            {% endif %}
+                                          </span><br>
+                                        {% endif %}
+                                      {% endfor %}
+                                    {% endif %}
+
+                                    {% if line.selling_plan_allocation %}
+                                      <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ line.selling_plan_allocation.selling_plan.name }}</span><br>
+                                    {% endif %}
+
+                                    {% if line.refunded_quantity > 0 %}
+                                      <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #8b0000;">Refunded</span>
+                                    {% endif %}
+
+                                    {% if line.discount_allocations %}
+                                      {% for discount_allocation in line.discount_allocations %}
+                                        {% if discount_allocation.discount_application.target_selection != 'all' %}
+                                          <p style="margin: 8px 0 0 0;">
+                                            <span style="display: inline-block; padding: 4px 8px; background-color: #f5f0e1; border-radius: 4px; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #C7AA4E;">
+                                              {{ discount_allocation.discount_application.title | upcase }} (-{{ discount_allocation.amount | money }})
+                                            </span>
+                                          </p>
+                                        {% endif %}
+                                      {% endfor %}
+                                    {% endif %}
+                                  </td>
+                                  <!-- Price -->
+                                  <td style="width: 100px; vertical-align: top; text-align: right;">
+                                    {% if line.original_line_price != line.final_line_price %}
+                                      <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #888888; text-decoration: line-through;">{{ line.original_line_price | money }}</span><br>
+                                    {% endif %}
+                                    <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; color: #1a1a1a;">
+                                      {% if line.final_line_price > 0 %}
+                                        {{ line.final_line_price | money }}
+                                      {% else %}
+                                        Free
+                                      {% endif %}
+                                    </span>
+                                    {% if line.unit_price_measurement %}
+                                      <br><span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 11px; color: #888888;">{{ line.unit_price | unit_price_with_measurement: line.unit_price_measurement }}</span>
+                                    {% endif %}
+                                  </td>
+                                </tr>
+                              </table>
+
+                              <!-- Nested Line Items -->
+                              {% if line.nested_line_parent? %}
+                                {% for child_line in line.nested_lines %}
+                                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 8px; padding-left: 20px;">
+                                    <tr>
+                                      <td style="width: 50px; vertical-align: top; padding-right: 12px;">
+                                        {% if child_line.image %}
+                                          <img src="{{ child_line | img_url: 'compact_cropped' }}" alt="{{ child_line.title }}" width="40" height="40" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                        {% else %}
+                                          <div style="width: 40px; height: 40px; background-color: #f5f0e1; border: 1px solid #e5e5e5; border-radius: 4px;"></div>
+                                        {% endif %}
+                                      </td>
+                                      <td style="vertical-align: top;">
+                                        {% if child_line.product.title %}
+                                          {% assign item_title = child_line.product.title %}
+                                        {% else %}
+                                          {% assign item_title = child_line.title %}
+                                        {% endif %}
+                                        <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #333333;">{{ item_title }}&nbsp;&times;&nbsp;{{ child_line.quantity }}</span>
+                                        {% if child_line.variant.title != 'Default Title' %}
+                                          <br><span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #555555;">{{ child_line.variant.title }}</span>
+                                        {% endif %}
+                                      </td>
+                                    </tr>
+                                  </table>
+                                {% endfor %}
+                              {% endif %}
+                            </td>
+                          </tr>
+                        {% endunless %}
+                      {% endif %}
+                    {% endfor %}
+
+                    <!-- Standard Line Item Groups -->
+                    {% for line_item_group in line_item_groups %}
+                      {% assign final_line_price = 0 %}
+                      {% assign original_line_price = 0 %}
+
+                      {% if line_item_group.deliverable? == false %}
+                        {% for component in line_item_group.components %}
+                          {% assign final_line_price = final_line_price | plus: component.final_line_price %}
+                          {% assign original_line_price = original_line_price | plus: component.original_line_price %}
+                        {% endfor %}
+                      {% else %}
+                        {% assign parent_line_item = line_item_group.parent_sales_line_item %}
+                        {% assign final_line_price = parent_line_item.final_line_price %}
+                        {% assign original_line_price = parent_line_item.original_line_price %}
+                      {% endif %}
+
+                      <tr>
+                        <td style="padding: 16px 0; border-bottom: 1px solid #e5e5e5;">
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                              <td style="width: 70px; vertical-align: top; padding-right: 16px;">
+                                {% if parent_line_item and parent_line_item.image %}
+                                  <img src="{{ parent_line_item | img_url: 'compact_cropped' }}" width="60" height="60" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                {% elsif line_item_group.image %}
+                                  <img src="{{ line_item_group | img_url: 'compact_cropped' }}" width="60" height="60" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                {% else %}
+                                  <div style="width: 60px; height: 60px; background-color: #f5f0e1; border: 1px solid #e5e5e5; border-radius: 4px;"></div>
+                                {% endif %}
+                              </td>
+                              <td style="vertical-align: top;">
+                                <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; color: #1a1a1a;">{{ line_item_group.title }}&nbsp;&times;&nbsp;{{ line_item_group.quantity }}</span>
+                                {% if line_item_group.variant and line_item_group.variant.title != 'Default Title' %}
+                                  <br><span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ line_item_group.variant.title }}</span>
+                                {% endif %}
+                              </td>
+                              <td style="width: 100px; vertical-align: top; text-align: right;">
+                                {% if original_line_price != final_line_price %}
+                                  <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #888888; text-decoration: line-through;">{{ original_line_price | money }}</span><br>
+                                {% endif %}
+                                <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; color: #1a1a1a;">
+                                  {% if final_line_price > 0 %}{{ final_line_price | money }}{% else %}Free{% endif %}
+                                </span>
+                              </td>
+                            </tr>
+                          </table>
+
+                          {% if line_item_group.deliverable? == false %}
+                            {% for component in line_item_group.components %}
+                              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 8px; padding-left: 20px;">
+                                <tr>
+                                  <td style="width: 50px; vertical-align: top; padding-right: 12px;">
+                                    {% if component.image %}
+                                      <img src="{{ component | img_url: 'compact_cropped' }}" width="40" height="40" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                    {% else %}
+                                      <div style="width: 40px; height: 40px; background-color: #f5f0e1; border: 1px solid #e5e5e5; border-radius: 4px;"></div>
+                                    {% endif %}
+                                  </td>
+                                  <td style="vertical-align: top;">
+                                    {% if component.product.title %}
+                                      {% assign component_title = component.product.title %}
+                                    {% else %}
+                                      {% assign component_title = component.title %}
+                                    {% endif %}
+                                    <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #333333;">{{ component.quantity }}&nbsp;&times;&nbsp;{{ component_title }}</span>
+                                    {% if component.variant.title != 'Default Title' %}
+                                      <br><span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #555555;">{{ component.variant.title }}</span>
+                                    {% endif %}
+                                  </td>
+                                </tr>
+                              </table>
+                            {% endfor %}
+                          {% endif %}
+
+                          {% if line_item_group.deliverable? %}
+                            {% for component in line_item_group.components %}
+                              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 8px; padding-left: 20px;">
+                                <tr>
+                                  <td style="width: 50px; vertical-align: top; padding-right: 12px;">
+                                    {% if component.image %}
+                                      <img src="{{ component | img_url: 'compact_cropped' }}" width="40" height="40" style="display: block; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                    {% else %}
+                                      <div style="width: 40px; height: 40px; background-color: #f5f0e1; border: 1px solid #e5e5e5; border-radius: 4px;"></div>
+                                    {% endif %}
+                                  </td>
+                                  <td style="vertical-align: top;">
+                                    {% if component.product.title %}
+                                      {% assign component_title = component.product.title %}
+                                    {% else %}
+                                      {% assign component_title = component.title %}
+                                    {% endif %}
+                                    <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #333333;">{{ component_title }}&nbsp;&times;&nbsp;{{ component.quantity }}</span>
+                                    {% if component.variant.title != 'Default Title' %}
+                                      <br><span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #555555;">{{ component.variant.title }}</span>
+                                    {% endif %}
+                                  </td>
+                                  <td style="width: 80px; vertical-align: top; text-align: right;">
+                                    {% if component.original_line_price != component.final_line_price %}
+                                      <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #888888; text-decoration: line-through;">{{ component.original_line_price | money }}</span><br>
+                                    {% endif %}
+                                    <span style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #1a1a1a;">
+                                      {% if component.final_line_price > 0 %}{{ component.final_line_price | money }}{% else %}Free{% endif %}
+                                    </span>
+                                  </td>
+                                </tr>
+                              </table>
+                            {% endfor %}
+                          {% endif %}
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </table>
+                {% endif %}
+              </td>
+            </tr>
+
+            <!-- ============ TOTALS SECTION ============ -->
+            <tr>
+              <td style="background-color: #ffffff; padding: 24px 30px; border-top: 1px solid #e5e5e5;">
+                {% assign total_order_discount_amount = 0 %}
+                {% assign has_shipping_discount = false %}
+                {% assign epsilon = 0.00001 %}
+
+                {% for discount_application in discount_applications %}
+                  {% if discount_application.target_selection == 'all' and discount_application.target_type == 'line_item' %}
+                    {% assign order_discount_count = order_discount_count | plus: 1 %}
+                    {% assign total_order_discount_amount = total_order_discount_amount | plus: discount_application.total_allocated_amount %}
+                  {% endif %}
+                  {% if discount_application.target_type == 'shipping_line' %}
+                    {% assign has_shipping_discount = true %}
+                    {% assign shipping_discount_title = discount_application.title %}
+                    {% assign discount_value_price = discount_application.total_allocated_amount %}
+                    {% assign shipping_amount_minus_discount_value_price = shipping_price | minus: discount_value_price %}
+                    {% assign shipping_amount_minus_discount_value_price_abs = shipping_amount_minus_discount_value_price | abs %}
+                    {% assign discount_application_value_type = discount_application.value_type | strip %}
+                    {% if shipping_amount_minus_discount_value_price_abs < epsilon or discount_application_value_type == 'percentage' and discount_application.value == 100 %}
+                      {% assign free_shipping = true %}
+                    {% else %}
+                      {% assign discounted_shipping_price = shipping_amount_minus_discount_value_price %}
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <!-- Subtotal -->
+                  <tr>
+                    <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Subtotal</td>
+                    <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ subtotal_price | plus: total_order_discount_amount | money }}</td>
+                  </tr>
+
+                  <!-- Order Discounts -->
+                  {% if order_discount_count > 0 %}
+                    <tr>
+                      <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">
+                        {% if order_discount_count == 1 %}Order discount{% else %}Order discounts{% endif %}
+                      </td>
+                      <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #C7AA4E; text-align: right; font-weight: bold;">-{{ total_order_discount_amount | money }}</td>
+                    </tr>
+                    {% for discount_application in discount_applications %}
+                      {% if discount_application.target_selection == 'all' and discount_application.target_type != 'shipping_line' %}
+                        <tr>
+                          <td colspan="2" style="padding: 4px 0 8px 0;">
+                            <span style="display: inline-block; padding: 4px 8px; background-color: #f5f0e1; border-radius: 4px; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #C7AA4E;">
+                              {{ discount_application.title }} (-{{ discount_application.total_allocated_amount | money }})
+                            </span>
+                          </td>
+                        </tr>
+                      {% endif %}
+                    {% endfor %}
+                  {% endif %}
+
+                  <!-- Shipping -->
+                  {% unless retail_delivery_only %}
+                    {% if delivery_method == 'pick-up' %}
+                      <tr>
+                        <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Pickup</td>
+                        <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ shipping_price | money }}</td>
+                      </tr>
+                    {% else %}
+                      {% if has_shipping_discount %}
+                        {% if free_shipping == true %}
+                          <tr>
+                            <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Shipping</td>
+                            <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; text-align: right;">
+                              {% if shipping_price != 0 %}<span style="text-decoration: line-through; color: #888888;">{{ shipping_price | money }}</span>&nbsp;{% endif %}
+                              <span style="color: #C7AA4E; font-weight: bold;">Free</span>
+                            </td>
+                          </tr>
+                        {% else %}
+                          <tr>
+                            <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Shipping</td>
+                            <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; text-align: right;">
+                              <span style="text-decoration: line-through; color: #888888;">{{ shipping_price | money }}</span>&nbsp;
+                              <span style="color: #1a1a1a; font-weight: bold;">{{ discounted_shipping_price | money }}</span>
+                            </td>
+                          </tr>
+                        {% endif %}
+                        <tr>
+                          <td colspan="2" style="padding: 4px 0 8px 0;">
+                            <span style="display: inline-block; padding: 4px 8px; background-color: #f5f0e1; border-radius: 4px; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #C7AA4E;">
+                              {{ shipping_discount_title }}{% if discount_value_price != 0 %} (-{{ discount_value_price | money }}){% endif %}
+                            </span>
+                          </td>
+                        </tr>
+                      {% else %}
+                        <tr>
+                          <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Shipping</td>
+                          <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ shipping_price | money }}</td>
+                        </tr>
+                      {% endif %}
+                    {% endif %}
+                  {% endunless %}
+
+                  <!-- Duties -->
+                  {% if total_duties %}
+                    <tr>
+                      <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Duties</td>
+                      <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ total_duties | money }}</td>
+                    </tr>
+                  {% endif %}
+
+                  <!-- Taxes -->
+                  <tr>
+                    <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Taxes</td>
+                    <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ tax_price | money }}</td>
+                  </tr>
+
+                  <!-- Tip -->
+                  {% if total_tip and total_tip > 0 %}
+                    <tr>
+                      <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Tip</td>
+                      <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ total_tip | money }}</td>
+                    </tr>
+                  {% endif %}
+                </table>
+
+                <!-- Transaction Calculations -->
+                {% assign transaction_size = 0 %}
+                {% assign transaction_amount = 0 %}
+                {% assign net_transaction_amount_rounding = 0 %}
+                {% assign authorized_amount = 0 %}
+                {% assign has_refunds = false %}
+                {% assign shopify_pay_captured = false %}
+                {% assign shop_cash_offers_captured = false %}
+                {% for transaction in transactions %}
+                  {% if transaction.kind == "sale" or transaction.kind == "capture" %}
+                    {% if transaction.status == "success" %}
+                      {% if transaction.payment_details.credit_card_company %}
+                        {% assign shopify_pay_captured = true %}
+                      {% endif %}
+                      {% if transaction.gateway == "shop_cash" or transaction.gateway == "shop_offer" %}
+                        {% assign shop_cash_offers_captured = true %}
+                      {% endif %}
+                      {% assign transaction_size = transaction_size | plus: 1 %}
+                      {% assign transaction_amount = transaction_amount | plus: transaction.amount %}
+                      {% if transaction.amount_rounding != nil %}
+                        {% assign net_transaction_amount_rounding = net_transaction_amount_rounding | plus: transaction.amount_rounding %}
+                      {% endif %}
+                    {% endif %}
+                  {% elsif transaction.kind == "authorization" %}
+                    {% if transaction.status == "success" %}
+                      {% assign authorized_amount = authorized_amount | plus: transaction.amount %}
+                    {% endif %}
+                  {% elsif transaction.kind == "refund" or transaction.kind == "change" %}
+                    {% if transaction.status == "success" or transaction.status == "pending" %}
+                      {% assign transaction_size = transaction_size | plus: 1 %}
+                      {% assign transaction_amount = transaction_amount | minus: transaction.amount %}
+                      {% assign has_refunds = true %}
+                      {% if transaction.amount_rounding != nil %}
+                        {% assign net_transaction_amount_rounding = net_transaction_amount_rounding | minus: transaction.amount_rounding %}
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+
+                {% if shopify_pay_captured == true and shop_cash_offers_captured == false %}
+                  {% for transaction in transactions %}
+                    {% if transaction.status == "success" %}
+                      {% if transaction.kind == "authorization" and transaction.gateway == "shop_cash" or transaction.gateway == "shop_offer" %}
+                        {% assign transaction_size = transaction_size | plus: 1 %}
+                        {% assign transaction_amount = transaction_amount | plus: transaction.amount %}
+                        {% if transaction.amount_rounding != nil %}
+                          {% assign net_transaction_amount_rounding = net_transaction_amount_rounding | plus: transaction.amount_rounding %}
+                        {% endif %}
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+
+                <!-- Total Section -->
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 16px; border-top: 2px solid #102117; padding-top: 16px;">
+                  {% if payment_terms and payment_terms.automatic_capture_at_fulfillment == false or b2b? %}
+                    {% assign next_payment = payment_terms.next_payment %}
+                    {% assign due_at_date = next_payment.due_at | date: "%b %d, %Y" %}
+
+                    {% if net_transaction_amount_rounding != 0 %}
+                      <tr>
+                        <td style="padding: 8px 0; font-family: 'Playfair Display', Georgia, 'Times New Roman', serif; font-size: 18px; color: #1a1a1a;">Total</td>
+                        <td style="padding: 8px 0; font-family: 'Playfair Display', Georgia, 'Times New Roman', serif; font-size: 18px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ total_price | money_with_currency }}</td>
+                      </tr>
+                      {% if total_discounts > 0 %}
+                        <tr>
+                          <td></td>
+                          <td style="padding: 4px 0; text-align: right;">
+                            <span style="display: inline-block; padding: 4px 12px; background-color: #f5f0e1; border-radius: 4px; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #C7AA4E;">
+                              You saved {{ total_discounts | money }}
+                            </span>
+                          </td>
+                        </tr>
+                      {% endif %}
+                      <tr><td colspan="2" style="padding: 8px 0; border-top: 1px solid #e5e5e5;"></td></tr>
+                      <tr>
+                        <td style="padding: 4px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">Cash rounding</td>
+                        <td style="padding: 4px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #1a1a1a; text-align: right;">{% if net_transaction_amount_rounding < 0 %}-{% endif %} {{ net_transaction_amount_rounding | abs | money }}</td>
+                      </tr>
+                      <tr><td colspan="2" style="padding: 8px 0; border-top: 1px solid #e5e5e5;"></td></tr>
+                    {% endif %}
+
+                    <tr>
+                      <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Total paid today</td>
+                      <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ transaction_amount | plus: net_transaction_amount_rounding | money_with_currency }}</td>
+                    </tr>
+
+                    {% assign next_amount_due = total_price %}
+                    {% if next_payment %}
+                      {% assign next_amount_due = next_payment.amount_due %}
+                    {% elsif total_outstanding > 0 %}
+                      {% assign next_amount_due = total_outstanding %}
+                    {% endif %}
+
+                    {% if payment_terms.type == 'receipt' %}
+                      <tr>
+                        <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Total due on receipt</td>
+                        <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ next_amount_due | money_with_currency }}</td>
+                      </tr>
+                    {% elsif payment_terms.type == 'fulfillment' %}
+                      <tr>
+                        <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Total due on fulfillment</td>
+                        <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ next_amount_due | money_with_currency }}</td>
+                      </tr>
+                    {% else %}
+                      <tr>
+                        <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Total due {{ due_at_date }}</td>
+                        <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ next_amount_due | money_with_currency }}</td>
+                      </tr>
+                    {% endif %}
+
+                    {% if total_discounts > 0 and net_transaction_amount_rounding == 0 %}
+                      <tr>
+                        <td></td>
+                        <td style="padding: 8px 0; text-align: right;">
+                          <span style="display: inline-block; padding: 4px 12px; background-color: #f5f0e1; border-radius: 4px; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #C7AA4E;">
+                            You saved {{ total_discounts | money }}
+                          </span>
+                        </td>
+                      </tr>
+                    {% endif %}
+                  {% else %}
+                    <tr>
+                      <td style="padding: 8px 0; font-family: 'Playfair Display', Georgia, 'Times New Roman', serif; font-size: 18px; color: #1a1a1a;">Total</td>
+                      <td style="padding: 8px 0; font-family: 'Playfair Display', Georgia, 'Times New Roman', serif; font-size: 18px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ total_price | money_with_currency }}</td>
+                    </tr>
+                    {% if total_discounts > 0 %}
+                      <tr>
+                        <td></td>
+                        <td style="padding: 8px 0; text-align: right;">
+                          <span style="display: inline-block; padding: 4px 12px; background-color: #f5f0e1; border-radius: 4px; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #C7AA4E;">
+                            You saved {{ total_discounts | money }}
+                          </span>
+                        </td>
+                      </tr>
+                    {% endif %}
+                    {% if net_transaction_amount_rounding != 0 %}
+                      <tr><td colspan="2" style="padding: 8px 0; border-top: 1px solid #e5e5e5;"></td></tr>
+                      <tr>
+                        <td style="padding: 4px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">Cash rounding</td>
+                        <td style="padding: 4px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #1a1a1a; text-align: right;">{% if net_transaction_amount_rounding < 0 %}-{% endif %} {{ net_transaction_amount_rounding | abs | money }}</td>
+                      </tr>
+                      {% if financial_status == 'paid' %}
+                        <tr>
+                          <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">
+                            Paid<br>
+                            <span style="font-size: 12px; color: #888888;">{{ order.transactions | map: 'gateway_display_name' | uniq | join: ', ' }}</span>
+                          </td>
+                          <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ transaction_amount | plus: net_transaction_amount_rounding | money_with_currency }}</td>
+                        </tr>
+                      {% endif %}
+                    {% endif %}
+                    {% if transaction_amount != total_price and payment_terms == nil %}
+                      {% if transaction_amount == 0 and authorized_amount > 0 and has_refunds == false %}
+                      {% else %}
+                        <tr>
+                          <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #555555;">Total paid today</td>
+                          <td style="padding: 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #1a1a1a; text-align: right; font-weight: bold;">{{ transaction_amount | plus: net_transaction_amount_rounding | money_with_currency }}</td>
+                        </tr>
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+                </table>
+
+                <!-- Payment Details -->
+                {% unless payment_terms %}
+                  {% if transaction_size > 1 or transaction_amount < total_price %}
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 16px; border-top: 1px solid #e5e5e5; padding-top: 16px;">
+                      {% for transaction in transactions %}
+                        {% assign amount_rounding = 0 %}
+                        {% if transaction.amount_rounding != 0 %}
+                          {% assign amount_rounding = transaction.amount_rounding %}
+                        {% endif %}
+                        {% if transaction.status == "success" and transaction.kind == "capture" or transaction.kind == "sale" %}
+                          {% if transaction.payment_details.gift_card_last_four_digits %}
+                            {% capture transaction_name %}Gift card (ending with {{ transaction.payment_details.gift_card_last_four_digits }}){% endcapture %}
+                          {% elsif transaction.payment_details.credit_card_company %}
+                            {% capture transaction_name %}{{ transaction.payment_details.credit_card_company }} (ending in {{ transaction.payment_details.credit_card_last_four_digits }}){% endcapture %}
+                          {% else %}
+                            {% capture transaction_name %}{{ transaction.gateway_display_name }}{% endcapture %}
+                          {% endif %}
+                          <tr>
+                            <td style="padding: 6px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ transaction_name }}</td>
+                            <td style="padding: 6px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #1a1a1a; text-align: right;">{{ transaction.amount | plus: amount_rounding | money }}</td>
+                          </tr>
+                        {% elsif shopify_pay_captured and shop_cash_offers_captured == false and transaction.kind == "authorization" and transaction.gateway == "shop_cash" or transaction.gateway == "shop_offer" %}
+                          {% capture transaction_name %}{{ transaction.gateway_display_name }}{% endcapture %}
+                          <tr>
+                            <td style="padding: 6px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">{{ transaction_name }}</td>
+                            <td style="padding: 6px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #1a1a1a; text-align: right;">{{ transaction.amount | plus: amount_rounding | money }}</td>
+                          </tr>
+                        {% endif %}
+                        {% if transaction.kind == 'refund' and transaction.gateway != "shop_offer" %}
+                          {% if transaction.payment_details.gift_card_last_four_digits %}
+                            {% assign refund_method_title = transaction.payment_details.type %}
+                          {% elsif transaction.payment_details.local_payment %}
+                            {% assign refund_method_title = transaction.payment_details.payment_method_name %}
+                          {% elsif transaction.payment_details.credit_card_company %}
+                            {% assign refund_method_title = transaction.payment_details.credit_card_company %}
+                          {% else %}
+                            {% assign refund_method_title = transaction.gateway_display_name %}
+                          {% endif %}
+
+                          {% if transaction.gateway == 'shopify_store_credit' %}
+                            {% assign link_url = routes.account_profile_url %}
+                            {% capture link_text %}View{% endcapture %}
+                          {% else %}
+                            {% assign link_url = nil %}
+                            {% assign link_text = nil %}
+                          {% endif %}
+
+                          <tr>
+                            <td style="padding: 6px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #555555;">
+                              Refund<br>
+                              <span style="font-size: 12px; color: #888888;">{{ refund_method_title | replace: '_', ' ' | capitalize }}</span>
+                              {% if link_url %}&nbsp;&nbsp;<a href="{{ link_url }}" style="font-size: 12px; color: #C7AA4E;">{{ link_text }}</a>{% endif %}
+                            </td>
+                            <td style="padding: 6px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #8b0000; text-align: right;">{{ transaction.amount | plus: amount_rounding | times: -1 | money }}</td>
+                          </tr>
+                        {% endif %}
+                      {% endfor %}
+                    </table>
+                  {% endif %}
+                {% endunless %}
+              </td>
+            </tr>
+
+            <!-- ============ CUSTOMER INFORMATION SECTION ============ -->
+            <tr>
+              <td style="background-color: #f9f7f3; padding: 24px 30px; border-top: 1px solid #e5e5e5;">
+                <h3 style="margin: 0 0 20px 0; font-family: 'Playfair Display', Georgia, 'Times New Roman', serif; font-size: 18px; font-weight: normal; color: #1a1a1a; letter-spacing: 0.5px;">Customer Information</h3>
+
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <!-- Shipping Address -->
+                    {% if requires_shipping and shipping_address %}
+                      <td style="width: 50%; vertical-align: top; padding-right: 15px;">
+                        <h4 style="margin: 0 0 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #888888; text-transform: uppercase; letter-spacing: 0.5px;">Shipping Address</h4>
+                        <p style="margin: 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #333333; line-height: 1.5;">
+                          {{ shipping_address | format_address }}
+                        </p>
+                      </td>
+                    {% endif %}
+                    <!-- Billing Address -->
+                    {% if billing_address %}
+                      <td style="width: 50%; vertical-align: top; padding-left: 15px;">
+                        <h4 style="margin: 0 0 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #888888; text-transform: uppercase; letter-spacing: 0.5px;">Billing Address</h4>
+                        <p style="margin: 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #333333; line-height: 1.5;">
+                          {{ billing_address | format_address }}
+                        </p>
+                      </td>
+                    {% endif %}
+                  </tr>
+                </table>
+
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 20px;">
+                  <tr>
+                    <!-- Company Location -->
+                    {% if company_location %}
+                      <td style="width: 50%; vertical-align: top; padding-right: 15px;">
+                        <h4 style="margin: 0 0 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #888888; text-transform: uppercase; letter-spacing: 0.5px;">Location</h4>
+                        <p style="margin: 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #333333;">
+                          {{ company_location.name }}
+                        </p>
+                      </td>
+                    {% endif %}
+                    <!-- Payment Method -->
+                    {% if transactions.size > 0 or payment_terms and payment_terms.automatic_capture_at_fulfillment == false or b2b? %}
+                      <td style="width: 50%; vertical-align: top; padding-left: 15px;">
+                        <h4 style="margin: 0 0 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #888888; text-transform: uppercase; letter-spacing: 0.5px;">Payment</h4>
+                        <p style="margin: 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #333333; line-height: 1.5;">
+                          {% if payment_terms %}
+                            {% assign due_date = payment_terms.next_payment.due_at | default: nil %}
+                            {% if payment_terms.type == 'receipt' or payment_terms.type == 'fulfillment' and payment_terms.next_payment.due_at == nil %}
+                              {{ payment_terms.translated_name }}<br>
+                            {% else %}
+                              {{ payment_terms.translated_name }}: Due {{ due_date | date: format: 'date' }}<br>
+                            {% endif %}
+                          {% endif %}
+                          {% if transactions.size > 0 %}
+                            {% for transaction in transactions %}
+                              {% if transaction.status == "success" or transaction.status == "pending" %}
+                                {% if transaction.kind == "capture" or transaction.kind == "sale" %}
+                                  {% if transaction.payment_details.gift_card_last_four_digits %}
+                                    <img src="{{ transaction.payment_details.payment_icon_source | payment_type_img_url }}" height="24" style="vertical-align: middle; margin-right: 6px;">
+                                    ending with {{ transaction.payment_details.gift_card_last_four_digits }}<br>
+                                  {% elsif transaction.payment_details.type == "shop_pay_installments" and transaction.payment_details.credit_card_company == "unknown" %}
+                                    <img src="{{ 'notifications/shop-pay.svg' | shopify_asset_url }}" height="20" style="vertical-align: middle;"><br>
+                                    <span>Paid with Shop Pay installments</span><br>
+                                  {% elsif transaction.payment_details.type == "card" %}
+                                    <img src="{{ transaction.payment_details.credit_card_company | payment_icon_png_url }}" height="24" style="vertical-align: middle; margin-right: 6px;" alt="{{ transaction.payment_details.credit_card_company }}">
+                                    <span>ending with {{ transaction.payment_details.credit_card_last_four_digits }}</span><br>
+                                  {% elsif transaction.gateway_display_name == "Gift card" %}
+                                    <img src="{{ transaction.gateway_icon_source | payment_type_img_url }}" height="24" style="vertical-align: middle; margin-right: 6px;">
+                                    ending with {{ transaction.payment_details.gift_card.last_four_characters | upcase }}<br>
+                                    <span style="font-size: 12px; color: #555555; padding-left: 30px;">Gift card balance - <b>{{ transaction.payment_details.gift_card.balance | money }}</b></span>
+                                  {% elsif transaction.payment_details.local_payment? %}
+                                    <img src="{{ transaction.payment_details.payment_icon_source | payment_type_img_url }}" height="24" style="vertical-align: middle; margin-right: 6px;">
+                                    <span>{{ transaction.payment_details.payment_method_display_name }}</span><br>
+                                  {% elsif transaction.gateway_display_name != "Shop Cash" and transaction.gateway != "shop_offer" %}
+                                    {{ transaction.gateway_display_name }}<br>
+                                  {% endif %}
+                                {% elsif transaction.kind == "authorization" and transaction.gateway_display_name == "Shop Cash" %}
+                                  <span>Shop Cash</span><br>
+                                {% endif %}
+                              {% endif %}
+                            {% endfor %}
+                          {% endif %}
+                        </p>
+                      </td>
+                    {% endif %}
+                  </tr>
+                </table>
+
+                <!-- Shipping Method -->
+                {% if requires_shipping and shipping_address %}
+                  {% if shipping_method %}
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 20px;">
+                      <tr>
+                        <td style="vertical-align: top;">
+                          <h4 style="margin: 0 0 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 12px; color: #888888; text-transform: uppercase; letter-spacing: 0.5px;">Shipping Method</h4>
+                          <p style="margin: 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #333333;">
+                            {% if delivery_promise_branded_shipping_line %}
+                              {{ delivery_promise_branded_shipping_line }}
+                            {% else %}
+                              {{ shipping_method.title }}
+                            {% endif %}
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  {% endif %}
+                {% endif %}
+              </td>
+            </tr>
+
+            <!-- ============ FOOTER ============ -->
+            <tr>
+              <td style="background-color: #102117; padding: 0;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <!-- Gold accent line -->
+                  <tr>
+                    <td style="padding: 0 30px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td style="border-top: 2px solid #C7AA4E; height: 1px;"></td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <!-- Footer Content -->
+                  <tr>
+                    <td style="padding: 24px 30px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td align="center">
+                            <!-- Contact Email -->
+                            <p style="margin: 0 0 12px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 14px; color: #f5f0e1;">
+                              Questions? Contact us at
+                              <a href="mailto:{{ shop.email }}" style="color: #C7AA4E; text-decoration: none;">{{ shop.email }}</a>
+                            </p>
+                            <!-- Address -->
+                            <p style="margin: 0 0 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #888888;">
+                              3, Kasthuri 2nd Street, New Laxmipuram
+                            </p>
+                            <p style="margin: 0 0 16px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #888888;">
+                              Chennai, Tamil Nadu - 600099
+                            </p>
+                            <!-- Instagram -->
+                            <p style="margin: 0 0 16px 0;">
+                              <a href="https://instagram.com/houseofkumaran" style="font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #C7AA4E; text-decoration: none;">
+                                @houseofkumaran
+                              </a>
+                            </p>
+                            <!-- Tagline -->
+                            <p style="margin: 0 0 16px 0; font-family: 'Playfair Display', Georgia, 'Times New Roman', serif; font-size: 12px; font-style: italic; color: #C7AA4E; letter-spacing: 1px;">
+                              The Taste of Madras
+                            </p>
+                            <!-- Copyright -->
+                            <p style="margin: 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 11px; color: #555555;">
+                              &copy; {{ 'now' | date: '%Y' }} House of Kumaran. All rights reserved.
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+
+{%- if billing_address.country_code == 'DE' or billing_address.country_code == 'DK' -%}
+  {%- if shop.terms_of_service.body != blank -%}
+    {{ shop.terms_of_service | attach_as_pdf: "Terms of service" }}
+  {%- endif -%}
+
+  {%- if shop.refund_policy.body != blank -%}
+    {{ shop.refund_policy | attach_as_pdf: "Refund policy" }}
+  {%- endif -%}
+{%- endif -%}

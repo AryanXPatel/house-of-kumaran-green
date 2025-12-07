@@ -474,12 +474,24 @@ export default function WholesalePage() {
       <section className="py-16 px-6 bg-[#b8860b]">
         <div className="max-w-[1400px] mx-auto text-center">
           <h2 className="font-serif text-2xl font-bold text-[#0d1f14] mb-4">
-            Prefer to Talk?
+            Get in Touch
           </h2>
           <p className="text-[#0d1f14]/70 mb-6">
-            Call our wholesale team directly at{" "}
-            <a href="tel:+919337054587" className="font-semibold underline">
-              +91 93370 54587
+            Contact our wholesale team via{" "}
+            <a
+              href="mailto:hello@houseofkumaran.com"
+              className="font-semibold underline"
+            >
+              hello@houseofkumaran.com
+            </a>{" "}
+            or{" "}
+            <a
+              href="https://wa.me/917358407027"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold underline"
+            >
+              WhatsApp
             </a>
           </p>
           <p className="text-[#0d1f14]/60 text-sm">

@@ -89,10 +89,10 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Content */}
-        <div className="p-5">
+        <div className="p-3 sm:p-5">
           {/* Rating - Shows Judge.me reviews if available, falls back to default */}
           {product.shopifyId ? (
-            <div className="mb-2 min-h-5">
+            <div className="mb-1.5 sm:mb-2 min-h-4 sm:min-h-5">
               <StarRatingBadge
                 productId={product.shopifyId}
                 size="sm"
@@ -100,31 +100,33 @@ export function ProductCard({ product }: ProductCardProps) {
               />
             </div>
           ) : (
-            <div className="flex items-center gap-1.5 mb-2">
-              <Star className="w-4 h-4 fill-[#b8860b] text-[#b8860b]" />
-              <span className="text-sm font-semibold text-[#f5f0e1]">
+            <div className="flex items-center gap-1 sm:gap-1.5 mb-1.5 sm:mb-2">
+              <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-[#b8860b] text-[#b8860b]" />
+              <span className="text-xs sm:text-sm font-semibold text-[#f5f0e1]">
                 {product.rating}
               </span>
-              <span className="text-sm text-[#f5f0e1]/40">
+              <span className="text-xs sm:text-sm text-[#f5f0e1]/40">
                 ({product.reviews})
               </span>
             </div>
           )}
 
           {/* Name & Weight */}
-          <h3 className="font-serif text-lg font-bold text-[#f5f0e1] mb-1 group-hover:text-[#b8860b] transition-colors">
+          <h3 className="font-serif text-sm sm:text-lg font-bold text-[#f5f0e1] mb-0.5 sm:mb-1 group-hover:text-[#b8860b] transition-colors line-clamp-2">
             {product.name}
           </h3>
-          <p className="text-[#f5f0e1]/50 text-sm mb-4">{product.weight}</p>
+          <p className="text-[#f5f0e1]/50 text-xs sm:text-sm mb-2 sm:mb-4">
+            {product.weight}
+          </p>
 
           {/* Price & Add to cart */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-baseline gap-2">
-              <span className="text-xl font-bold text-[#f5f0e1]">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:justify-between">
+            <div className="flex items-baseline gap-1.5 sm:gap-2">
+              <span className="text-base sm:text-xl font-bold text-[#f5f0e1]">
                 ₹{product.price}
               </span>
               {product.originalPrice && (
-                <span className="text-sm text-[#f5f0e1]/40 line-through">
+                <span className="text-xs sm:text-sm text-[#f5f0e1]/40 line-through">
                   ₹{product.originalPrice}
                 </span>
               )}
@@ -132,24 +134,33 @@ export function ProductCard({ product }: ProductCardProps) {
             <button
               onClick={handleAddToCart}
               disabled={!product.inStock}
-              className={`w-14 h-14 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg ${
+              className={`w-full sm:w-12 h-10 sm:h-12 rounded-full flex items-center justify-center gap-2 transition-all duration-300 shadow-lg font-semibold text-sm ${
                 product.inStock
                   ? isAdding
-                    ? "bg-green-500 scale-110"
-                    : "bg-[#b8860b] hover:bg-[#d4a017] hover:scale-110 active:scale-95"
+                    ? "bg-green-500 scale-105 sm:scale-110"
+                    : "bg-[#b8860b] hover:bg-[#d4a017] sm:hover:scale-110 active:scale-95"
                   : "bg-[#f5f0e1]/20 cursor-not-allowed"
               }`}
             >
               <ShoppingBag
-                className={`w-6 h-6 ${
+                className={`w-5 h-5 sm:w-6 sm:h-6 ${
                   isAdding ? "text-white" : "text-[#0d1f14]"
                 }`}
               />
+              <span className="sm:hidden text-[#0d1f14]">
+                {product.inStock
+                  ? isAdding
+                    ? "Added!"
+                    : "Add to Cart"
+                  : "Out of Stock"}
+              </span>
             </button>
           </div>
 
           {!product.inStock && (
-            <p className="text-red-400 text-sm mt-2">Out of Stock</p>
+            <p className="text-red-400 text-xs sm:text-sm mt-1.5 sm:mt-2 hidden sm:block">
+              Out of Stock
+            </p>
           )}
         </div>
       </div>

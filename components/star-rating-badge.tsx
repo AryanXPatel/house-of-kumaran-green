@@ -80,9 +80,32 @@ export function StarRatingBadge({
     lg: "text-base",
   };
 
-  // Don't show anything if still loading or no reviews
-  if (loading || !rating || rating.count === 0) {
-    return null;
+  // Show loading skeleton
+  if (loading) {
+    return (
+      <div className={`flex items-center gap-1 ${className}`}>
+        <div className="animate-pulse h-3 w-16 bg-[#f5f0e1]/10 rounded" />
+      </div>
+    );
+  }
+
+  // Show "Be the first to review" when no reviews
+  if (!rating || rating.count === 0) {
+    return (
+      <div className={`flex items-center gap-1 ${className}`}>
+        <div className="flex gap-0.5">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Star
+              key={star}
+              className={`${sizeClasses[size]} text-[#f5f0e1]/20`}
+            />
+          ))}
+        </div>
+        <span className={`text-[#b8860b] ${textSizeClasses[size]}`}>
+          Be the first to review
+        </span>
+      </div>
+    );
   }
 
   return (

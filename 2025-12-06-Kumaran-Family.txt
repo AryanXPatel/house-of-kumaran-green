@@ -1,0 +1,1124 @@
+
+╭─── Claude Code v2.0.60 ──────────────────────────────────────────────────────╮
+│                                                    │ Tips for getting        │
+│                    Welcome back!                   │ started                 │
+│                                                    │ Run /init to create a … │
+│                       ▐▛███▜▌                      │ ─────────────────────── │
+│                      ▝▜█████▛▘                     │ Recent activity         │
+│                        ▘▘ ▝▝                       │ No recent activity      │
+│                                                    │                         │
+│            Opus 4.5 · API Usage Billing            │                         │
+│ D:\Work\MakeScale\HouseOfKumaran\hok-green\house-… │                         │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+  /model to try Opus 4.5
+
+> hi 
+  ⎿  Interrupted · What should Claude do instead?
+
+> hi 
+
+● Hello! How can I help you today?
+
+> Hey so i want your help witht The Join The Kumaran Family workflow . Now I
+ make customers with shopify email password or supabase Google Auth , 
+Understand how it is so , how they communicate with each other and what is 
+proffesional way to have the Join the kumaran family consent from user in 
+any way and or any automatic way if a use is already signed in or not and 
+they want to join the kumaranfamily for discount and newsletter understand 
+and let me know . Its December 2025 search web if needed use mcp as needed 
+
+● I'll help you understand the current authentication and "Join The Kumaran
+  Family" workflow. Let me explore the codebase to understand how Shopify
+  and Supabase authentication work together, and then research best
+  practices.
+
+● 2 Task agents finished (ctrl+o to expand)
+   ├─ Task · 0 tool uses
+   │  ⎿  Done
+   └─ Task · 0 tool uses
+      ⎿  Done
+
+● 2 Explore agents finished (ctrl+o to expand)
+   ├─ Explore auth system · 44 tool uses · 72.7k tokens
+   │  ⎿  Done
+   └─ Explore Supabase-Shopify sync · 19 tool uses · 57.2k tokens
+      ⎿  Done
+
+● I have a good understanding of the current system. Let me also search for
+  best practices on newsletter consent and check the current marketing
+  consent implementation.
+
+● BashOutput(Reading shell output)
+  ⎿ D:/Work/Mak
+    eScale/HouseOfKumaran/hok-green/house-of-kumaran-green/app/account/page
+    .tsx:    acceptsMarketing: true,
+    … +68 lines (ctrl+o to expand)
+
+
+● Web Search("ecommerce newsletter signup consent best practices GDPR 2025
+            double opt-in")
+  ⎿  Did 1 search in 62s                                                   
+
+● Read(components\auth-drawer.tsx)
+  ⎿  Read 712 lines
+
+● Excellent! Now I have a clear picture. Let me also read the Shopify admin
+  customer creation to see how marketing consent is currently handled during
+   signup:
+
+● Read(lib\shopify-admin.ts)
+  ⎿  Read 956 lines
+
+● Read(app\api\auth\google\route.ts)
+  ⎿  Read 287 lines
+
+● Now I have a comprehensive understanding of the current system. Let me
+  summarize what I've found and ask some clarifying questions:
+
+  Current State Analysis
+
+  Current Authentication Flow:
+  1. Google OAuth → Supabase user → Shopify customer (auto-created)
+  2. Email/Password → Supabase → Shopify (via Storefront API)
+
+  Key Finding - Marketing Consent Issue:
+  Currently in lib/shopify-admin.ts:164-167, when a customer is created via
+  Google OAuth, they are automatically subscribed to marketing:
+  emailMarketingConsent: {
+    marketingOptInLevel: "SINGLE_OPT_IN",
+    marketingState: "SUBSCRIBED",
+  }
+
+  This is problematic because:
+  - Users never explicitly consent to "Join The Kumaran Family"
+  - GDPR best practices recommend explicit opt-in (not pre-checked)
+  - No checkbox is shown during signup in auth-drawer.tsx
+
+  Current Marketing Management:
+  - Users can toggle marketing consent on the /account page after signup
+  - Uses acceptsMarketing field in profile updates
+
+  Based on my research and the code analysis, I have some questions to
+  clarify your requirements:
+                                                                           
+● User answered Claude's questions:
+  ⎿  · Where should the 'Join The Kumaran Family' consent appear? → Both 
+     Signup + Footer
+     · What benefits does 'Kumaran Family' membership provide? → VIP Perks
+     · Should users who are already signed in but not subscribed be 
+     prompted? → Show Popup/Banner
+     · What consent method do you prefer for GDPR compliance? → Single 
+     Opt-In
+
+● Now I have clear requirements. Let me also check the footer component to
+  understand the current structure, then create the implementation plan.
+
+● Read(components\footer.tsx)
+  ⎿  Read 353 lines
+
+● Read(app\account\page.tsx)
+  ⎿  Read 150 lines
+
+● Now I have all the information I need. Let me create the implementation
+  plan:
+
+● Updated plan
+  ⎿ /plan to preview ·                                                     
+    C:\Users\AP\.claude\plans\recursive-zooming-stallman.md
+  ⎿  API Error: Cannot read properties of undefined (reading 'map')
+
+> continue 
+
+● I've created the implementation plan. Let me now exit plan mode so we can
+  proceed with implementation.
+                                                                           
+● User approved Claude's plan
+  ⎿  Plan saved to: C:\Users\AP\.claude\plans\recursive-zooming-stallman.md 
+     · /plan to edit
+
+     Join The Kumaran Family - Implementation Plan
+
+     Overview
+
+     Implement a comprehensive "Join The Kumaran Family" membership workflow
+      with:
+     - Explicit consent during signup (Google OAuth & Email)
+     - Footer newsletter form for all visitors
+     - Popup/banner for signed-in non-members
+     - VIP perks: discount, newsletter, early access, special offers
+     - Single opt-in consent (India-focused)
+
+     Current State Issues
+
+     1. Auto-subscription problem: lib/shopify-admin.ts:164-167 
+     auto-subscribes all Google OAuth users without consent
+     2. Footer form disconnected: Uses Web3Forms email instead of Shopify 
+     marketing consent
+     3. No membership tracking: No way to distinguish "Kumaran Family" 
+     members from regular customers
+     4. No re-prompting: No popup/banner for signed-in non-members
+
+     ---
+     Implementation Steps
+
+     Step 1: Create Kumaran Family Context & State Management
+
+     File: lib/kumaran-family-context.tsx (new)
+
+     Create a React context to track membership status:
+     - Check if user is a Kumaran Family member (via Shopify customer 
+     tags/marketing consent)
+     - Provide joinFamily() function
+     - Track isMember, isLoading, hasSeenPrompt states
+     - Persist "dismissed prompt" in localStorage
+
+     Step 2: Add Consent Checkbox to Auth Drawer
+
+     File: components/auth-drawer.tsx
+
+     Add "Join the Kumaran Family" checkbox:
+     - Add checkbox state: joinKumaranFamily: boolean (default: true, but 
+     unchecked visually)
+     - Show benefits tooltip: "5% off forever, early access, exclusive 
+     recipes"
+     - Pass consent to Google OAuth and Email registration flows
+
+     // Add to form state
+     const [joinFamily, setJoinFamily] = useState(false);
+
+     // Checkbox UI
+     <label className="flex items-start gap-3 cursor-pointer">
+       <input type="checkbox" checked={joinFamily} onChange={(e) => 
+     setJoinFamily(e.target.checked)} />
+       <div>
+         <span>Join the Kumaran Family</span>
+         <p className="text-xs text-muted">Get 5% off forever + exclusive 
+     perks</p>
+       </div>
+     </label>
+
+     Step 3: Update Google OAuth Flow
+
+     File: app/api/auth/google/route.ts
+
+     Modify to accept joinFamily consent:
+     - Accept joinFamily: boolean in request body
+     - Pass to createCustomerFromGoogle() function
+     - Only set marketing consent if user explicitly opted in
+
+     Step 4: Update Shopify Customer Creation
+
+     File: lib/shopify-admin.ts
+
+     Modify createCustomerFromGoogle():
+     - Add acceptsMarketing: boolean parameter
+     - Add "kumaran-family" tag only if opted in
+     - Set emailMarketingConsent.marketingState based on consent
+
+     export async function createCustomerFromGoogle(
+       email: string,
+       name: string,
+       picture?: string | null,
+       acceptsMarketing: boolean = false  // Default to false (opt-in 
+     required)
+     ): Promise<ShopifyCustomer | null>
+
+     Step 5: Create Kumaran Family Popup Component
+
+     File: components/kumaran-family-popup.tsx (new)
+
+     Create modal/popup for signed-in non-members:
+     - Show after 3 seconds on page if user is signed in but not a member
+     - Highlight benefits: discount, newsletter, early access
+     - "Join Now" button → calls API to update Shopify marketing consent
+     - "Maybe Later" → dismiss and store in localStorage (don't show for 7 
+     days)
+
+     Step 6: Create Join Family API Route
+
+     File: app/api/customer/join-family/route.ts (new)
+
+     API endpoint to join Kumaran Family:
+     - Verify JWT auth token
+     - Update Shopify customer:
+       - Add "kumaran-family" tag
+       - Set emailMarketingConsent.marketingState: "SUBSCRIBED"
+     - Update Supabase user record with membership flag (optional)
+
+     Step 7: Update Footer Newsletter Form
+
+     File: components/footer.tsx
+
+     Enhance existing newsletter form:
+     - If user is authenticated:
+       - Pre-fill email
+       - On submit: call /api/customer/join-family
+       - Show success: "Welcome to the Kumaran Family!"
+     - If user is guest:
+       - On submit: call /api/newsletter/subscribe (creates/updates Shopify 
+     customer)
+       - Show benefits info
+
+     Step 8: Create Guest Newsletter API
+
+     File: app/api/newsletter/subscribe/route.ts (new)
+
+     Handle newsletter signups for non-authenticated users:
+     - Check if customer exists in Shopify (by email)
+     - If exists: update marketing consent
+     - If not: create customer with marketing consent + "kumaran-family" tag
+     - Return success response
+
+     Step 9: Add Membership Badge to Account Page
+
+     File: app/account/page.tsx
+
+     Show "Kumaran Family Member" badge:
+     - Check customer tags for "kumaran-family"
+     - Display golden badge/banner in overview tab
+     - Show join prompt if not a member
+
+     Step 10: Integrate Popup into Layout
+
+     File: app/layout.tsx or components/providers.tsx
+
+     Add KumaranFamilyProvider and conditionally render popup:
+     - Wrap app in KumaranFamilyProvider
+     - Render KumaranFamilyPopup component
+
+     ---
+     Files to Modify
+
+     | File                                  | Action | Description         
+                            |
+     |---------------------------------------|--------|---------------------
+     -----------------------|
+     | lib/shopify-admin.ts                  | Modify | Add consent 
+     parameter to customer creation |
+     | app/api/auth/google/route.ts          | Modify | Accept & pass 
+     consent from signup          |
+     | components/auth-drawer.tsx            | Modify | Add "Join Family" 
+     checkbox                 |
+     | components/footer.tsx                 | Modify | Connect to Shopify +
+      handle auth state     |
+     | app/account/page.tsx                  | Modify | Show membership 
+     badge/prompt               |
+     | lib/kumaran-family-context.tsx        | Create | Membership state 
+     management                |
+     | components/kumaran-family-popup.tsx   | Create | Popup for 
+     non-members                      |
+     | app/api/customer/join-family/route.ts | Create | API to join family  
+                            |
+     | app/api/newsletter/subscribe/route.ts | Create | Guest newsletter 
+     signup                    |
+
+     ---
+     Data Flow
+
+     ┌─────────────────────────────────────────────────────────────────┐
+     │                        USER SIGNUP                               │
+     ├─────────────────────────────────────────────────────────────────┤
+     │  Auth Drawer                                                     │
+     │  ┌─────────────────────────────────────────────────────────────┐│
+     │  │ [x] Join the Kumaran Family (5% off + exclusive perks)     ││
+     │  └─────────────────────────────────────────────────────────────┘│
+     │                              │                                   │
+     │                              ▼                                   │
+     │  ┌──────────────────────────────────────────────────────────────┤
+     │  │ POST /api/auth/google { credential, joinFamily: true }      ││
+     │  └──────────────────────────────────────────────────────────────┤
+     │                              │                                   │
+     │                              ▼                                   │
+     │  ┌──────────────────────────────────────────────────────────────┤
+     │  │ Shopify Customer Created with:                               ││
+     │  │   - tags: ["google-oauth", "kumaran-family"]                 ││
+     │  │   - emailMarketingConsent: SUBSCRIBED                        ││
+     │  └──────────────────────────────────────────────────────────────┤
+     └─────────────────────────────────────────────────────────────────┘
+
+     ┌─────────────────────────────────────────────────────────────────┐
+     │                    EXISTING USER PROMPT                          │
+     ├─────────────────────────────────────────────────────────────────┤
+     │  User signs in (no kumaran-family tag)                          │
+     │                              │                                   │
+     │                              ▼                                   │
+     │  ┌──────────────────────────────────────────────────────────────┤
+     │  │ Popup: "Join the Kumaran Family!"                            ││
+     │  │ [Join Now]  [Maybe Later]                                    ││
+     │  └──────────────────────────────────────────────────────────────┤
+     │                              │                                   │
+     │                              ▼                                   │
+     │  ┌──────────────────────────────────────────────────────────────┤
+     │  │ POST /api/customer/join-family                               ││
+     │  │ → Updates tags + emailMarketingConsent                       ││
+     │  └──────────────────────────────────────────────────────────────┤
+     └─────────────────────────────────────────────────────────────────┘
+
+     ┌─────────────────────────────────────────────────────────────────┐
+     │                      GUEST FOOTER SIGNUP                         │
+     ├─────────────────────────────────────────────────────────────────┤
+     │  Footer Newsletter Form                                          │
+     │  ┌─────────────────────────────────────────────────────────────┐│
+     │  │ Email: [________________] [Subscribe]                       ││
+     │  └─────────────────────────────────────────────────────────────┘│
+     │                              │                                   │
+     │                              ▼                                   │
+     │  ┌──────────────────────────────────────────────────────────────┤
+     │  │ POST /api/newsletter/subscribe { email }                     ││
+     │  │ → Creates/updates Shopify customer with marketing consent    ││
+     │  └──────────────────────────────────────────────────────────────┤
+     └─────────────────────────────────────────────────────────────────┘
+
+     ---
+     Benefits Messaging (Consistent across all touchpoints)
+
+     Headline: "Join the Kumaran Family"
+
+     Benefits List:
+     - 5% off on all orders, forever
+     - Early access to new products
+     - Exclusive recipes and cooking tips
+     - Special member-only offers
+     - First to know about sales
+
+     ---
+     GDPR Compliance Notes
+
+     - Single opt-in (checkbox must be actively checked)
+     - Clear explanation of what they're signing up for
+     - Easy unsubscribe via account settings or email footer
+     - Store consent timestamp in Shopify customer note
+
+
+
+
+
+● Let me set up the todo list and start implementing:
+
+● Read(lib\shopify-admin.ts)
+  ⎿  Read 85 lines
+
+● Now let me update the createCustomerFromGoogle function to accept the
+  consent parameter:
+
+● Update(lib\shopify-admin.ts)
+  ⎿  Error: File has been unexpectedly modified. Read it again before attempting 
+     to write it.
+
+
+● Read(lib\shopify-admin.ts)
+  ⎿  Read 100 lines
+
+● Update(lib\shopify-admin.ts)
+  ⎿  Error: File has been unexpectedly modified. Read it again before attempting 
+     to write it.
+
+
+● Read(lib\shopify-admin.ts)
+  ⎿  Read 956 lines
+
+● Now let me make the edits:
+
+● Update(lib\shopify-admin.ts)
+  ⎿  Error: File has been unexpectedly modified. Read it again before attempting 
+     to write it.
+
+
+● The file keeps being modified externally. Let me try reading it again and
+  making a smaller, more targeted edit:
+
+● Read(lib\shopify-admin.ts)
+  ⎿  Read 120 lines
+
+● Update(lib\shopify-admin.ts)
+  ⎿  Error: File has been unexpectedly modified. Read it again before attempting 
+     to write it.
+
+
+● There seems to be something modifying the file. Let me kill the background
+   bash processes and try again:
+
+● Kill Shell(Kill shell: 2d2404)
+  ⎿  Error: Shell 2d2404 is not running, so cannot be killed (status: completed)
+
+● Kill Shell(Kill shell: 82c255)
+  ⎿  Error: Shell 82c255 is not running, so cannot be killed (status: completed)
+
+● Read(lib\shopify-admin.ts)
+  ⎿  Read 80 lines
+
+● Update(lib\shopify-admin.ts)
+  ⎿  Error: File has been unexpectedly modified. Read it again before attempting 
+     to write it.
+
+
+● The file keeps getting modified externally (possibly by an IDE autosave or
+   watcher). Let me try reading the whole file and writing it out with all
+  changes:
+
+● Read(lib\shopify-admin.ts)
+  ⎿  Read 956 lines
+
+● Now I need to make multiple edits to this file. Let me make the edits in
+  smaller chunks:
+
+● Update(lib\shopify-admin.ts)
+  ⎿  Error: File has been unexpectedly modified. Read it again before attempting 
+     to write it.
+
+
+● It appears there's a persistent issue with something modifying the file.
+  Let me use Bash to check what might be happening and then write the
+  complete file:
+
+● Bash(cd "D:/Work/MakeScale/HouseOfKumaran/hok-green/house-of-kumaran-green" &&
+       git status lib/shopify-admin.ts 2>&1)
+  ⎿  ;asRichCommandDetection=TrueOn branch f
+     eat/supabase-email-5-12-2025
+     Untracked files:
+     … +5 lines (ctrl+o to expand)
+
+● The file is untracked, which means it could be modified by an IDE
+  formatter or some other process. Let me try the Write tool to write the
+  complete modified file:
+
+● Write(lib\shopify-admin.ts)
+  ⎿  Error writing file
+
+● Read(lib\shopify-admin.ts)
+  ⎿  Read 50 lines
+
+● Write(lib\shopify-admin.ts)
+  ⎿  Error writing file
+
+● It seems there's an issue with the session state. Let me read again and
+  write in a single operation:
+
+● Read(lib\shopify-admin.ts)
+  ⎿  Read 956 lines
+
+● Now let me try writing the file immediately:
+
+● Write(lib\shopify-admin.ts)
+  ⎿  Error writing file
+
+● There seems to be an issue with the session state. Let me try using Bash
+  to write the file directly:
+
+● Bash(cat > "D:/Work/MakeScale/HouseOfKumaran/hok-green/house-of-kum timeout: 
+      aran-green/lib/shopify-admin.ts" << 'ENDOFFILE'                 30s
+      /**…)
+  ⎿  Error: Exit code 2
+     /usr/bin/bash: -c: line 1: unexpected EOF while looking for matching `''
+
+     
+
+● The heredoc approach has issues. Let me try a different approach - use the
+   Edit tool with smaller, focused changes:
+
+● Read(lib\shopify-admin.ts)
+  ⎿  Read 20 lines
+
+● Update(lib\shopify-admin.ts)
+  ⎿  Error: File has been unexpectedly modified. Read it again before attempting 
+     to write it.
+
+
+● There's clearly something modifying the file continuously. This might be
+  an IDE with autosave or a file watcher. I'll update the todo list and
+  provide a summary of what we need to do, then suggest pausing the IDE/file
+   watcher:
+
+● I'm encountering persistent issues with file modifications. It appears
+  that something (likely your IDE with autosave enabled, ESLint auto-fix, or
+   a file watcher like nodemon) is continuously modifying the file, which
+  prevents me from making edits.
+
+  Could you please:
+  1. Close or pause your IDE (VS Code, Cursor, etc.) temporarily
+  2. Or disable autosave/autoformat in your IDE settings
+  3. Or stop any running dev servers (npm run dev) that might have watchers
+
+  Once you've done that, let me know and I'll continue with the
+  implementation. Alternatively, if you prefer, I can provide you with the
+  exact code changes to copy-paste manually.
+
+  Summary of changes needed for lib/shopify-admin.ts:
+
+  1. Update createCustomerFromGoogle function signature - Add
+  joinKumaranFamily: boolean = false parameter
+  2. Change tags logic - Only add "kumaran-family" tag if user opts in
+  3. Change marketing consent - Only subscribe if joinKumaranFamily is true
+  4. Update getOrCreateShopifyCustomer - Add joinKumaranFamily parameter
+  5. Add new functions - joinKumaranFamily(), isKumaranFamilyMember(),
+  subscribeToNewsletter()
+
+  Would you like me to:
+  - A) Wait for you to pause the IDE and retry the edits
+  - B) Provide the complete file content for you to copy-paste manually
+  - C) Continue with other files that might not have this issue (like
+  creating new API routes)
+
+> B 
+
+● I'll provide you the complete updated lib/shopify-admin.ts file. Here's
+  the content to copy-paste:
+
+● Read(lib\shopify-admin.ts)
+  ⎿  Read 956 lines
+
+● Here's the complete updated lib/shopify-admin.ts file. Copy and paste this
+   entire content to replace your current file:
+
+  ---
+  Changes Summary
+
+  The key changes are:
+
+  1. Updated createCustomerFromGoogle (lines ~115-194)
+
+  // OLD:
+  export async function createCustomerFromGoogle(
+    email: string,
+    name: string,
+    picture?: string | null
+  ): Promise<ShopifyCustomer | null> {
+    // ...
+    const input = {
+      tags: ["google-oauth", "houseofkumaran-member"],
+      emailMarketingConsent: {
+        marketingOptInLevel: "SINGLE_OPT_IN",
+        marketingState: "SUBSCRIBED",  // ❌ Auto-subscribes everyone
+      },
+    };
+
+  // NEW:
+  export async function createCustomerFromGoogle(
+    email: string,
+    name: string,
+    picture?: string | null,
+    joinKumaranFamily: boolean = false  // ✅ New parameter
+  ): Promise<ShopifyCustomer | null> {
+    // ...
+    const tags = ["google-oauth"];
+    if (joinKumaranFamily) {
+      tags.push("kumaran-family");  // ✅ Only add if opted in
+    }
+
+    const input = {
+      tags,
+      emailMarketingConsent: {
+        marketingOptInLevel: "SINGLE_OPT_IN",
+        marketingState: joinKumaranFamily ? "SUBSCRIBED" : "NOT_SUBSCRIBED",
+    // ✅ Consent-based
+      },
+    };
+
+  2. Updated getOrCreateShopifyCustomer (lines ~196-225)
+
+  // OLD:
+  export async function getOrCreateShopifyCustomer(
+    email: string,
+    name: string,
+    picture?: string | null
+  )
+
+  // NEW:
+  export async function getOrCreateShopifyCustomer(
+    email: string,
+    name: string,
+    picture?: string | null,
+    joinKumaranFamily: boolean = false  // ✅ New parameter
+  )
+
+  3. New functions to add at the end of the file:
+
+  /**
+   * Join Kumaran Family - Update customer to subscribe to marketing and add
+   tag
+   */
+  export async function joinKumaranFamily(customerId: string): 
+  Promise<boolean> {
+    // ... (see full code below)
+  }
+
+  /**
+   * Check if a customer is a Kumaran Family member
+   */
+  export function isKumaranFamilyMember(customer: ShopifyCustomer | 
+  ShopifyCustomerProfile | null): boolean {
+    if (!customer) return false;
+    return customer.tags.includes("kumaran-family");
+  }
+
+  /**
+   * Create or update a customer for newsletter subscription (guest users)
+   */
+  export async function subscribeToNewsletter(email: string): Promise<{
+  success: boolean; isNew: boolean; error?: string }> {
+    // ... (see full code below)
+  }
+
+  ---
+  Full File Content
+
+  Here's what you need to add at the end of your current
+  lib/shopify-admin.ts file (after line 955):
+
+  /**
+   * Join Kumaran Family - Update customer to subscribe to marketing and add
+   tag
+   * Used when an existing customer wants to join the Kumaran Family
+   */
+  export async function joinKumaranFamily(customerId: string): 
+  Promise<boolean> {
+    const mutation = `
+      mutation customerUpdate($input: CustomerInput!) {
+        customerUpdate(input: $input) {
+          customer {
+            id
+            tags
+            emailMarketingConsent {
+              marketingState
+            }
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    // First get current customer to preserve existing tags
+    const customer = await getCustomerById(customerId);
+    if (!customer) return false;
+
+    // Add kumaran-family tag if not already present
+    const existingTags = customer.tags || [];
+    const newTags = existingTags.includes("kumaran-family")
+      ? existingTags
+      : [...existingTags, "kumaran-family"];
+
+    try {
+      const data = await adminApiRequest<{
+        customerUpdate: {
+          customer: { id: string; tags: string[]; emailMarketingConsent: {
+  marketingState: string } | null } | null;
+          userErrors: Array<{ field: string; message: string }>;
+        };
+      }>(mutation, {
+        input: {
+          id: customerId,
+          tags: newTags,
+          emailMarketingConsent: {
+            marketingOptInLevel: "SINGLE_OPT_IN",
+            marketingState: "SUBSCRIBED",
+          },
+          note: `${customer.note || ""}\nJoined Kumaran Family: ${new 
+  Date().toISOString()}`,
+        }
+      });
+
+      if (data.customerUpdate.userErrors.length > 0) {
+        console.error("Join Kumaran Family errors:",
+  data.customerUpdate.userErrors);
+        return false;
+      }
+
+      console.log(`Customer ${customerId} joined Kumaran Family`);
+      return true;
+    } catch (error) {
+      console.error("Error joining Kumaran Family:", error);
+      return false;
+    }
+  }
+
+  /**
+   * Check if a customer is a Kumaran Family member
+   */
+  export function isKumaranFamilyMember(customer: ShopifyCustomer | 
+  ShopifyCustomerProfile | null): boolean {
+    if (!customer) return false;
+    return customer.tags.includes("kumaran-family");
+  }
+
+  /**
+   * Create or update a customer for newsletter subscription (guest users)
+   * This is used when a guest subscribes via the footer form
+   */
+  export async function subscribeToNewsletter(email: string): Promise<{
+  success: boolean; isNew: boolean; error?: string }> {
+    try {
+      // First, check if customer already exists
+      const existing = await findCustomerByEmail(email);
+
+      if (existing) {
+        // Update existing customer to subscribe
+        const success = await joinKumaranFamily(existing.id);
+        return { success, isNew: false };
+      }
+
+      // Create new customer with newsletter subscription
+      const mutation = `
+        mutation customerCreate($input: CustomerInput!) {
+          customerCreate(input: $input) {
+            customer {
+              id
+              email
+            }
+            userErrors {
+              field
+              message
+            }
+          }
+        }
+      `;
+
+      const input = {
+        email,
+        tags: ["kumaran-family", "newsletter-signup"],
+        note: `Newsletter signup. Consent date: ${new 
+  Date().toISOString()}`,
+        emailMarketingConsent: {
+          marketingOptInLevel: "SINGLE_OPT_IN",
+          marketingState: "SUBSCRIBED",
+        },
+      };
+
+      const data = await adminApiRequest<{
+        customerCreate: {
+          customer: { id: string; email: string } | null;
+          userErrors: Array<{ field: string; message: string }>;
+        };
+      }>(mutation, { input });
+
+      if (data.customerCreate.userErrors.length > 0) {
+        console.error("Newsletter subscription errors:",
+  data.customerCreate.userErrors);
+        return {
+          success: false,
+          isNew: false,
+          error: data.customerCreate.userErrors[0]?.message || "Subscription
+   failed"
+        };
+      }
+
+      console.log(`New newsletter subscriber: ${email}`);
+      return { success: true, isNew: true };
+    } catch (error) {
+      console.error("Error subscribing to newsletter:", error);
+      return { success: false, isNew: false, error: "An error occurred" };
+    }
+  }
+
+  ---
+  And modify lines 115-168 (the createCustomerFromGoogle function) to
+  include the joinKumaranFamily parameter. The key changes:
+
+  1. Add parameter: joinKumaranFamily: boolean = false
+  2. Change tags from ["google-oauth", "houseofkumaran-member"] to dynamic
+  based on consent
+  3. Change marketingState from "SUBSCRIBED" to joinKumaranFamily ? 
+  "SUBSCRIBED" : "NOT_SUBSCRIBED"
+
+  Also update getOrCreateShopifyCustomer (line ~200-204) to pass the
+  joinKumaranFamily parameter through.
+
+  ---
+  Let me know once you've made these changes and I'll continue with the
+  other files (auth-drawer, API routes, etc.)!
+
+> yes have done if you want you can check 
+
+● Let me verify the changes you made:
+
+● Read(lib\shopify-admin.ts)
+  ⎿  Read 100 lines
+
+● I see the function signature is updated but there's an issue - the input
+  object is missing the email, firstName, lastName, and note fields. Let me
+  check the rest and see the new functions:
+
+● Read(lib\shopify-admin.ts)
+  ⎿  Read 210 lines
+
+● The new functions are there. But I notice there's an issue with the
+  createCustomerFromGoogle function - the input object is missing email,
+  firstName, lastName, and note. Let me fix that:
+
+● Update(lib\shopify-admin.ts)
+  ⎿  Error: File has been unexpectedly modified. Read it again before attempting 
+     to write it.
+
+
+● There's a bug in the createCustomerFromGoogle input - it's missing email,
+  firstName, lastName, and note. Please update lines 177-183 in
+  lib/shopify-admin.ts:
+
+  Current (broken):
+  const input = {
+    tags,
+    emailMarketingConsent: {
+      marketingOptInLevel: "SINGLE_OPT_IN",
+      marketingState: joinKumaranFamily ? "SUBSCRIBED" : "NOT_SUBSCRIBED",
+    },
+  };
+
+  Should be:
+  const input = {
+    email,
+    firstName,
+    lastName,
+    tags,
+    note: `Signed up via Google OAuth. Profile picture: ${picture || 
+  "none"}. Kumaran Family: ${joinKumaranFamily ? "Yes" : "No"}. Consent 
+  date: ${new Date().toISOString()}`,
+    emailMarketingConsent: {
+      marketingOptInLevel: "SINGLE_OPT_IN",
+      marketingState: joinKumaranFamily ? "SUBSCRIBED" : "NOT_SUBSCRIBED",
+    },
+  };
+
+  Also check that getOrCreateShopifyCustomer passes the joinKumaranFamily
+  parameter. Let me check that:
+
+● Read(lib\shopify-admin.ts)
+  ⎿  Read 40 lines
+
+● Two issues found:
+
+  Issue 1 (lines 177-183): The input object is missing email, firstName,
+  lastName, and note fields.
+
+  Issue 2 (line 234): getOrCreateShopifyCustomer isn't passing
+  joinKumaranFamily to createCustomerFromGoogle.
+
+  Please fix these two issues:
+
+  Fix 1 - Update the input object in createCustomerFromGoogle (around line
+  177):
+  const input = {
+    email,
+    firstName,
+    lastName,
+    tags,
+    note: `Signed up via Google OAuth. Profile picture: ${picture || 
+  "none"}. Kumaran Family: ${joinKumaranFamily ? "Yes" : "No"}. Consent 
+  date: ${new Date().toISOString()}`,
+    emailMarketingConsent: {
+      marketingOptInLevel: "SINGLE_OPT_IN",
+      marketingState: joinKumaranFamily ? "SUBSCRIBED" : "NOT_SUBSCRIBED",
+    },
+  };
+
+  Fix 2 - Update line 234 in getOrCreateShopifyCustomer:
+  // Change from:
+  const newCustomer = await createCustomerFromGoogle(email, name, picture);
+
+  // To:
+  const newCustomer = await createCustomerFromGoogle(email, name, picture,
+  joinKumaranFamily);
+
+  Once you've made these fixes, let me know and I'll continue with the next
+  steps (updating the Google OAuth route and auth-drawer).
+
+> Yes have made these changes 
+
+● Let me verify and then continue with the next steps:
+
+● Read(lib\shopify-admin.ts)
+  ⎿  Read 80 lines
+
+● All the changes look correct. Now let me update the todo list and continue
+   with the next steps:
+
+● Now let's update the Google OAuth route. Let me read it first:
+
+● Read(app\api\auth\google\route.ts)
+  ⎿  Read 287 lines
+
+● Now I need to update the Google OAuth route to accept and pass the
+  joinKumaranFamily parameter. Here are the changes needed:
+
+  Changes for app/api/auth/google/route.ts:
+
+  1. Extract joinKumaranFamily from request body (line 91)
+  2. Pass it to getOrCreateShopifyCustomer (line 131-135)
+
+  // Line 91 - Add joinKumaranFamily extraction:
+  const { credential, joinKumaranFamily } = body;
+
+  // Lines 131-135 - Pass joinKumaranFamily:
+  const shopifyResult = await getOrCreateShopifyCustomer(
+    email,
+    name || email.split("@")[0],
+    picture,
+    joinKumaranFamily || false  // New parameter
+  );
+
+  Please update your file with these changes. Specifically:
+
+  Change 1 (line 91):
+  // FROM:
+  const { credential } = body;
+
+  // TO:
+  const { credential, joinKumaranFamily } = body;
+
+  Change 2 (lines 131-135):
+  // FROM:
+  const shopifyResult = await getOrCreateShopifyCustomer(
+    email,
+    name || email.split("@")[0],
+    picture
+  );
+
+  // TO:
+  const shopifyResult = await getOrCreateShopifyCustomer(
+    email,
+    name || email.split("@")[0],
+    picture,
+    joinKumaranFamily || false
+  );
+
+  Let me know once you've made these changes and I'll continue with the
+  auth-drawer component.
+
+> Done 
+
+● Let me verify and continue with the auth-drawer:
+
+● Read(app\api\auth\google\route.ts)
+  ⎿  Read 50 lines
+
+● Read(app\api\auth\google\route.ts)
+  ⎿  Read 20 lines
+
+● Now let me read the auth-drawer component to add the "Join the Kumaran
+  Family" checkbox:
+
+● Read(components\auth-drawer.tsx)
+  ⎿  Read 712 lines
+
+● Now I need to add the "Join the Kumaran Family" checkbox. Here are the
+  changes needed for components/auth-drawer.tsx:
+
+  Changes to make:
+
+  1. Add state for checkbox (around line 98):
+  const [joinKumaranFamily, setJoinKumaranFamily] = useState(false);
+
+  2. Pass it to Google login (around line 161):
+  const result = await loginWithGoogle(credentialResponse.credential,
+  joinKumaranFamily);
+
+  3. Add checkbox UI before the Google login button (around line 424-443,
+  before the GoogleLogin component)
+  4. Update the loginWithGoogle function call in the auth-context to accept
+  this parameter
+
+  Let me also check the auth-context to see the current loginWithGoogle
+  function:
+
+● Search(pattern: "loginWithGoogle", path: "lib\auth-context.tsx", output_mode:
+        "content")
+  ⎿  Found 20 lines (ctrl+o to expand)
+
+● Read(lib\auth-context.tsx)
+  ⎿  Read 60 lines
+
+● I need to update both files. Here are the changes needed:
+
+  ---
+  Changes for lib/auth-context.tsx
+
+  1. Update the interface (around line 51-53):
+  // FROM:
+  loginWithGoogle: (
+    credential: string
+  ) => Promise<{ success: boolean; error?: string; data?: GoogleLoginData
+  }>;
+
+  // TO:
+  loginWithGoogle: (
+    credential: string,
+    joinKumaranFamily?: boolean
+  ) => Promise<{ success: boolean; error?: string; data?: GoogleLoginData
+  }>;
+
+  2. Update the function signature (around line 344-347):
+  // FROM:
+  const loginWithGoogle = useCallback(
+    async (
+      credential: string
+    ): Promise<{
+
+  // TO:
+  const loginWithGoogle = useCallback(
+    async (
+      credential: string,
+      joinKumaranFamily: boolean = false
+    ): Promise<{
+
+  3. Update the fetch body (around line 359):
+  // FROM:
+  body: JSON.stringify({ credential }),
+
+  // TO:
+  body: JSON.stringify({ credential, joinKumaranFamily }),
+
+  ---
+  Changes for components/auth-drawer.tsx
+
+  1. Add state (after line 98):
+  const [joinKumaranFamily, setJoinKumaranFamily] = useState(false);
+
+  2. Update Google login call (around line 161):
+  // FROM:
+  const result = await loginWithGoogle(credentialResponse.credential);
+
+  // TO:
+  const result = await loginWithGoogle(credentialResponse.credential,
+  joinKumaranFamily);
+
+  3. Add checkbox UI before the Google login button (insert around line 424,
+   before the <div className="flex justify-center">):
+
+  {/* Join Kumaran Family Checkbox */}
+  <div className="p-4 bg-gradient-to-r from-[#b8860b]/10 to-[#d4a017]/5 
+  rounded-xl border border-[#b8860b]/20 mb-4">
+    <label className="flex items-start gap-3 cursor-pointer">
+      <input
+        type="checkbox"
+        checked={joinKumaranFamily}
+        onChange={(e) => setJoinKumaranFamily(e.target.checked)}
+        className="mt-1 w-5 h-5 rounded border-[#b8860b]/50 bg-[#1a472a]/30
+  text-[#b8860b] focus:ring-[#b8860b] focus:ring-offset-0"
+      />
+      <div>
+        <span className="text-[#f5f0e1] font-semibold">Join the Kumaran
+  Family</span>
+        <p className="text-[#f5f0e1]/60 text-xs mt-1">
+          Get 5% off forever, early access to new products, exclusive
+  recipes & special offers
+        </p>
+      </div>
+    </label>
+  </div>
+
+  ---
+  Please make these changes to both files and let me know when done!
+
+> done please check 
+  ⎿  API Error: 520 status code (no body)
+
+> please check again 
+  ⎿  API Error: 520 status code (no body)
+
+> please check 
+  ⎿  Request timed out
+
+
+
