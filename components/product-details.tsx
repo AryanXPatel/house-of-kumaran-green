@@ -113,9 +113,9 @@ export function ProductDetails({ product }: ProductDetailsProps) {
   }, [selectedImage, images.length]);
 
   return (
-    <section className="py-8 px-6">
+    <section className="py-4 sm:py-8 px-4 sm:px-6">
       <div className="max-w-[1400px] mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 lg:gap-20">
           {/* Images */}
           <div className="space-y-4">
             {/* Main Image */}
@@ -134,19 +134,19 @@ export function ProductDetails({ product }: ProductDetailsProps) {
               />
 
               {/* Badges */}
-              <div className="absolute top-6 left-6 flex flex-col gap-2">
+              <div className="absolute top-3 left-3 sm:top-6 sm:left-6 flex flex-col gap-1.5 sm:gap-2">
                 {product.isBestseller && (
-                  <span className="px-4 py-2 bg-[#b8860b] text-[#0d1f14] text-sm font-bold rounded-full">
+                  <span className="px-2.5 py-1 sm:px-4 sm:py-2 bg-[#b8860b] text-[#0d1f14] text-[10px] sm:text-sm font-bold rounded-full">
                     Bestseller
                   </span>
                 )}
                 {product.isNew && (
-                  <span className="px-4 py-2 bg-[#f5f0e1] text-[#0d1f14] text-sm font-bold rounded-full">
+                  <span className="px-2.5 py-1 sm:px-4 sm:py-2 bg-[#f5f0e1] text-[#0d1f14] text-[10px] sm:text-sm font-bold rounded-full">
                     New Arrival
                   </span>
                 )}
                 {discount > 0 && (
-                  <span className="px-4 py-2 bg-red-500 text-white text-sm font-bold rounded-full">
+                  <span className="px-2.5 py-1 sm:px-4 sm:py-2 bg-red-500 text-white text-[10px] sm:text-sm font-bold rounded-full">
                     {discount}% OFF
                   </span>
                 )}
@@ -155,14 +155,14 @@ export function ProductDetails({ product }: ProductDetailsProps) {
               {/* Wishlist Heart - Top Right on Image */}
               <button
                 onClick={() => toggleWishlist(product)}
-                className={`absolute top-6 right-6 w-12 h-12 rounded-full border flex items-center justify-center transition-all backdrop-blur-sm ${
+                className={`absolute top-3 right-3 sm:top-6 sm:right-6 w-9 h-9 sm:w-12 sm:h-12 rounded-full border flex items-center justify-center transition-all backdrop-blur-sm ${
                   isWishlisted
                     ? "border-red-500 bg-red-500/20"
                     : "border-[#f5f0e1]/30 bg-[#0d1f14]/50 hover:border-[#b8860b] hover:bg-[#0d1f14]/70"
                 }`}
               >
                 <Heart
-                  className={`w-6 h-6 ${
+                  className={`w-4 h-4 sm:w-6 sm:h-6 ${
                     isWishlisted
                       ? "fill-red-500 text-red-500"
                       : "text-[#f5f0e1]"
@@ -292,21 +292,21 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             </div>
 
             {/* Quantity & Add to Cart */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8">
+            <div className="flex flex-row gap-3 sm:gap-4 mb-6 sm:mb-8">
               {/* Quantity Selector */}
-              <div className="flex items-center border border-[#b8860b]/20 rounded-full h-12 sm:h-14">
+              <div className="flex items-center border border-[#b8860b]/20 rounded-full h-12 sm:h-14 shrink-0">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-12 sm:w-14 h-full flex items-center justify-center hover:text-[#b8860b] transition-colors"
+                  className="w-10 sm:w-14 h-full flex items-center justify-center hover:text-[#b8860b] transition-colors"
                 >
                   <Minus className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
-                <span className="w-10 sm:w-12 text-center font-bold text-base sm:text-lg">
+                <span className="w-8 sm:w-12 text-center font-bold text-base sm:text-lg">
                   {quantity}
                 </span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
-                  className="w-12 sm:w-14 h-full flex items-center justify-center hover:text-[#b8860b] transition-colors"
+                  className="w-10 sm:w-14 h-full flex items-center justify-center hover:text-[#b8860b] transition-colors"
                 >
                   <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
@@ -316,7 +316,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
               <button
                 onClick={handleAddToCart}
                 disabled={!product.inStock}
-                className={`flex-1 flex items-center justify-center gap-3 h-14 sm:h-14 py-4 rounded-full font-bold text-lg sm:text-base transition-all duration-300 ${
+                className={`flex-1 flex items-center justify-center gap-2 sm:gap-3 h-12 sm:h-14 rounded-full font-bold text-base sm:text-base transition-all duration-300 ${
                   product.inStock
                     ? isAdding
                       ? "bg-green-500 text-white scale-[1.02]"

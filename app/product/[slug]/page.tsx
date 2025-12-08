@@ -126,30 +126,30 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <Navbar />
 
       {/* Breadcrumb */}
-      <section className="pt-28 pb-4 px-6">
+      <section className="pt-20 sm:pt-28 pb-2 sm:pb-4 px-4 sm:px-6">
         <div className="max-w-[1400px] mx-auto">
-          <nav className="flex items-center gap-2 text-sm">
+          <nav className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
             <Link
               href="/"
               className="text-[#f5f0e1]/50 hover:text-[#b8860b] transition-colors"
             >
               Home
             </Link>
-            <ChevronRight className="w-4 h-4 text-[#f5f0e1]/30" />
+            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-[#f5f0e1]/30" />
             <Link
               href="/shop"
               className="text-[#f5f0e1]/50 hover:text-[#b8860b] transition-colors"
             >
               Shop
             </Link>
-            <ChevronRight className="w-4 h-4 text-[#f5f0e1]/30" />
+            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-[#f5f0e1]/30" />
             <Link
               href={`/shop?category=${product.category}`}
               className="text-[#f5f0e1]/50 hover:text-[#b8860b] transition-colors capitalize"
             >
               {product.category.replace("-", " ")}
             </Link>
-            <ChevronRight className="w-4 h-4 text-[#f5f0e1]/30" />
+            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-[#f5f0e1]/30" />
             <span className="text-[#b8860b] truncate max-w-[200px]">
               {product.name}
             </span>
