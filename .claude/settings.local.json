@@ -29,9 +29,14 @@
       "WebFetch(domain:www.pexels.com)",
       "Bash(taskkill:*)",
       "mcp__chrome-devtools__select_page",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "mcp__supabase__search_docs"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "enabledMcpjsonServers": [
+    "supabase"
+  ],
+  "enableAllProjectMcpServers": true
 }

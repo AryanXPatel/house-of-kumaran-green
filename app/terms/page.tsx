@@ -378,7 +378,7 @@ export default function TermsPage() {
               </p>
             </div>
 
-            <div className="p-6 bg-[#1a472a]/20 rounded-2xl border border-[#b8860b]/10">
+            {/* <div className="p-6 bg-[#1a472a]/20 rounded-2xl border border-[#b8860b]/10">
               <h2 className="font-serif text-2xl font-bold mb-4 text-[#b8860b]">
                 Contact Us
               </h2>
@@ -405,7 +405,7 @@ export default function TermsPage() {
                   600099, India
                 </li>
               </ul>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
