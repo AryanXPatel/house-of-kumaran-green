@@ -1,0 +1,14 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Explicitly allow favicon crawling for Google
+User-agent: Googlebot
+Allow: /favicon.ico
+Allow: /favicon-*.png
+Allow: /apple-touch-icon.png
+Allow: /android-chrome-*.png
+Allow: /icon.svg
+
+# Sitemap
+Sitemap: https://www.houseofkumaran.com/sitemap.xml
