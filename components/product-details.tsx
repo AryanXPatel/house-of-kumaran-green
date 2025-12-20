@@ -402,25 +402,6 @@ export function ProductDetails({ product }: ProductDetailsProps) {
 
             {/* Product Info */}
             <div className="border-t border-[#b8860b]/10 pt-8 space-y-6">
-              {/* Ingredients */}
-              {product.ingredients && (
-                <div>
-                  <h3 className="font-semibold text-[#b8860b] mb-3">
-                    Ingredients
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {product.ingredients.map((ingredient) => (
-                      <span
-                        key={ingredient}
-                        className="px-3 py-1 bg-[#1a472a]/30 text-sm rounded-full text-[#f5f0e1]/70"
-                      >
-                        {ingredient}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {/* Storage & Shelf Life */}
               <div className="grid grid-cols-2 gap-6">
                 {product.shelfLife && (

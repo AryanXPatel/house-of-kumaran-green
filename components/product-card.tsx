@@ -43,25 +43,6 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Link href={`/product/${product.slug}`} className="group block">
       <div className="relative bg-[#1a472a]/30 rounded-2xl overflow-hidden border border-[#b8860b]/10 hover:border-[#b8860b]/30 transition-all duration-500">
-        {/* Tags */}
-        <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
-          {product.isBestseller && (
-            <span className="px-3 py-1 bg-[#b8860b] text-[#0d1f14] text-xs font-bold rounded-full">
-              Bestseller
-            </span>
-          )}
-          {product.isNew && (
-            <span className="px-3 py-1 bg-[#f5f0e1] text-[#0d1f14] text-xs font-bold rounded-full">
-              New
-            </span>
-          )}
-          {discount > 0 && (
-            <span className="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
-              -{discount}%
-            </span>
-          )}
-        </div>
-
         {/* Wishlist - Always visible on mobile, hover on desktop */}
         <button
           onClick={handleToggleWishlist}
