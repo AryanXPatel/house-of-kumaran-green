@@ -123,6 +123,7 @@ function ShopContent() {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [showMobileSort, setShowMobileSort] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const [hideOutOfStock, setHideOutOfStock] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<CategoryInfo[]>([]);
@@ -221,6 +222,11 @@ function ShopContent() {
       (p) => p.price >= priceRange[0] && p.price <= priceRange[1]
     );
 
+    // Filter by stock availability (if toggle is on)
+    if (hideOutOfStock) {
+      result = result.filter((p) => p.inStock);
+    }
+
     // Sort
     result.sort((a, b) => {
       switch (sortBy) {
@@ -232,8 +238,24 @@ function ShopContent() {
           return b.rating - a.rating;
         case "newest":
           return a.isNew ? -1 : 1;
-        default:
-          return a.isBestseller ? -1 : 1;
+        default: {
+          // Featured: In-stock bestsellers > In-stock > Out-of-stock > Coming-soon
+          const aComingSoon = a.tags.some((t) => t.toLowerCase() === "coming-soon");
+          const bComingSoon = b.tags.some((t) => t.toLowerCase() === "coming-soon");
+
+          // Coming soon products go to absolute last
+          if (aComingSoon && !bComingSoon) return 1;
+          if (!aComingSoon && bComingSoon) return -1;
+
+          // Out of stock (but not coming-soon) goes after in-stock
+          if (!a.inStock && b.inStock) return 1;
+          if (a.inStock && !b.inStock) return -1;
+
+          // Within same stock status, bestsellers first
+          if (a.isBestseller && !b.isBestseller) return -1;
+          if (!a.isBestseller && b.isBestseller) return 1;
+          return 0;
+        }
       }
     });
 
@@ -245,6 +267,7 @@ function ShopContent() {
     selectedTag,
     priceRange,
     sortBy,
+    hideOutOfStock,
   ]);
 
   // Get category name for display
@@ -259,6 +282,7 @@ function ShopContent() {
     setSelectedTag("");
     setPriceRange([0, 500]);
     setSortBy("featured");
+    setHideOutOfStock(false);
     router.push("/shop", { scroll: false });
   };
 
@@ -267,7 +291,8 @@ function ShopContent() {
     searchQuery ||
     selectedTag ||
     priceRange[0] > 0 ||
-    priceRange[1] < 500;
+    priceRange[1] < 500 ||
+    hideOutOfStock;
   const activeFilterCount = [
     selectedCategory,
     selectedTag,
@@ -300,7 +325,7 @@ function ShopContent() {
               <div className="hidden sm:block w-px h-4 bg-[#b8860b]/30" />
               <div className="hidden sm:flex items-center gap-2 text-[#f5f0e1]/60">
                 <span>Standard Delivery:</span>
-                <span className="text-[#f5f0e1] font-medium">₹80</span>
+                <span className="text-[#f5f0e1] font-medium">₹59</span>
                 <span>(orders below ₹399)</span>
               </div>
             </div>
@@ -420,7 +445,7 @@ function ShopContent() {
           <div className="flex gap-8">
             {/* Desktop Sidebar */}
             <aside className="hidden lg:block w-64 flex-shrink-0">
-              <div className="sticky top-24 space-y-8">
+              <div className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2 space-y-8 scrollbar-thin scrollbar-thumb-[#b8860b]/30 scrollbar-track-transparent">
                 {/* Categories */}
                 <div>
                   <h3 className="text-sm font-bold text-[#b8860b] tracking-wider uppercase mb-4">
@@ -432,11 +457,10 @@ function ShopContent() {
                         setSelectedCategory("");
                         updateURL({ category: "" });
                       }}
-                      className={`w-full flex items-center justify-between py-2.5 px-3 rounded-lg text-sm transition-colors ${
-                        !selectedCategory
-                          ? "bg-[#b8860b]/10 text-[#b8860b] font-medium"
-                          : "text-[#f5f0e1]/70 hover:text-[#f5f0e1] hover:bg-[#1a472a]/30"
-                      }`}
+                      className={`w-full flex items-center justify-between py-2.5 px-3 rounded-lg text-sm transition-colors ${!selectedCategory
+                        ? "bg-[#b8860b]/10 text-[#b8860b] font-medium"
+                        : "text-[#f5f0e1]/70 hover:text-[#f5f0e1] hover:bg-[#1a472a]/30"
+                        }`}
                     >
                       <span>All Products</span>
                       <span className="text-[#f5f0e1]/30">
@@ -450,11 +474,10 @@ function ShopContent() {
                           setSelectedCategory(cat.slug);
                           updateURL({ category: cat.slug });
                         }}
-                        className={`w-full flex items-center justify-between py-2.5 px-3 rounded-lg text-sm transition-colors ${
-                          selectedCategory === cat.slug
-                            ? "bg-[#b8860b]/10 text-[#b8860b] font-medium"
-                            : "text-[#f5f0e1]/70 hover:text-[#f5f0e1] hover:bg-[#1a472a]/30"
-                        }`}
+                        className={`w-full flex items-center justify-between py-2.5 px-3 rounded-lg text-sm transition-colors ${selectedCategory === cat.slug
+                          ? "bg-[#b8860b]/10 text-[#b8860b] font-medium"
+                          : "text-[#f5f0e1]/70 hover:text-[#f5f0e1] hover:bg-[#1a472a]/30"
+                          }`}
                       >
                         <span>{cat.name}</span>
                         <span className="text-[#f5f0e1]/30">
@@ -492,6 +515,26 @@ function ShopContent() {
                   </div>
                 </div>
 
+                {/* Stock Availability Toggle */}
+                <div>
+                  <h3 className="text-sm font-bold text-[#b8860b] tracking-wider uppercase mb-4">
+                    Availability
+                  </h3>
+                  <div className="flex items-center justify-between py-2 px-3 bg-[#1a472a]/30 rounded-lg border border-[#b8860b]/10">
+                    <span className="text-sm text-[#f5f0e1]/70">Hide Out of Stock</span>
+                    <button
+                      onClick={() => setHideOutOfStock(!hideOutOfStock)}
+                      className={`relative w-11 h-6 rounded-full transition-colors duration-300 ${hideOutOfStock ? "bg-[#b8860b]" : "bg-[#1a472a]"
+                        }`}
+                    >
+                      <div
+                        className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-[#f5f0e1] shadow-md transition-transform duration-300 ${hideOutOfStock ? "translate-x-5" : "translate-x-0"
+                          }`}
+                      />
+                    </button>
+                  </div>
+                </div>
+
                 {/* Quick Filters */}
                 <div>
                   <h3 className="text-sm font-bold text-[#b8860b] tracking-wider uppercase mb-4">
@@ -508,11 +551,10 @@ function ShopContent() {
                             setSelectedTag(newTag);
                             updateURL({ tag: newTag });
                           }}
-                          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full transition-colors ${
-                            selectedTag === tag.id
-                              ? "bg-[#b8860b] text-[#0d1f14] font-medium"
-                              : "border border-[#b8860b]/20 text-[#f5f0e1]/70 hover:border-[#b8860b] hover:text-[#b8860b]"
-                          }`}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full transition-colors ${selectedTag === tag.id
+                            ? "bg-[#b8860b] text-[#0d1f14] font-medium"
+                            : "border border-[#b8860b]/20 text-[#f5f0e1]/70 hover:border-[#b8860b] hover:text-[#b8860b]"
+                            }`}
                         >
                           <Icon className="w-3 h-3" />
                           {tag.label}
@@ -552,9 +594,8 @@ function ShopContent() {
                       {sortOptions.find((o) => o.value === sortBy)?.label}
                     </span>
                     <ChevronDown
-                      className={`w-4 h-4 transition-transform ${
-                        showSortDropdown ? "rotate-180" : ""
-                      }`}
+                      className={`w-4 h-4 transition-transform ${showSortDropdown ? "rotate-180" : ""
+                        }`}
                     />
                   </button>
 
@@ -568,11 +609,10 @@ function ShopContent() {
                             setShowSortDropdown(false);
                             updateURL({ sort: option.value });
                           }}
-                          className={`w-full px-4 py-2.5 text-left text-sm hover:bg-[#b8860b]/10 transition-colors ${
-                            sortBy === option.value
-                              ? "text-[#b8860b] bg-[#b8860b]/5"
-                              : "text-[#f5f0e1]/70"
-                          }`}
+                          className={`w-full px-4 py-2.5 text-left text-sm hover:bg-[#b8860b]/10 transition-colors ${sortBy === option.value
+                            ? "text-[#b8860b] bg-[#b8860b]/5"
+                            : "text-[#f5f0e1]/70"
+                            }`}
                         >
                           {option.label}
                         </button>
@@ -671,11 +711,10 @@ function ShopContent() {
                       setSelectedCategory("");
                       updateURL({ category: "" });
                     }}
-                    className={`py-3 px-4 rounded-lg text-sm text-left transition-colors ${
-                      !selectedCategory
-                        ? "bg-[#b8860b] text-[#0d1f14] font-semibold"
-                        : "border border-[#b8860b]/30 text-[#f5f0e1]/70"
-                    }`}
+                    className={`py-3 px-4 rounded-lg text-sm text-left transition-colors ${!selectedCategory
+                      ? "bg-[#b8860b] text-[#0d1f14] font-semibold"
+                      : "border border-[#b8860b]/30 text-[#f5f0e1]/70"
+                      }`}
                   >
                     All Products
                   </button>
@@ -686,11 +725,10 @@ function ShopContent() {
                         setSelectedCategory(cat.slug);
                         updateURL({ category: cat.slug });
                       }}
-                      className={`py-3 px-4 rounded-lg text-sm text-left transition-colors ${
-                        selectedCategory === cat.slug
-                          ? "bg-[#b8860b] text-[#0d1f14] font-semibold"
-                          : "border border-[#b8860b]/30 text-[#f5f0e1]/70"
-                      }`}
+                      className={`py-3 px-4 rounded-lg text-sm text-left transition-colors ${selectedCategory === cat.slug
+                        ? "bg-[#b8860b] text-[#0d1f14] font-semibold"
+                        : "border border-[#b8860b]/30 text-[#f5f0e1]/70"
+                        }`}
                     >
                       {cat.name}
                     </button>
@@ -721,6 +759,26 @@ function ShopContent() {
                 </div>
               </div>
 
+              {/* Stock Availability Toggle */}
+              <div>
+                <h4 className="text-sm font-bold text-[#b8860b] tracking-wider uppercase mb-4">
+                  Availability
+                </h4>
+                <div className="flex items-center justify-between py-3 px-4 bg-[#1a472a]/30 rounded-lg border border-[#b8860b]/10">
+                  <span className="text-sm text-[#f5f0e1]/70">Hide Out of Stock</span>
+                  <button
+                    onClick={() => setHideOutOfStock(!hideOutOfStock)}
+                    className={`relative w-12 h-7 rounded-full transition-colors duration-300 ${hideOutOfStock ? "bg-[#b8860b]" : "bg-[#1a472a]"
+                      }`}
+                  >
+                    <div
+                      className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-[#f5f0e1] shadow-md transition-transform duration-300 ${hideOutOfStock ? "translate-x-5" : "translate-x-0"
+                        }`}
+                    />
+                  </button>
+                </div>
+              </div>
+
               {/* Quick Filters */}
               <div>
                 <h4 className="text-sm font-bold text-[#b8860b] tracking-wider uppercase mb-4">
@@ -737,11 +795,10 @@ function ShopContent() {
                           setSelectedTag(newTag);
                           updateURL({ tag: newTag });
                         }}
-                        className={`flex items-center gap-1.5 px-4 py-2 text-sm rounded-full transition-colors ${
-                          selectedTag === tag.id
-                            ? "bg-[#b8860b] text-[#0d1f14] font-medium"
-                            : "border border-[#b8860b]/30 text-[#f5f0e1]/70"
-                        }`}
+                        className={`flex items-center gap-1.5 px-4 py-2 text-sm rounded-full transition-colors ${selectedTag === tag.id
+                          ? "bg-[#b8860b] text-[#0d1f14] font-medium"
+                          : "border border-[#b8860b]/30 text-[#f5f0e1]/70"
+                          }`}
                       >
                         <Icon className="w-4 h-4" />
                         {tag.label}
@@ -801,11 +858,10 @@ function ShopContent() {
                     updateURL({ sort: option.value });
                     setShowMobileSort(false);
                   }}
-                  className={`w-full flex items-center justify-between py-4 px-4 rounded-lg mb-1 transition-colors ${
-                    sortBy === option.value
-                      ? "bg-[#b8860b]/10 text-[#b8860b]"
-                      : "text-[#f5f0e1]/70"
-                  }`}
+                  className={`w-full flex items-center justify-between py-4 px-4 rounded-lg mb-1 transition-colors ${sortBy === option.value
+                    ? "bg-[#b8860b]/10 text-[#b8860b]"
+                    : "text-[#f5f0e1]/70"
+                    }`}
                 >
                   <span className="text-base">{option.label}</span>
                   {sortBy === option.value && (

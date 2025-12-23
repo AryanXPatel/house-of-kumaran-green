@@ -34,10 +34,13 @@ export function ProductCard({ product }: ProductCardProps) {
   };
 
   const isWishlisted = isInWishlist(product.id);
+  const isComingSoon = product.tags.some(
+    (tag) => tag.toLowerCase() === "coming-soon"
+  );
   const discount = product.originalPrice
     ? Math.round(
-        ((product.originalPrice - product.price) / product.originalPrice) * 100
-      )
+      ((product.originalPrice - product.price) / product.originalPrice) * 100
+    )
     : 0;
 
   return (
@@ -46,18 +49,26 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* Wishlist - Always visible on mobile, hover on desktop */}
         <button
           onClick={handleToggleWishlist}
-          className={`absolute top-4 right-4 z-10 w-10 h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-all duration-300 hover:bg-[#0d1f14] ${
-            isWishlisted
-              ? "opacity-100 bg-red-500/20"
-              : "opacity-100 sm:opacity-0 sm:group-hover:opacity-100 bg-[#0d1f14]/50"
-          }`}
+          className={`absolute top-4 right-4 z-10 w-10 h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-all duration-300 hover:bg-[#0d1f14] ${isWishlisted
+            ? "opacity-100 bg-red-500/20"
+            : "opacity-100 sm:opacity-0 sm:group-hover:opacity-100 bg-[#0d1f14]/50"
+            }`}
         >
           <Heart
-            className={`w-5 h-5 transition-colors ${
-              isWishlisted ? "fill-red-500 text-red-500" : "text-[#f5f0e1]"
-            }`}
+            className={`w-5 h-5 transition-colors ${isWishlisted ? "fill-red-500 text-red-500" : "text-[#f5f0e1]"
+              }`}
           />
         </button>
+
+        {/* Coming Soon Badge */}
+        {isComingSoon && (
+          <div className="absolute top-4 left-4 z-10 px-2 py-1 sm:px-2.5 bg-amber-500/90 backdrop-blur-sm rounded-full">
+            <span className="text-[10px] sm:text-xs font-bold text-[#0d1f14] uppercase tracking-wide">
+              <span className="sm:hidden">Soon</span>
+              <span className="hidden sm:inline">Coming Soon</span>
+            </span>
+          </div>
+        )}
 
         {/* Image */}
         <div className="relative aspect-square overflow-hidden">
@@ -115,32 +126,35 @@ export function ProductCard({ product }: ProductCardProps) {
             <button
               onClick={handleAddToCart}
               disabled={!product.inStock}
-              className={`w-full sm:w-12 h-10 sm:h-12 rounded-full flex items-center justify-center gap-2 transition-all duration-300 shadow-lg font-semibold text-sm ${
-                product.inStock
-                  ? isAdding
-                    ? "bg-green-500 scale-105 sm:scale-110"
-                    : "bg-[#b8860b] hover:bg-[#d4a017] sm:hover:scale-110 active:scale-95"
-                  : "bg-[#f5f0e1]/20 cursor-not-allowed"
-              }`}
+              className={`w-full sm:w-12 h-10 sm:h-12 rounded-full flex items-center justify-center gap-2 transition-all duration-300 shadow-lg font-semibold text-sm ${product.inStock
+                ? isAdding
+                  ? "bg-green-500 scale-105 sm:scale-110"
+                  : "bg-[#b8860b] hover:bg-[#d4a017] sm:hover:scale-110 active:scale-95"
+                : "bg-[#f5f0e1]/20 cursor-not-allowed"
+                }`}
             >
               <ShoppingBag
-                className={`w-5 h-5 sm:w-6 sm:h-6 ${
-                  isAdding ? "text-white" : "text-[#0d1f14]"
-                }`}
+                className={`w-5 h-5 sm:w-6 sm:h-6 ${isAdding ? "text-white" : "text-[#0d1f14]"
+                  }`}
               />
               <span className="sm:hidden text-[#0d1f14]">
                 {product.inStock
                   ? isAdding
                     ? "Added!"
                     : "Add to Cart"
-                  : "Out of Stock"}
+                  : isComingSoon
+                    ? "Coming Soon"
+                    : "Out of Stock"}
               </span>
             </button>
           </div>
 
           {!product.inStock && (
-            <p className="text-red-400 text-xs sm:text-sm mt-1.5 sm:mt-2 hidden sm:block">
-              Out of Stock
+            <p
+              className={`text-xs sm:text-sm mt-1.5 sm:mt-2 hidden sm:block ${isComingSoon ? "text-amber-400" : "text-red-400"
+                }`}
+            >
+              {isComingSoon ? "Coming Soon" : "Out of Stock"}
             </p>
           )}
         </div>

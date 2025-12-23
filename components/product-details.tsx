@@ -35,10 +35,13 @@ export function ProductDetails({ product }: ProductDetailsProps) {
 
   const isWishlisted = isInWishlist(product.id);
   const images = product.images || [product.image];
+  const isComingSoon = product.tags.some(
+    (tag) => tag.toLowerCase() === "coming-soon"
+  );
   const discount = product.originalPrice
     ? Math.round(
-        ((product.originalPrice - product.price) / product.originalPrice) * 100
-      )
+      ((product.originalPrice - product.price) / product.originalPrice) * 100
+    )
     : 0;
 
   // Track product view
@@ -135,17 +138,22 @@ export function ProductDetails({ product }: ProductDetailsProps) {
 
               {/* Badges */}
               <div className="absolute top-3 left-3 sm:top-6 sm:left-6 flex flex-col gap-1.5 sm:gap-2">
-                {product.isBestseller && (
+                {isComingSoon && (
+                  <span className="px-2.5 py-1 sm:px-4 sm:py-2 bg-amber-500/90 backdrop-blur-sm text-[#0d1f14] text-[10px] sm:text-sm font-bold rounded-full uppercase tracking-wide">
+                    Coming Soon
+                  </span>
+                )}
+                {product.isBestseller && !isComingSoon && (
                   <span className="px-2.5 py-1 sm:px-4 sm:py-2 bg-[#b8860b] text-[#0d1f14] text-[10px] sm:text-sm font-bold rounded-full">
                     Bestseller
                   </span>
                 )}
-                {product.isNew && (
+                {product.isNew && !isComingSoon && (
                   <span className="px-2.5 py-1 sm:px-4 sm:py-2 bg-[#f5f0e1] text-[#0d1f14] text-[10px] sm:text-sm font-bold rounded-full">
                     New Arrival
                   </span>
                 )}
-                {discount > 0 && (
+                {discount > 0 && !isComingSoon && (
                   <span className="px-2.5 py-1 sm:px-4 sm:py-2 bg-red-500 text-white text-[10px] sm:text-sm font-bold rounded-full">
                     {discount}% OFF
                   </span>
@@ -155,18 +163,16 @@ export function ProductDetails({ product }: ProductDetailsProps) {
               {/* Wishlist Heart - Top Right on Image */}
               <button
                 onClick={() => toggleWishlist(product)}
-                className={`absolute top-3 right-3 sm:top-6 sm:right-6 w-9 h-9 sm:w-12 sm:h-12 rounded-full border flex items-center justify-center transition-all backdrop-blur-sm ${
-                  isWishlisted
+                className={`absolute top-3 right-3 sm:top-6 sm:right-6 w-9 h-9 sm:w-12 sm:h-12 rounded-full border flex items-center justify-center transition-all backdrop-blur-sm ${isWishlisted
                     ? "border-red-500 bg-red-500/20"
                     : "border-[#f5f0e1]/30 bg-[#0d1f14]/50 hover:border-[#b8860b] hover:bg-[#0d1f14]/70"
-                }`}
+                  }`}
               >
                 <Heart
-                  className={`w-4 h-4 sm:w-6 sm:h-6 ${
-                    isWishlisted
+                  className={`w-4 h-4 sm:w-6 sm:h-6 ${isWishlisted
                       ? "fill-red-500 text-red-500"
                       : "text-[#f5f0e1]"
-                  }`}
+                    }`}
                 />
               </button>
 
@@ -177,11 +183,10 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                   <button
                     onClick={goToPreviousImage}
                     disabled={selectedImage === 0}
-                    className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border flex items-center justify-center transition-all backdrop-blur-sm ${
-                      selectedImage === 0
+                    className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border flex items-center justify-center transition-all backdrop-blur-sm ${selectedImage === 0
                         ? "border-[#f5f0e1]/10 bg-[#0d1f14]/30 cursor-not-allowed opacity-40"
                         : "border-[#f5f0e1]/30 bg-[#0d1f14]/50 hover:border-[#b8860b] hover:bg-[#0d1f14]/70"
-                    }`}
+                      }`}
                     aria-label="Previous image"
                   >
                     <ChevronLeft className="w-5 h-5 text-[#f5f0e1]" />
@@ -191,11 +196,10 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                   <button
                     onClick={goToNextImage}
                     disabled={selectedImage === images.length - 1}
-                    className={`absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border flex items-center justify-center transition-all backdrop-blur-sm ${
-                      selectedImage === images.length - 1
+                    className={`absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border flex items-center justify-center transition-all backdrop-blur-sm ${selectedImage === images.length - 1
                         ? "border-[#f5f0e1]/10 bg-[#0d1f14]/30 cursor-not-allowed opacity-40"
                         : "border-[#f5f0e1]/30 bg-[#0d1f14]/50 hover:border-[#b8860b] hover:bg-[#0d1f14]/70"
-                    }`}
+                      }`}
                     aria-label="Next image"
                   >
                     <ChevronRight className="w-5 h-5 text-[#f5f0e1]" />
@@ -211,11 +215,10 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
-                    className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
-                      selectedImage === index
+                    className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === index
                         ? "border-[#b8860b]"
                         : "border-transparent opacity-60 hover:opacity-100"
-                    }`}
+                      }`}
                   >
                     <Image
                       src={image || "/placeholder.svg"}
@@ -246,11 +249,10 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`w-5 h-5 ${
-                          i < Math.floor(product.rating)
+                        className={`w-5 h-5 ${i < Math.floor(product.rating)
                             ? "fill-[#b8860b] text-[#b8860b]"
                             : "text-[#f5f0e1]/20"
-                        }`}
+                          }`}
                       />
                     ))}
                   </div>
@@ -315,19 +317,25 @@ export function ProductDetails({ product }: ProductDetailsProps) {
               {/* Add to Cart */}
               <button
                 onClick={handleAddToCart}
-                disabled={!product.inStock}
-                className={`flex-1 flex items-center justify-center gap-2 sm:gap-3 h-12 sm:h-14 rounded-full font-bold text-base sm:text-base transition-all duration-300 ${
-                  product.inStock
-                    ? isAdding
-                      ? "bg-green-500 text-white scale-[1.02]"
-                      : "bg-[#b8860b] hover:bg-[#f5f0e1] text-[#0d1f14]"
-                    : "bg-[#f5f0e1]/20 text-[#f5f0e1]/40 cursor-not-allowed"
-                }`}
+                disabled={!product.inStock || isComingSoon}
+                className={`flex-1 flex items-center justify-center gap-2 sm:gap-3 h-12 sm:h-14 rounded-full font-bold text-base sm:text-base transition-all duration-300 ${isComingSoon
+                    ? "bg-amber-500/90 text-[#0d1f14] cursor-not-allowed"
+                    : product.inStock
+                      ? isAdding
+                        ? "bg-green-500 text-white scale-[1.02]"
+                        : "bg-[#b8860b] hover:bg-[#f5f0e1] text-[#0d1f14]"
+                      : "bg-[#f5f0e1]/20 text-[#f5f0e1]/40 cursor-not-allowed"
+                  }`}
               >
                 {isAdding ? (
                   <>
                     <Check className="w-6 h-6 sm:w-5 sm:h-5" />
                     Added to Cart!
+                  </>
+                ) : isComingSoon ? (
+                  <>
+                    <ShoppingBag className="w-6 h-6 sm:w-5 sm:h-5" />
+                    Coming Soon
                   </>
                 ) : (
                   <>
