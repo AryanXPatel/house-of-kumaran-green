@@ -29,7 +29,7 @@ export function CartDrawer() {
 
   if (!isCartOpen) return null;
 
-  const deliveryFee = totalPrice >= 399 ? 0 : 80;
+  const deliveryFee = totalPrice >= 399 ? 0 : 59;
   const finalTotal = totalPrice + deliveryFee;
 
   const handleCheckout = () => {

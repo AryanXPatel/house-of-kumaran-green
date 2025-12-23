@@ -401,7 +401,7 @@ export default function TermsPage() {
                 </li>
                 <li>
                   <strong className="text-[#f5f0e1]">Address:</strong> 3,
-                  Kasthuri 2nd Street, New Laxmipuram, Chennai, Tamil Nadu -
+                  Kasthuri 2nd Street, New Lakshmipuram, Chennai, Tamil Nadu -
                   600099, India
                 </li>
               </ul>

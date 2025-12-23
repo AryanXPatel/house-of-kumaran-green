@@ -78,10 +78,8 @@ export default function ContactPage() {
         const mailtoLink = `mailto:hello@houseofkumaran.com?subject=${encodeURIComponent(
           `Contact Form: ${formData.subject || "General Inquiry"}`
         )}&body=${encodeURIComponent(
-          `Name: ${formData.firstName} ${formData.lastName}\nEmail: ${
-            formData.email
-          }\nPhone: ${formData.phone || "Not provided"}\n\nMessage:\n${
-            formData.message
+          `Name: ${formData.firstName} ${formData.lastName}\nEmail: ${formData.email
+          }\nPhone: ${formData.phone || "Not provided"}\n\nMessage:\n${formData.message
           }`
         )}`;
         window.location.href = mailtoLink;
@@ -92,10 +90,8 @@ export default function ContactPage() {
       const mailtoLink = `mailto:hello@houseofkumaran.com?subject=${encodeURIComponent(
         `Contact Form: ${formData.subject || "General Inquiry"}`
       )}&body=${encodeURIComponent(
-        `Name: ${formData.firstName} ${formData.lastName}\nEmail: ${
-          formData.email
-        }\nPhone: ${formData.phone || "Not provided"}\n\nMessage:\n${
-          formData.message
+        `Name: ${formData.firstName} ${formData.lastName}\nEmail: ${formData.email
+        }\nPhone: ${formData.phone || "Not provided"}\n\nMessage:\n${formData.message
         }`
       )}`;
       window.location.href = mailtoLink;
@@ -110,7 +106,7 @@ export default function ContactPage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="pt-32 pb-16 px-6 relative overflow-hidden">
+      <section className="pt-32 pb-16 px-4 md:px-6 relative overflow-hidden">
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-20 left-10 w-96 h-96 border border-[#b8860b] rounded-full" />
           <div className="absolute bottom-10 right-20 w-64 h-64 border border-[#b8860b] rounded-full" />
@@ -131,7 +127,7 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Info & Form */}
-      <section className="py-16 px-6">
+      <section className="py-16 px-4 md:px-6">
         <div className="max-w-[1400px] mx-auto">
           <div className="grid lg:grid-cols-2 gap-16">
             {/* Contact Information */}
@@ -190,7 +186,7 @@ export default function ContactPage() {
                       <br />
                       3, Kasthuri 2nd Street
                       <br />
-                      New Laxmipuram
+                      New Lakshmipuram
                       <br />
                       Chennai, Tamil Nadu - 600099
                       <br />
@@ -383,7 +379,7 @@ export default function ContactPage() {
       </section>
 
       {/* Business Hours */}
-      <section className="py-16 px-6 bg-[#0a1810]">
+      <section className="py-16 px-4 md:px-6 bg-[#0a1810]">
         <div className="max-w-[1400px] mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#b8860b]/10 rounded-full mb-6">
             <Clock className="w-4 h-4 text-[#b8860b]" />

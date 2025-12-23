@@ -1442,7 +1442,7 @@ Email body (HTML)
                             </p>
                             <!-- Address -->
                             <p style="margin: 0 0 8px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #888888;">
-                              3, Kasthuri 2nd Street, New Laxmipuram
+                              3, Kasthuri 2nd Street, New Lakshmipuram
                             </p>
                             <p style="margin: 0 0 16px 0; font-family: Inter, Arial, Helvetica, sans-serif; font-size: 13px; color: #888888;">
                               Chennai, Tamil Nadu - 600099

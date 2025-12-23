@@ -242,7 +242,7 @@ export function Footer() {
 
             {/* Contact */}
             <div className="space-y-2 text-[#f5f0e1]/50 text-sm">
-              <p>3, Kasthuri 2nd Street, New Laxmipuram</p>
+              <p>3, Kasthuri 2nd Street, New Lakshmipuram</p>
               <p>Chennai, Tamil Nadu - 600099</p>
               <p>hello@houseofkumaran.com</p>
             </div>
