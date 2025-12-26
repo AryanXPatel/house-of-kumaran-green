@@ -1,9 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { Star, ThumbsUp, CheckCircle, Filter, ChevronDown } from "lucide-react";
+import {
+  Star,
+  ThumbsUp,
+  CheckCircle,
+  Filter,
+  ChevronDown,
+  LogIn,
+  ShoppingBag,
+  AlertCircle,
+  Lock,
+} from "lucide-react";
 import type { Review } from "@/lib/judgeme";
+import { useAuth } from "@/lib/auth-context";
 
 interface ProductReviewsProps {
   productId: string;
@@ -12,6 +23,16 @@ interface ProductReviewsProps {
 }
 
 type SortOption = "newest" | "oldest" | "highest" | "lowest";
+
+// Review eligibility status
+interface ReviewEligibility {
+  canReview: boolean;
+  reason: "NOT_LOGGED_IN" | "NOT_PURCHASED" | "ELIGIBLE" | "LOADING" | "ERROR";
+  customerName?: string;
+  customerEmail?: string;
+  maskedEmail?: string;
+  message?: string;
+}
 
 export function ProductReviews({
   productId,
@@ -28,11 +49,25 @@ export function ProductReviews({
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
 
+  // Review eligibility state
+  const [eligibility, setEligibility] = useState<ReviewEligibility>({
+    canReview: false,
+    reason: "LOADING",
+  });
+  const [eligibilityChecked, setEligibilityChecked] = useState(false);
+
+  const { isAuthenticated } = useAuth();
+
   const perPage = 5;
 
   useEffect(() => {
     fetchReviews();
   }, [productId, currentPage]);
+
+  // Check eligibility when auth status or product changes
+  useEffect(() => {
+    checkEligibility();
+  }, [productId, isAuthenticated]);
 
   const fetchReviews = async () => {
     try {
@@ -55,6 +90,43 @@ export function ProductReviews({
       setLoading(false);
     }
   };
+
+  const checkEligibility = useCallback(async () => {
+    try {
+      setEligibility({ canReview: false, reason: "LOADING" });
+
+      const response = await fetch(
+        `/api/reviews/verify-purchase?productId=${encodeURIComponent(productId)}`
+      );
+      const data = await response.json();
+
+      if (data.success) {
+        setEligibility({
+          canReview: data.canReview,
+          reason: data.reason,
+          customerName: data.customerName,
+          customerEmail: data.customerEmail,
+          maskedEmail: data.maskedEmail,
+          message: data.message,
+        });
+      } else {
+        setEligibility({
+          canReview: false,
+          reason: "ERROR",
+          message: "Unable to verify eligibility",
+        });
+      }
+    } catch (error) {
+      console.error("Error checking eligibility:", error);
+      setEligibility({
+        canReview: false,
+        reason: "ERROR",
+        message: "Unable to verify eligibility",
+      });
+    } finally {
+      setEligibilityChecked(true);
+    }
+  }, [productId]);
 
   // Calculate rating distribution
   const ratingDistribution = reviews.reduce((acc, review) => {
@@ -104,11 +176,10 @@ export function ProductReviews({
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`${sizeClasses[size]} ${
-              star <= rating
+            className={`${sizeClasses[size]} ${star <= rating
                 ? "fill-[#b8860b] text-[#b8860b]"
                 : "text-[#f5f0e1]/20"
-            }`}
+              }`}
           />
         ))}
       </div>
@@ -139,9 +210,24 @@ export function ProductReviews({
           </h2>
           <button
             onClick={() => setShowReviewForm(true)}
-            className="px-6 py-3 bg-[#b8860b] hover:bg-[#f5f0e1] text-[#0d1f14] font-bold rounded-full transition-all"
+            className="px-6 py-3 bg-[#b8860b] hover:bg-[#f5f0e1] text-[#0d1f14] font-bold rounded-full transition-all flex items-center gap-2 justify-center"
           >
-            Write a Review
+            {eligibility.reason === "ELIGIBLE" ? (
+              <>
+                <CheckCircle className="w-5 h-5" />
+                Write a Review
+              </>
+            ) : eligibility.reason === "NOT_LOGGED_IN" ? (
+              <>
+                <LogIn className="w-5 h-5" />
+                Sign In to Review
+              </>
+            ) : (
+              <>
+                <Star className="w-5 h-5" />
+                Write a Review
+              </>
+            )}
           </button>
         </div>
 
@@ -171,11 +257,10 @@ export function ProductReviews({
                   onClick={() =>
                     setFilterRating(filterRating === rating ? null : rating)
                   }
-                  className={`flex items-center gap-3 w-full group transition-all ${
-                    filterRating === rating
+                  className={`flex items-center gap-3 w-full group transition-all ${filterRating === rating
                       ? "opacity-100"
                       : "opacity-70 hover:opacity-100"
-                  }`}
+                    }`}
                 >
                   <span className="w-8 text-sm font-medium">{rating} star</span>
                   <div className="flex-1 h-3 bg-[#0d1f14]/50 rounded-full overflow-hidden">
@@ -222,10 +307,10 @@ export function ProductReviews({
                 {sortBy === "newest"
                   ? "Newest"
                   : sortBy === "oldest"
-                  ? "Oldest"
-                  : sortBy === "highest"
-                  ? "Highest Rating"
-                  : "Lowest Rating"}
+                    ? "Oldest"
+                    : sortBy === "highest"
+                      ? "Highest Rating"
+                      : "Lowest Rating"}
               </span>
               <ChevronDown className="w-4 h-4" />
             </button>
@@ -241,17 +326,16 @@ export function ProductReviews({
                       setSortBy(option);
                       setShowSortDropdown(false);
                     }}
-                    className={`w-full px-4 py-2 text-left text-sm hover:bg-[#1a472a]/50 first:rounded-t-lg last:rounded-b-lg ${
-                      sortBy === option ? "text-[#b8860b]" : ""
-                    }`}
+                    className={`w-full px-4 py-2 text-left text-sm hover:bg-[#1a472a]/50 first:rounded-t-lg last:rounded-b-lg ${sortBy === option ? "text-[#b8860b]" : ""
+                      }`}
                   >
                     {option === "newest"
                       ? "Newest First"
                       : option === "oldest"
-                      ? "Oldest First"
-                      : option === "highest"
-                      ? "Highest Rating"
-                      : "Lowest Rating"}
+                        ? "Oldest First"
+                        : option === "highest"
+                          ? "Highest Rating"
+                          : "Lowest Rating"}
                   </button>
                 ))}
               </div>
@@ -379,6 +463,7 @@ export function ProductReviews({
             productId={productId}
             productTitle={productTitle}
             productHandle={productHandle}
+            eligibility={eligibility}
             onClose={() => setShowReviewForm(false)}
             onSuccess={() => {
               setShowReviewForm(false);
@@ -391,11 +476,12 @@ export function ProductReviews({
   );
 }
 
-// Review Form Modal Component
+// Review Form Modal Component with Eligibility Check
 interface ReviewFormModalProps {
   productId: string;
   productTitle: string;
   productHandle: string;
+  eligibility: ReviewEligibility;
   onClose: () => void;
   onSuccess: () => void;
 }
@@ -404,6 +490,7 @@ function ReviewFormModal({
   productId,
   productTitle,
   productHandle,
+  eligibility,
   onClose,
   onSuccess,
 }: ReviewFormModalProps) {
@@ -411,8 +498,6 @@ function ReviewFormModal({
   const [hoverRating, setHoverRating] = useState(0);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -430,8 +515,6 @@ function ReviewFormModal({
           productId,
           productTitle,
           productHandle,
-          reviewerName: name,
-          reviewerEmail: email,
           rating,
           title,
           body,
@@ -456,162 +539,242 @@ function ReviewFormModal({
     }
   };
 
+  // Render different content based on eligibility
+  const renderContent = () => {
+    // Loading state
+    if (eligibility.reason === "LOADING") {
+      return (
+        <div className="text-center py-12">
+          <div className="animate-spin w-12 h-12 border-4 border-[#b8860b] border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-[#f5f0e1]/70">Checking eligibility...</p>
+        </div>
+      );
+    }
+
+    // Not logged in
+    if (eligibility.reason === "NOT_LOGGED_IN") {
+      return (
+        <div className="text-center py-8">
+          <div className="w-20 h-20 bg-[#b8860b]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <LogIn className="w-10 h-10 text-[#b8860b]" />
+          </div>
+          <h4 className="text-xl font-bold mb-3">Sign In Required</h4>
+          <p className="text-[#f5f0e1]/70 mb-6 max-w-sm mx-auto">
+            Please sign in to write a review. Only customers who have purchased
+            this product can share their experience.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={onClose}
+              className="px-6 py-3 border border-[#b8860b]/30 rounded-full hover:border-[#b8860b] transition-all"
+            >
+              Maybe Later
+            </button>
+            <a
+              href="/?auth=required"
+              className="px-6 py-3 bg-[#b8860b] hover:bg-[#f5f0e1] text-[#0d1f14] font-bold rounded-full transition-all"
+            >
+              Sign In
+            </a>
+          </div>
+          <p className="text-xs text-[#f5f0e1]/50 mt-6">
+            <Lock className="w-3 h-3 inline mr-1" />
+            Only verified buyers can leave reviews
+          </p>
+        </div>
+      );
+    }
+
+    // Logged in but has not purchased
+    if (eligibility.reason === "NOT_PURCHASED") {
+      return (
+        <div className="text-center py-8">
+          <div className="w-20 h-20 bg-[#b8860b]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <ShoppingBag className="w-10 h-10 text-[#b8860b]" />
+          </div>
+          <h4 className="text-xl font-bold mb-3">Purchase Required</h4>
+          <p className="text-[#f5f0e1]/70 mb-2">
+            You can only review products you&apos;ve purchased.
+          </p>
+          <p className="text-[#f5f0e1]/50 text-sm mb-6 max-w-sm mx-auto">
+            Get <span className="text-[#b8860b] font-medium">{productTitle}</span> to share your experience with other customers!
+          </p>
+          <button
+            onClick={onClose}
+            className="px-6 py-3 bg-[#b8860b] hover:bg-[#f5f0e1] text-[#0d1f14] font-bold rounded-full transition-all"
+          >
+            Got It
+          </button>
+          <p className="text-xs text-[#f5f0e1]/50 mt-6">
+            <CheckCircle className="w-3 h-3 inline mr-1" />
+            Reviews are limited to verified buyers for authenticity
+          </p>
+        </div>
+      );
+    }
+
+    // Error state
+    if (eligibility.reason === "ERROR") {
+      return (
+        <div className="text-center py-8">
+          <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <AlertCircle className="w-10 h-10 text-red-400" />
+          </div>
+          <h4 className="text-xl font-bold mb-3">Something Went Wrong</h4>
+          <p className="text-[#f5f0e1]/70 mb-6">
+            {eligibility.message || "Unable to verify your eligibility. Please try again."}
+          </p>
+          <button
+            onClick={onClose}
+            className="px-6 py-3 border border-[#b8860b]/30 rounded-full hover:border-[#b8860b] transition-all"
+          >
+            Close
+          </button>
+        </div>
+      );
+    }
+
+    // Success state after submission
+    if (success) {
+      return (
+        <div className="text-center py-8">
+          <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
+          <h4 className="text-xl font-bold mb-2">Thank You!</h4>
+          <p className="text-[#f5f0e1]/70">
+            Your review has been submitted and will appear after moderation.
+          </p>
+        </div>
+      );
+    }
+
+    // ELIGIBLE - Show the review form
+    return (
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Product Info */}
+        <div className="text-center pb-4 border-b border-[#b8860b]/10">
+          <p className="text-[#f5f0e1]/70 text-sm">You&apos;re reviewing</p>
+          <p className="font-semibold">{productTitle}</p>
+        </div>
+
+        {/* Reviewer Info - Pre-filled and locked */}
+        <div className="bg-[#1a472a]/30 p-4 rounded-lg">
+          <div className="flex items-center gap-3">
+            <CheckCircle className="w-5 h-5 text-green-400" />
+            <div>
+              <p className="text-sm font-medium">
+                Reviewing as {eligibility.customerName || "Verified Buyer"}
+              </p>
+              <p className="text-xs text-[#f5f0e1]/50">
+                {eligibility.maskedEmail || eligibility.customerEmail}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Rating */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Your Rating *</label>
+          <div className="flex gap-1 justify-center">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                type="button"
+                onClick={() => setRating(star)}
+                onMouseEnter={() => setHoverRating(star)}
+                onMouseLeave={() => setHoverRating(0)}
+                className="p-1 transition-transform hover:scale-110"
+              >
+                <Star
+                  className={`w-8 h-8 ${star <= (hoverRating || rating)
+                      ? "fill-[#b8860b] text-[#b8860b]"
+                      : "text-[#f5f0e1]/20"
+                    }`}
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Review Title */}
+        <div>
+          <label htmlFor="title" className="block text-sm font-medium mb-2">
+            Review Title *
+          </label>
+          <input
+            type="text"
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Give your review a title"
+            required
+            className="w-full px-4 py-3 bg-[#1a472a]/30 border border-[#b8860b]/20 rounded-lg focus:border-[#b8860b] focus:outline-none transition-colors"
+          />
+        </div>
+
+        {/* Review Body */}
+        <div>
+          <label htmlFor="body" className="block text-sm font-medium mb-2">
+            Your Review *
+          </label>
+          <textarea
+            id="body"
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            placeholder="Write your review here..."
+            required
+            rows={4}
+            className="w-full px-4 py-3 bg-[#1a472a]/30 border border-[#b8860b]/20 rounded-lg focus:border-[#b8860b] focus:outline-none transition-colors resize-none"
+          />
+        </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+            {error}
+          </div>
+        )}
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full py-4 bg-[#b8860b] hover:bg-[#f5f0e1] text-[#0d1f14] font-bold rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          {isSubmitting ? (
+            "Submitting..."
+          ) : (
+            <>
+              <CheckCircle className="w-5 h-5" />
+              Submit Verified Review
+            </>
+          )}
+        </button>
+
+        <p className="text-xs text-center text-[#f5f0e1]/50">
+          Your review will be marked as a verified purchase
+        </p>
+      </form>
+    );
+  };
+
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
       <div className="bg-[#0d1f14] border border-[#b8860b]/20 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold">Write a Review</h3>
+            <h3 className="text-xl font-bold">
+              {eligibility.reason === "ELIGIBLE" ? "Write a Review" : "Review"}
+            </h3>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-[#1a472a]/50 rounded-full transition-colors"
+              className="p-2 hover:bg-[#1a472a]/50 rounded-full transition-colors text-2xl leading-none"
             >
               ×
             </button>
           </div>
 
-          {success ? (
-            <div className="text-center py-8">
-              <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
-              <h4 className="text-xl font-bold mb-2">Thank You!</h4>
-              <p className="text-[#f5f0e1]/70">
-                Your review has been submitted and will appear after moderation.
-              </p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Product Info */}
-              <div className="text-center pb-4 border-b border-[#b8860b]/10">
-                <p className="text-[#f5f0e1]/70 text-sm">
-                  You&apos;re reviewing
-                </p>
-                <p className="font-semibold">{productTitle}</p>
-              </div>
-
-              {/* Rating */}
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Your Rating *
-                </label>
-                <div className="flex gap-1 justify-center">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      onClick={() => setRating(star)}
-                      onMouseEnter={() => setHoverRating(star)}
-                      onMouseLeave={() => setHoverRating(0)}
-                      className="p-1 transition-transform hover:scale-110"
-                    >
-                      <Star
-                        className={`w-8 h-8 ${
-                          star <= (hoverRating || rating)
-                            ? "fill-[#b8860b] text-[#b8860b]"
-                            : "text-[#f5f0e1]/20"
-                        }`}
-                      />
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Review Title */}
-              <div>
-                <label
-                  htmlFor="title"
-                  className="block text-sm font-medium mb-2"
-                >
-                  Review Title *
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Give your review a title"
-                  required
-                  className="w-full px-4 py-3 bg-[#1a472a]/30 border border-[#b8860b]/20 rounded-lg focus:border-[#b8860b] focus:outline-none transition-colors"
-                />
-              </div>
-
-              {/* Review Body */}
-              <div>
-                <label
-                  htmlFor="body"
-                  className="block text-sm font-medium mb-2"
-                >
-                  Your Review *
-                </label>
-                <textarea
-                  id="body"
-                  value={body}
-                  onChange={(e) => setBody(e.target.value)}
-                  placeholder="Write your review here..."
-                  required
-                  rows={4}
-                  className="w-full px-4 py-3 bg-[#1a472a]/30 border border-[#b8860b]/20 rounded-lg focus:border-[#b8860b] focus:outline-none transition-colors resize-none"
-                />
-              </div>
-
-              {/* Name */}
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium mb-2"
-                >
-                  Your Name *
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your name"
-                  required
-                  className="w-full px-4 py-3 bg-[#1a472a]/30 border border-[#b8860b]/20 rounded-lg focus:border-[#b8860b] focus:outline-none transition-colors"
-                />
-              </div>
-
-              {/* Email */}
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium mb-2"
-                >
-                  Your Email *
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  required
-                  className="w-full px-4 py-3 bg-[#1a472a]/30 border border-[#b8860b]/20 rounded-lg focus:border-[#b8860b] focus:outline-none transition-colors"
-                />
-                <p className="text-xs text-[#f5f0e1]/50 mt-1">
-                  Your email will not be published
-                </p>
-              </div>
-
-              {/* Error Message */}
-              {error && (
-                <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
-                  {error}
-                </div>
-              )}
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full py-4 bg-[#b8860b] hover:bg-[#f5f0e1] text-[#0d1f14] font-bold rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? "Submitting..." : "Submit Review"}
-              </button>
-            </form>
-          )}
+          {renderContent()}
         </div>
       </div>
     </div>

@@ -34,6 +34,11 @@ export function FeaturedProducts() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Store ratings separately for real-time updates
+  const [productRatings, setProductRatings] = useState<
+    Record<string, { average: number; count: number }>
+  >({});
+
   useEffect(() => {
     async function fetchProducts() {
       try {
@@ -46,7 +51,26 @@ export function FeaturedProducts() {
           const allProducts = await getProducts();
           products = allProducts.slice(0, 6);
         }
-        setFeaturedProducts(products.slice(0, 6));
+        const slicedProducts = products.slice(0, 6);
+        setFeaturedProducts(slicedProducts);
+
+        // Fetch real ratings from Judge.me
+        const productIds = slicedProducts.map((p) => p.shopifyId || p.id);
+        if (productIds.length > 0) {
+          try {
+            const response = await fetch("/api/products/ratings", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ productIds }),
+            });
+            const data = await response.json();
+            if (data.success && data.ratings) {
+              setProductRatings(data.ratings);
+            }
+          } catch (ratingError) {
+            console.error("Error fetching ratings:", ratingError);
+          }
+        }
       } catch (error) {
         console.error("Error fetching featured products:", error);
         // Fallback to static products
@@ -93,112 +117,131 @@ export function FeaturedProducts() {
           {isLoading
             ? [...Array(6)].map((_, i) => <ProductSkeleton key={i} />)
             : featuredProducts.map((product) => {
-                const discount = product.originalPrice
-                  ? Math.round(
-                      ((product.originalPrice - product.price) /
-                        product.originalPrice) *
-                        100
-                    )
-                  : 0;
+              const discount = product.originalPrice
+                ? Math.round(
+                  ((product.originalPrice - product.price) /
+                    product.originalPrice) *
+                  100
+                )
+                : 0;
 
-                return (
-                  <Link
-                    href={`/product/${product.slug}`}
-                    key={product.id}
-                    className="group"
-                  >
-                    <div className="relative bg-[#1a472a]/30 rounded-xl overflow-hidden border border-[#b8860b]/10 hover:border-[#b8860b]/40 transition-all duration-300">
-                      {/* Tag */}
-                      <div className="absolute top-2 left-2 z-10 flex gap-1">
-                        {product.isBestseller && (
-                          <span className="px-2 py-0.5 bg-[#b8860b] text-[#0d1f14] text-[10px] font-bold rounded-full">
-                            Bestseller
-                          </span>
-                        )}
-                        {discount > 0 && (
-                          <span className="px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full">
-                            -{discount}%
-                          </span>
-                        )}
-                      </div>
+              return (
+                <Link
+                  href={`/product/${product.slug}`}
+                  key={product.id}
+                  className="group"
+                >
+                  <div className="relative bg-[#1a472a]/30 rounded-xl overflow-hidden border border-[#b8860b]/10 hover:border-[#b8860b]/40 transition-all duration-300">
+                    {/* Tag */}
+                    <div className="absolute top-2 left-2 z-10 flex gap-1">
+                      {product.isBestseller && (
+                        <span className="px-2 py-0.5 bg-[#b8860b] text-[#0d1f14] text-[10px] font-bold rounded-full">
+                          Bestseller
+                        </span>
+                      )}
+                      {discount > 0 && (
+                        <span className="px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full">
+                          -{discount}%
+                        </span>
+                      )}
+                    </div>
 
-                      {/* Wishlist button */}
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          toggleWishlist(product);
-                        }}
-                        className={`absolute top-2 right-2 z-10 w-7 h-7 rounded-full backdrop-blur-sm flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity ${
-                          isInWishlist(product.id)
-                            ? "bg-red-500/20 hover:bg-red-500/30"
-                            : "bg-[#0d1f14]/50 hover:bg-[#0d1f14]/70"
+                    {/* Wishlist button */}
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleWishlist(product);
+                      }}
+                      className={`absolute top-2 right-2 z-10 w-7 h-7 rounded-full backdrop-blur-sm flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity ${isInWishlist(product.id)
+                        ? "bg-red-500/20 hover:bg-red-500/30"
+                        : "bg-[#0d1f14]/50 hover:bg-[#0d1f14]/70"
                         }`}
-                      >
-                        <Heart
-                          className={`w-3.5 h-3.5 ${
-                            isInWishlist(product.id)
-                              ? "fill-red-500 text-red-500"
-                              : "text-[#f5f0e1]"
+                    >
+                      <Heart
+                        className={`w-3.5 h-3.5 ${isInWishlist(product.id)
+                          ? "fill-red-500 text-red-500"
+                          : "text-[#f5f0e1]"
                           }`}
-                        />
-                      </button>
+                      />
+                    </button>
 
-                      {/* Image */}
-                      <div className="relative aspect-square overflow-hidden">
-                        <Image
-                          src={product.image || "/placeholder.svg"}
-                          alt={product.name}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      </div>
+                    {/* Image */}
+                    <div className="relative aspect-square overflow-hidden">
+                      <Image
+                        src={product.image || "/placeholder.svg"}
+                        alt={product.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
 
-                      {/* Content */}
-                      <div className="p-3">
-                        {/* Rating */}
-                        <div className="flex items-center gap-1 mb-1">
-                          <Star className="w-3 h-3 fill-[#b8860b] text-[#b8860b]" />
-                          <span className="text-xs font-semibold text-[#f5f0e1]">
-                            {product.rating}
-                          </span>
-                          <span className="text-xs text-[#f5f0e1]/40">
-                            ({product.reviews})
-                          </span>
-                        </div>
+                    {/* Content */}
+                    <div className="p-3">
+                      {/* Rating - use real ratings from Judge.me */}
+                      {(() => {
+                        const productId = product.shopifyId || product.id;
+                        const realRating = productRatings[productId] || productRatings[product.id];
+                        const rating = realRating?.average || 0;
+                        const reviewCount = realRating?.count || 0;
 
-                        {/* Name */}
-                        <h3 className="font-serif text-sm font-bold text-[#f5f0e1] mb-1 group-hover:text-[#b8860b] transition-colors line-clamp-1">
-                          {product.name}
-                        </h3>
-                        <p className="text-[#f5f0e1]/50 text-xs mb-2">
-                          {product.weight}
-                        </p>
-
-                        {/* Price & Add to cart - Always visible */}
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <span className="text-base font-bold text-[#f5f0e1]">
-                              ₹{product.price}
-                            </span>
-                            {product.originalPrice && (
-                              <span className="text-xs text-[#f5f0e1]/40 line-through ml-1">
-                                ₹{product.originalPrice}
+                        // Only show rating if there are reviews
+                        if (reviewCount > 0) {
+                          return (
+                            <div className="flex items-center gap-1 mb-1">
+                              <Star className="w-3 h-3 fill-[#b8860b] text-[#b8860b]" />
+                              <span className="text-xs font-semibold text-[#f5f0e1]">
+                                {rating.toFixed(1)}
                               </span>
-                            )}
+                              <span className="text-xs text-[#f5f0e1]/40">
+                                ({reviewCount})
+                              </span>
+                            </div>
+                          );
+                        }
+                        // Show placeholder for products with no reviews
+                        return (
+                          <div className="flex items-center gap-1 mb-1">
+                            <Star className="w-3 h-3 text-[#f5f0e1]/20" />
+                            <span className="text-xs text-[#f5f0e1]/40">
+                              No reviews yet
+                            </span>
                           </div>
-                          <button
-                            onClick={(e) => handleAddToCart(product, e)}
-                            className="w-8 h-8 rounded-full bg-[#b8860b] hover:bg-[#d4a017] flex items-center justify-center transition-all duration-200 hover:scale-110"
-                          >
-                            <ShoppingBag className="w-4 h-4 text-[#0d1f14]" />
-                          </button>
+                        );
+                      })()}
+
+                      {/* Name */}
+                      <h3 className="font-serif text-sm font-bold text-[#f5f0e1] mb-1 group-hover:text-[#b8860b] transition-colors line-clamp-1">
+                        {product.name}
+                      </h3>
+                      <p className="text-[#f5f0e1]/50 text-xs mb-2">
+                        {product.weight}
+                      </p>
+
+                      {/* Price & Add to cart - Always visible */}
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-base font-bold text-[#f5f0e1]">
+                            ₹{product.price}
+                          </span>
+                          {product.originalPrice && (
+                            <span className="text-xs text-[#f5f0e1]/40 line-through ml-1">
+                              ₹{product.originalPrice}
+                            </span>
+                          )}
                         </div>
+                        <button
+                          onClick={(e) => handleAddToCart(product, e)}
+                          className="w-8 h-8 rounded-full bg-[#b8860b] hover:bg-[#d4a017] flex items-center justify-center transition-all duration-200 hover:scale-110"
+                        >
+                          <ShoppingBag className="w-4 h-4 text-[#0d1f14]" />
+                        </button>
                       </div>
                     </div>
-                  </Link>
-                );
-              })}
+                  </div>
+                </Link>
+              );
+            })}
         </div>
       </div>
     </section>

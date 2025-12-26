@@ -36,8 +36,8 @@ export interface JudgeMeReview {
   reviewer: JudgeMeReviewer;
   source: string;
   curated: string;
-  published: boolean;
-  hidden: boolean;
+  published: boolean | string;
+  hidden: boolean | string;
   verified: string;
   featured: boolean;
   created_at: string;
@@ -235,8 +235,23 @@ export async function fetchProductReviews(
       return { reviews: [], currentPage: 1, perPage: 10 };
     }
 
+    // Filter out hidden and unpublished reviews
+    // Judge.me API may return these as booleans or strings
+    const visibleReviews = data.reviews.filter((review) => {
+      // Handle both boolean and string values from API
+      const isPublished = review.published === true || String(review.published) === "true";
+      const isHidden = review.hidden === true || String(review.hidden) === "true";
+      const isCurated = review.curated;
+
+      // Show only published, non-hidden reviews
+      // curated can be: "ok", "spam", etc. - only show "ok" or non-spam
+      const isNotSpam = !isCurated || isCurated === "ok" || isCurated === "approved";
+
+      return isPublished && !isHidden && isNotSpam;
+    });
+
     // Transform to simplified format
-    const reviews: Review[] = data.reviews.map((review) => ({
+    const reviews: Review[] = visibleReviews.map((review) => ({
       id: review.id,
       title: review.title || "",
       body: review.body || "",
@@ -278,47 +293,22 @@ export async function getProductRating(
     return { average: 0, count: 0 };
   }
 
-  // Use private token for server-side, fall back to public
-  const apiToken = PRIVATE_API_TOKEN || PUBLIC_API_TOKEN;
-  if (!apiToken) {
-    return { average: 0, count: 0 };
-  }
-
   try {
-    const cleanProductId = productId.replace("gid://shopify/Product/", "");
+    // Instead of using Judge.me's count endpoint (which includes hidden reviews),
+    // fetch the actual visible reviews and calculate the rating from them
+    const { reviews } = await fetchProductReviews(productId, 1, 100);
 
-    // Get Judge.me's internal product ID (required for accurate product-specific counts)
-    const internalProductId = await getInternalProductId(cleanProductId);
-
-    if (!internalProductId) {
-      // Product doesn't exist in Judge.me yet - no reviews
+    if (reviews.length === 0) {
       return { average: 0, count: 0 };
     }
 
-    // Use product_id (internal ID) for the count endpoint
-    const params = new URLSearchParams({
-      shop_domain: SHOP_DOMAIN,
-      api_token: apiToken,
-      product_id: internalProductId,
-    });
-
-    const response = await fetch(`${API_BASE_URL}/reviews/count?${params}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      next: { revalidate: 300 }, // Cache for 5 minutes
-    });
-
-    if (!response.ok) {
-      throw new Error(`Judge.me API error: ${response.status}`);
-    }
-
-    const data = await response.json();
+    // Calculate average from visible reviews only
+    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+    const average = Math.round((sum / reviews.length) * 10) / 10; // Round to 1 decimal
 
     return {
-      average: data.average || 0,
-      count: data.count || 0,
+      average,
+      count: reviews.length,
     };
   } catch (error) {
     console.error("Error fetching product rating:", error);

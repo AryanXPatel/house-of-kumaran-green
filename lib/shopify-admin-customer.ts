@@ -5,6 +5,8 @@
 const adminApiUrl = process.env.SHOPIFY_ADMIN_API_URL!;
 // Use the custom Google sign-in token which has read_customers and write_customers scopes
 const adminAccessToken = process.env.SHOPIFY_CUSTOM_GOOGLE_SIGN_IN_TOKEN!;
+// HOK Customer Sync token has read_orders scope for purchase verification
+const ordersAccessToken = process.env.HOK_CUSTOMER_SYNC_ACCESS_TOKEN;
 
 export interface GoogleUserInfo {
   email: string;
@@ -45,7 +47,7 @@ interface CustomerQueryResponse {
   customer: AdminCustomer | null;
 }
 
-// GraphQL Helper for Admin API
+// GraphQL Helper for Admin API (customer operations)
 async function shopifyAdminFetch<T>(
   query: string,
   variables: Record<string, unknown> = {}
@@ -63,6 +65,36 @@ async function shopifyAdminFetch<T>(
 
   if (json.errors) {
     console.error("Shopify Admin API Error:", json.errors);
+    throw new Error(json.errors[0]?.message || "Shopify Admin API Error");
+  }
+
+  return json.data;
+}
+
+// GraphQL Helper for Admin API with orders scope (HOK Customer Sync token)
+async function shopifyAdminFetchWithOrders<T>(
+  query: string,
+  variables: Record<string, unknown> = {}
+): Promise<T> {
+  if (!ordersAccessToken) {
+    throw new Error(
+      "HOK_CUSTOMER_SYNC_ACCESS_TOKEN not set. Required for order queries."
+    );
+  }
+
+  const response = await fetch(`${adminApiUrl}/graphql.json`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Shopify-Access-Token": ordersAccessToken,
+    },
+    body: JSON.stringify({ query, variables }),
+  });
+
+  const json = await response.json();
+
+  if (json.errors) {
+    console.error("Shopify Admin API (Orders) Error:", json.errors);
     throw new Error(json.errors[0]?.message || "Shopify Admin API Error");
   }
 
@@ -372,4 +404,140 @@ export async function getCustomerOrders(
 export function extractCustomerId(gid: string): string {
   const match = gid.match(/Customer\/(\d+)/);
   return match ? match[1] : gid;
+}
+
+/**
+ * Extract numeric product ID from Shopify GID
+ */
+export function extractProductId(gid: string): string {
+  const match = gid.match(/Product\/(\d+)/);
+  return match ? match[1] : gid;
+}
+
+/**
+ * Check if a customer has purchased a specific product
+ * Used for review eligibility verification
+ */
+export async function hasCustomerPurchasedProduct(
+  customerId: string,
+  productId: string
+): Promise<{ purchased: boolean; orderName?: string; orderDate?: string }> {
+  // Clean the product ID (remove GID prefix if present)
+  const cleanProductId = extractProductId(productId);
+
+  // Query with product ID in line items
+  const query = `
+    query checkCustomerPurchase($customerId: ID!, $first: Int!) {
+      customer(id: $customerId) {
+        orders(first: $first, sortKey: CREATED_AT, reverse: true) {
+          edges {
+            node {
+              id
+              name
+              createdAt
+              displayFulfillmentStatus
+              lineItems(first: 50) {
+                edges {
+                  node {
+                    product {
+                      id
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  interface PurchaseCheckResponse {
+    customer: {
+      orders: {
+        edges: {
+          node: {
+            id: string;
+            name: string;
+            createdAt: string;
+            displayFulfillmentStatus: string;
+            lineItems: {
+              edges: {
+                node: {
+                  product: {
+                    id: string;
+                  } | null;
+                };
+              }[];
+            };
+          };
+        }[];
+      };
+    } | null;
+  }
+
+  try {
+    const data = await shopifyAdminFetchWithOrders<PurchaseCheckResponse>(query, {
+      customerId,
+      first: 50, // Check last 50 orders
+    });
+
+    if (!data.customer) {
+      return { purchased: false };
+    }
+
+    // Check each order for the product
+    for (const { node: order } of data.customer.orders.edges) {
+      for (const { node: lineItem } of order.lineItems.edges) {
+        if (lineItem.product) {
+          const orderProductId = extractProductId(lineItem.product.id);
+          if (orderProductId === cleanProductId) {
+            return {
+              purchased: true,
+              orderName: order.name,
+              orderDate: order.createdAt,
+            };
+          }
+        }
+      }
+    }
+
+    return { purchased: false };
+  } catch (error) {
+    console.error("Error checking customer purchase:", error);
+    return { purchased: false };
+  }
+}
+
+/**
+ * Find customer by email via Admin API
+ * Returns the Shopify customer GID if found
+ */
+export async function findCustomerGidByEmail(
+  email: string
+): Promise<string | null> {
+  const query = `
+    query findCustomerByEmail($query: String!) {
+      customers(first: 1, query: $query) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const data = await shopifyAdminFetch<{
+      customers: { edges: { node: { id: string } }[] };
+    }>(query, {
+      query: `email:${email}`,
+    });
+
+    return data.customers.edges[0]?.node?.id || null;
+  } catch (error) {
+    console.error("Error finding customer by email:", error);
+    return null;
+  }
 }
