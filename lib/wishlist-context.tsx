@@ -11,6 +11,7 @@ import {
 } from "react";
 import type { Product } from "./types";
 import { useAuth } from "./auth-context";
+import { trackWishlistAdd, trackWishlistRemove } from "./analytics";
 
 interface WishlistContextType {
   wishlistItems: Product[];
@@ -62,7 +63,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       console.error("Error loading wishlist from localStorage:", error);
       try {
         localStorage.removeItem("wishlist");
-      } catch {}
+      } catch { }
     }
     hasLoadedFromStorage.current = true;
     setIsInitialized(true);
@@ -181,7 +182,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       console.error("Error saving wishlist to localStorage:", error);
       try {
         localStorage.removeItem("wishlist");
-      } catch {}
+      } catch { }
     }
   }, [wishlistItems, isInitialized, authMethod, isRestoring]);
 
@@ -192,11 +193,15 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       if (prev.some((item) => item.id === product.id)) {
         return prev;
       }
+      // Track wishlist add event
+      trackWishlistAdd(product.id, product.name);
       return [...prev, product];
     });
   }, []);
 
   const removeFromWishlist = useCallback((productId: string) => {
+    // Track wishlist remove event
+    trackWishlistRemove(productId);
     setWishlistItems((prev) => prev.filter((item) => item.id !== productId));
   }, []);
 
@@ -211,9 +216,14 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     if (!product || !product.id) return;
 
     setWishlistItems((prev) => {
-      if (prev.some((item) => item.id === product.id)) {
+      const isInList = prev.some((item) => item.id === product.id);
+      if (isInList) {
+        // Track wishlist remove event
+        trackWishlistRemove(product.id);
         return prev.filter((item) => item.id !== product.id);
       }
+      // Track wishlist add event
+      trackWishlistAdd(product.id, product.name);
       return [...prev, product];
     });
   }, []);
@@ -222,7 +232,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     setWishlistItems([]);
     try {
       localStorage.removeItem("wishlist");
-    } catch {}
+    } catch { }
   }, []);
 
   // Restore wishlist from Supabase (called after Google login)
@@ -264,7 +274,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
           // Save merged list to localStorage
           try {
             localStorage.setItem("wishlist", JSON.stringify(merged));
-          } catch {}
+          } catch { }
 
           return merged;
         });

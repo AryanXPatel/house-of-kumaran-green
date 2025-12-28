@@ -1,6 +1,7 @@
 "use client";
 
 import { useShopifyCart } from "@/lib/shopify-cart-context";
+import { trackCheckoutInitiated } from "@/lib/analytics";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -33,6 +34,9 @@ export function CartDrawer() {
   const finalTotal = totalPrice + deliveryFee;
 
   const handleCheckout = () => {
+    // Track checkout initiation
+    trackCheckoutInitiated(totalPrice, items.length);
+
     // If Shopify checkout URL is available, use it
     if (checkoutUrl) {
       goToCheckout();

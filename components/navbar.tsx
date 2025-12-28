@@ -32,6 +32,7 @@ import { CartDrawer } from "@/components/cart-drawer";
 import { WishlistDrawer } from "@/components/wishlist-drawer";
 import { AuthDrawer } from "@/components/auth-drawer";
 import { categories } from "@/lib/products";
+import { trackSearch } from "@/lib/analytics";
 
 // Quick category links for sticky nav
 const quickCategoryLinks = categories.slice(0, 6);
@@ -102,6 +103,8 @@ export function Navbar() {
   // Handle search submission (Enter key or See All Results)
   const handleSearchSubmit = () => {
     if (searchInputValue.trim()) {
+      // Track the search event
+      trackSearch(searchInputValue.trim(), totalResults);
       router.push(`/shop?search=${encodeURIComponent(searchInputValue.trim())}`);
       handleCloseSearch();
     }
@@ -134,11 +137,10 @@ export function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled
-            ? "bg-[#0d1f14]/95 backdrop-blur-xl border-b border-[#2a4a35]"
-            : "bg-transparent"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
+          ? "bg-[#0d1f14]/95 backdrop-blur-xl border-b border-[#2a4a35]"
+          : "bg-transparent"
+          }`}
       >
         <nav className="mx-auto flex h-16 md:h-20 max-w-[1400px] items-center justify-between px-4 md:px-6 lg:px-10">
           {/* Logo */}
@@ -176,10 +178,10 @@ export function Navbar() {
                   item === "Our Story"
                     ? "/about"
                     : item === "Collections"
-                    ? "/collections"
-                    : item === "Contact"
-                    ? "/contact"
-                    : `/#${item.toLowerCase().replace(" ", "-")}`
+                      ? "/collections"
+                      : item === "Contact"
+                        ? "/contact"
+                        : `/#${item.toLowerCase().replace(" ", "-")}`
                 }
                 className="text-sm text-[#f5f0e1]/70 hover:text-[#f5f0e1] transition-colors tracking-wide uppercase"
               >
@@ -243,11 +245,10 @@ export function Navbar() {
 
         {/* Sticky Category Bar - appears on scroll */}
         <div
-          className={`hidden lg:block border-t border-[#2a4a35]/50 transition-all duration-300 ${
-            showCategoryBar
-              ? "opacity-100 max-h-12"
-              : "opacity-0 max-h-0 overflow-hidden"
-          }`}
+          className={`hidden lg:block border-t border-[#2a4a35]/50 transition-all duration-300 ${showCategoryBar
+            ? "opacity-100 max-h-12"
+            : "opacity-0 max-h-0 overflow-hidden"
+            }`}
         >
           <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
             <div className="flex items-center justify-center gap-6 py-2">
@@ -330,8 +331,8 @@ export function Navbar() {
                     item === "Our Story"
                       ? "/about"
                       : item === "Contact"
-                      ? "/contact"
-                      : `/#${item.toLowerCase().replace(" ", "-")}`
+                        ? "/contact"
+                        : `/#${item.toLowerCase().replace(" ", "-")}`
                   }
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block text-2xl font-serif text-[#f5f0e1]/70 hover:text-[#f5f0e1] transition-colors py-2"

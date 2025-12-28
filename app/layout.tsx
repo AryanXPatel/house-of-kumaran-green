@@ -8,6 +8,7 @@ import { RecentlyViewedProvider } from "@/lib/recently-viewed-context";
 import { AuthProvider } from "@/lib/auth-context";
 import { CustomerSyncProvider } from "@/lib/customer-sync";
 import { GoogleAuthProvider } from "@/lib/google-auth-provider";
+import { AnalyticsProviderWrapper } from "@/lib/analytics-provider-wrapper";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -142,7 +143,9 @@ export default function RootLayout({
               <WishlistProvider>
                 <RecentlyViewedProvider>
                   <CustomerSyncProvider>
-                    {children}
+                    <AnalyticsProviderWrapper>
+                      {children}
+                    </AnalyticsProviderWrapper>
                   </CustomerSyncProvider>
                 </RecentlyViewedProvider>
               </WishlistProvider>
