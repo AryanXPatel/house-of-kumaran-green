@@ -19,6 +19,12 @@ const adminLoginRoute = "/admin/login";
 // Admin session cookie name
 const ADMIN_SESSION_COOKIE = "hok_admin_session";
 
+// ===================================
+// MAINTENANCE MODE
+// ===================================
+// Set to false to disable maintenance mode
+const MAINTENANCE_MODE = true;
+
 /**
  * Check if request is from admin subdomain
  */
@@ -54,6 +60,35 @@ async function verifyAdminSessionMiddleware(token: string): Promise<boolean> {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // ===================================
+  // MAINTENANCE MODE REDIRECT
+  // ===================================
+  if (MAINTENANCE_MODE) {
+    const isMaintenancePage = pathname === "/maintenance";
+    const isStaticAsset =
+      pathname.startsWith("/_next") ||
+      pathname.startsWith("/images") ||
+      pathname === "/icon.svg" ||
+      pathname === "/favicon.ico" ||
+      pathname.endsWith(".png") ||
+      pathname.endsWith(".jpg") ||
+      pathname.endsWith(".svg") ||
+      pathname.endsWith(".ico");
+
+    // Allow admin subdomain to bypass maintenance (for testing/monitoring)
+    const isAdmin = isAdminSubdomain(request);
+
+    if (!isMaintenancePage && !isStaticAsset && !isAdmin) {
+      return NextResponse.redirect(new URL("/maintenance", request.url));
+    }
+
+    // If on maintenance page, just serve it
+    if (isMaintenancePage) {
+      return NextResponse.next();
+    }
+  }
+
   const isAdmin = isAdminSubdomain(request);
 
   // ===================================
@@ -200,11 +235,13 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Match protected routes
-    "/account/:path*",
-    // Match admin routes
-    "/admin/:path*",
-    // Match root for admin subdomain redirect
-    "/",
+    /*
+     * Match all request paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico, icon.svg (browser icons)
+     * - images folder (public images)
+     */
+    "/((?!_next/static|_next/image|favicon.ico|icon.svg).*)",
   ],
 };
