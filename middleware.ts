@@ -23,7 +23,7 @@ const ADMIN_SESSION_COOKIE = "hok_admin_session";
 // MAINTENANCE MODE
 // ===================================
 // Set to false to disable maintenance mode
-const MAINTENANCE_MODE = true;
+const MAINTENANCE_MODE = false;
 
 /**
  * Check if request is from admin subdomain
